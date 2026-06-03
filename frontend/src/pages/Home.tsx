@@ -390,7 +390,9 @@ const Home = () => {
     <div className="bg-base-200 relative">
       {/* Navbar */}
       <nav className="px-4 sm:px-6 lg:px-12 py-4 md:py-5 flex items-center justify-between relative z-50">
-        <img src="/logo.png" alt="ONE-365 Logo" className="w-52" />
+        <span className="text-2xl sm:text-3xl font-extrabold tracking-tight select-none">
+          <span className="text-[#1c1c1c]">ONE</span><span className="text-[#fdc700]">-365</span>
+        </span>
         {/* Hamburger icon for mobile */}
         <button
           className="md:hidden flex items-center justify-center p-2 rounded focus:outline-none"
@@ -914,7 +916,9 @@ const Home = () => {
       <footer className="bg-primary/15 text-[#a35608] py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
           <div className="flex items-center">
-            <img src="/logo.png" alt="ONE-365 Logo" className="w-36 sm:w-44" />
+            <span className="text-xl sm:text-2xl font-extrabold tracking-tight select-none">
+              <span className="text-[#a35608]">ONE</span><span className="text-[#fdc700]">-365</span>
+            </span>
           </div>
           <div className="text-xs sm:text-sm text-center">
             &copy; {new Date().getFullYear()} ONE-365.{" "}
