@@ -389,7 +389,7 @@ const Home = () => {
   return (
     <div className="bg-base-200 relative">
       {/* Navbar */}
-      <nav className="px-4 py-4 md:px-12 md:py-6 flex items-center justify-between relative">
+      <nav className="px-4 sm:px-6 lg:px-12 py-4 md:py-5 flex items-center justify-between relative z-50">
         <img src="/logo.png" alt="ONE-365 Logo" className="w-52" />
         {/* Hamburger icon for mobile */}
         <button
@@ -487,113 +487,126 @@ const Home = () => {
 
       {/* Hero Section */}
       <section
-        className="flex flex-col items-center justify-center text-center py-10 px-4 md:py-20 md:px-0 relative"
+        id="home"
+        className="flex flex-col items-center justify-center text-center py-16 px-4 sm:px-6 md:py-24 relative min-h-[60vh]"
         style={{ overflow: "hidden" }}
       >
         <P5Background />
-        <div className="z-50 flex flex-col justify-center items-center bg-neutral-100/10 backdrop-blur-md p-5 md:p-10 rounded-3xl  max-w-5xl mx-auto">
-          <div className="text-neutral-500 z-50 text-base md:text-lg tracking-widest font-medium mb-6 break-words text-center max-w-xs sm:max-w-md md:max-w-2xl mx-auto">
+        <div className="z-50 flex flex-col justify-center items-center bg-neutral-100/10 backdrop-blur-md p-6 sm:p-8 md:p-12 rounded-3xl w-full max-w-4xl mx-auto">
+          <div className="text-neutral-500 z-50 text-sm sm:text-base md:text-lg tracking-widest font-medium mb-4 sm:mb-6 text-center">
             {t("home_subtitle")}
           </div>
-          <h1 className="text-4xl md:text-7xl z-50 font-bold text-[#fdc700] mb-2">
-            {t("home_hero_shaping").split("your vision")[0]} <span className="text-[#1c1c1c]">{t("home_hero_shaping").includes("vision") ? (language === "en" ? "your vision" : "su visión") : ""}</span>
+          <h1 className="text-3xl sm:text-5xl md:text-7xl z-50 font-bold text-[#fdc700] mb-2 leading-tight">
+            {t("home_hero_shaping").split("your vision")[0]}{" "}
+            <span className="text-[#1c1c1c]">
+              {t("home_hero_shaping").includes("vision")
+                ? language === "en" ? "your vision" : "su visión"
+                : ""}
+            </span>
           </h1>
-          <h2 className="text-4xl md:text-7xl z-50 font-bold text-[#1c1c1c] mb-4">
-            {t("home_hero_precision").split("Precision")[0]} <span className="text-[#fdc700]">{t("home_hero_precision").includes("Precision") || t("home_hero_precision").includes("Precisión") ? (language === "en" ? "Precision" : "Precisión") : ""}</span>
+          <h2 className="text-3xl sm:text-5xl md:text-7xl z-50 font-bold text-[#1c1c1c] mb-6 leading-tight">
+            {t("home_hero_precision").split("Precision")[0]}{" "}
+            <span className="text-[#fdc700]">
+              {t("home_hero_precision").includes("Precision") || t("home_hero_precision").includes("Precisión")
+                ? language === "en" ? "Precision" : "Precisión"
+                : ""}
+            </span>
           </h2>
 
-          <div className="flex flex-wrap gap-1 justify-center w-full z-50 mt-4">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center w-full z-50">
             <button
-              className="bg-[#fdc700] text-[#a45505] font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-[#e5b400] cursor-pointer"
+              className="bg-[#fdc700] text-[#a45505] font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-[#e5b400] cursor-pointer w-full sm:w-auto"
               onClick={handleDemoClick}
             >
               {t("home_request_demo")}
-            </button>{" "}
-            <Link to="/login" className="md:hidden">
-              <button className="bg-[#3b3b3b] text-white px-8 py-4 rounded-lg font-medium hover:bg-[#2a2a2a] w-full">
+            </button>
+            <Link to="/login">
+              <button className="bg-[#3b3b3b] text-white px-8 py-4 rounded-lg font-medium hover:bg-[#2a2a2a] cursor-pointer w-full sm:w-auto">
                 {t("signin_btn")}
               </button>
             </Link>
           </div>
         </div>
 
-        {/* Glow effects */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#fdc700bf] rounded-full blur-2xl opacity-40 z-10" />
+        {/* Glow effect */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#fdc700bf] rounded-full blur-2xl opacity-30 z-10 pointer-events-none" />
       </section>
 
       {/* Feature Cards */}
       <section
+        id="solutions"
         ref={featureCardsRef}
-        className={`flex flex-row overflow-x-auto md:flex-row items-center justify-start md:justify-center gap-4 md:gap-10 px-4 md:px-0 py-8 transition-all duration-500 ${
+        className={`py-8 px-4 sm:px-6 transition-all duration-500 ${
           hideFeatureCards
             ? "opacity-0 translate-y-32 pointer-events-none"
             : "opacity-100 translate-y-0"
         }`}
-        style={{ scrollbarWidth: "none" }}
       >
-        {featureCards.map((card, idx) => (
-          <div
-            key={idx}
-            className={`flex flex-col items-center justify-center min-w-xs bg-base-200 rounded-2xl shadow-xl p-4 cursor-pointer transition-transform duration-300 w-64 md:w-72 h-24 md:h-28 ${
-              hoveredCard === idx ? "scale-110 z-10" : "scale-100"
-            }`}
-            onMouseEnter={() => setHoveredCard(idx)}
-            onMouseLeave={() => setHoveredCard(null)}
-          >
-            <div className="mb-2">{card.icon}</div>
-            {hoveredCard === idx ? (
-              <div className="text-xs text-neutral-500 text-center mt-2 px-1">
-                {featureCardDescriptions[card.key]}
-              </div>
-            ) : (
-              <div
-                className="font-bold text-lg md:text-xl mb-1"
-                style={{ color: card.color }}
-              >
-                {card.title}
-              </div>
-            )}
-          </div>
-        ))}
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 max-w-6xl mx-auto">
+          {featureCards.map((card, idx) => (
+            <div
+              key={idx}
+              className={`flex flex-col items-center justify-center bg-base-100 rounded-2xl shadow-lg p-4 cursor-pointer transition-transform duration-300 w-[calc(50%-0.5rem)] sm:w-48 md:w-52 h-28 md:h-32 ${
+                hoveredCard === idx ? "scale-105 shadow-xl z-10" : "scale-100"
+              }`}
+              onMouseEnter={() => setHoveredCard(idx)}
+              onMouseLeave={() => setHoveredCard(null)}
+            >
+              <div className="mb-2">{card.icon}</div>
+              {hoveredCard === idx ? (
+                <div className="text-xs text-neutral-500 text-center px-1 line-clamp-3">
+                  {featureCardDescriptions[card.key]}
+                </div>
+              ) : (
+                <div
+                  className="font-bold text-base md:text-lg text-center"
+                  style={{ color: card.color }}
+                >
+                  {card.title}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Project Administration Tools */}
       <section
         id="product"
-        className="bg-base-200 py-12 md:py-20 px-4 md:px-8"
+        className="bg-base-200 py-12 md:py-20 px-4 sm:px-6 lg:px-8"
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
-            <p className="text-sm font-semibold tracking-[0.18em] uppercase text-[#a45505] mb-3">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
+            <p className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[#a45505] mb-3">
               {language === "en" ? "Project management" : "Administración de proyectos"}
             </p>
-            <h2 className="text-3xl md:text-5xl font-bold text-[#111111] leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#111111] leading-tight">
               {language === "en"
                 ? "Project Administration Tools"
                 : "Herramientas de Administración de Proyectos"}
             </h2>
-            <p className="text-base md:text-lg text-neutral-600 mt-5">
+            <p className="text-sm sm:text-base md:text-lg text-neutral-600 mt-4">
               {language === "en"
                 ? "Access the core tools your team needs to administer construction projects from the office or the field."
-                : "Accede desde cualquier dispositivo a las herramientas principales que tu equipo necesita para administrar proyectos de construcción."}
+                : "Accede desde cualquier dispositivo a las herramientas necesarias para administrar tus proyectos."}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {projectTools.map(({ title, description, Icon }) => (
               <article
                 key={title}
-                className="group bg-base-100 rounded-2xl shadow-xl p-5 md:p-6 transition-transform duration-300 hover:-translate-y-1"
+                className="bg-base-100 rounded-xl shadow-md p-4 sm:p-5 transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex items-start gap-4">
-                  <div className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fdc700] text-[#a45505] shadow">
-                    <Icon size={20} aria-hidden="true" />
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#fdc700] text-[#a45505] shadow-sm">
+                    <Icon size={16} aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-xl md:text-2xl font-bold text-[#1c1c1c]">
+                    <h3 className="text-base sm:text-lg font-bold text-[#1c1c1c] leading-snug">
                       {title}
                     </h3>
-                    <p className="text-neutral-600 mt-2 leading-relaxed">
+                    <p className="text-neutral-600 text-sm mt-1 leading-relaxed">
                       {description}
                     </p>
                   </div>
@@ -605,126 +618,144 @@ const Home = () => {
       </section>
 
       {/* Dashboard Screenshot */}
-      <section className="flex flex-col items-center justify-center py-8 md:py-16 px-4 md:px-0">
-        <img
-          src={screenshots[0].src}
-          alt={screenshots[0].alt}
-          className="object-contain w-full md:w-2/3 h-auto rounded-xl shadow"
-        />
+      <section className="flex flex-col items-center justify-center py-10 md:py-16 px-4 sm:px-6">
+        <div className="w-full max-w-5xl mx-auto">
+          <img
+            src={screenshots[0].src}
+            alt={screenshots[0].alt}
+            className="object-contain w-full h-auto rounded-2xl shadow-xl"
+          />
+        </div>
       </section>
 
       {/* Companies Section */}
-      <section className="flex flex-col items-center justify-center gap-6 py-8 md:py-16 px-4 md:px-0">
-        <h1 className="text-2xl md:text-4xl text-[#a45505] font-normal text-center">
+      <section className="flex flex-col items-center justify-center gap-4 sm:gap-6 py-10 md:py-16 px-4 sm:px-6">
+        <h2 className="text-lg sm:text-2xl md:text-4xl text-[#a45505] font-normal text-center max-w-2xl">
           {t("home_best_building")}
-        </h1>
+        </h2>
         <img
           src="/company_scroll.png"
           alt="companies"
-          className="w-full md:w-1/2"
+          className="w-full max-w-xl h-auto"
         />
       </section>
 
       {/* Communication Section */}
-      <section className="flex flex-col md:flex-row items-center justify-center gap-8 py-8 md:py-16 lg:px-5 px-4 md:px-0">
-        <img
-          src="main-m.png"
-          alt=""
-          className="w-full md:w-1/2 h-auto rounded-xl"
-        />
-        <div className="flex flex-col gap-4">
-          <div className="font-medium text-black text-lg tracking-widest">
-            {t("home_comm_label")}
+      <section id="support" className="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
+          <div className="w-full md:w-1/2 shrink-0">
+            <img
+              src="main-m.png"
+              alt="Communication dashboard"
+              className="w-full h-auto rounded-2xl shadow-lg"
+            />
           </div>
-          <h2 className="font-bold text-[#1c1c1c] text-2xl md:text-4xl">
-            {t("home_comm_title")}
-          </h2>
-          <p className="text-[#434343] text-base md:text-lg">
-            {t("home_comm_desc")}
-          </p>
-          <button
-            className="btn btn-primary w-full lg:w-2xs md:w-auto cursor-pointer"
-            onClick={handleDemoClick}
-          >
-            {t("home_request_demo")}
-          </button>
-        </div>
-      </section>
-
-      {/* Access Section */}
-      <section className="flex flex-col-reverse md:flex-row items-center justify-center gap-8 py-8 md:py-16 lg:px-10 px-4 md:px-0">
-        <div className="flex flex-col gap-4">
-          <div className="font-medium text-black text-lg tracking-widest">
-            {t("home_access_label")}
-          </div>
-          <h2 className="font-bold text-[#1c1c1c] text-2xl md:text-4xl">
-            {t("home_access_title")}
-          </h2>
-          <div className="text-[#434343] text-base md:text-lg">
-            {t("home_access_desc")}
-          </div>
-          <button
-            className="btn btn-primary w-full lg:w-2xs md:w-auto mt-2 cursor-pointer"
-            onClick={handleDemoClick}
-          >
-            {t("home_request_demo")}
-          </button>
-        </div>
-        <img
-          src="main-m.png"
-          alt=""
-          className="w-full md:w-1/2 h-auto rounded-xl"
-        />
-      </section>
-
-      {/* Visibility Section */}
-      <section className="flex flex-col-reverse md:flex-row items-center justify-center gap-8 py-8 md:py-16 lg:px-10 px-4 md:px-0">
-        <div className="flex flex-col gap-4">
-          <div className="font-medium text-black text-lg tracking-widest">
-            {t("home_visibility_label")}
-          </div>
-          <h2 className="font-bold text-[#1c1c1c] text-2xl md:text-4xl">
-            {t("home_visibility_title")}
-          </h2>
-          <div className="text-[#434343] text-base md:text-lg">
-            {t("home_visibility_desc")}
-          </div>
-          <div className="flex flex-col md:flex-row gap-2 mt-2 w-full">
+          <div className="flex flex-col gap-4 w-full md:w-1/2">
+            <div className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[#a45505]">
+              {t("home_comm_label")}
+            </div>
+            <h2 className="font-bold text-[#1c1c1c] text-2xl sm:text-3xl md:text-4xl leading-tight">
+              {t("home_comm_title")}
+            </h2>
+            <p className="text-[#434343] text-sm sm:text-base md:text-lg leading-relaxed">
+              {t("home_comm_desc")}
+            </p>
             <button
-              className="btn btn-primary lg:w-2xs w-full md:w-auto cursor-pointer"
+              className="btn btn-primary w-full sm:w-auto self-start cursor-pointer mt-2"
               onClick={handleDemoClick}
             >
               {t("home_request_demo")}
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Access Section */}
+      <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-base-100">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12">
+          <div className="w-full md:w-1/2 shrink-0">
+            <img
+              src="main-m.png"
+              alt="Access dashboard"
+              className="w-full h-auto rounded-2xl shadow-lg"
+            />
+          </div>
+          <div className="flex flex-col gap-4 w-full md:w-1/2">
+            <div className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[#a45505]">
+              {t("home_access_label")}
+            </div>
+            <h2 className="font-bold text-[#1c1c1c] text-2xl sm:text-3xl md:text-4xl leading-tight">
+              {t("home_access_title")}
+            </h2>
+            <p className="text-[#434343] text-sm sm:text-base md:text-lg leading-relaxed">
+              {t("home_access_desc")}
+            </p>
             <button
-              onClick={handleInstallClick}
-              className="btn btn-neutral lg:w-2xs w-full md:w-auto cursor-pointer"
+              className="btn btn-primary w-full sm:w-auto self-start cursor-pointer mt-2"
+              onClick={handleDemoClick}
             >
-              {t("home_get_mobile")}
+              {t("home_request_demo")}
             </button>
           </div>
         </div>
-        <img
-          src="mobile.jpeg"
-          alt=""
-          className="w-full md:w-1/3 h-auto rounded-xl"
-        />
+      </section>
+
+      {/* Visibility Section */}
+      <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12">
+          <div className="w-full md:w-1/3 shrink-0">
+            <img
+              src="mobile.jpeg"
+              alt="Mobile app"
+              className="w-full max-w-xs mx-auto md:max-w-none h-auto rounded-2xl shadow-lg"
+            />
+          </div>
+          <div className="flex flex-col gap-4 w-full md:w-2/3">
+            <div className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[#a45505]">
+              {t("home_visibility_label")}
+            </div>
+            <h2 className="font-bold text-[#1c1c1c] text-2xl sm:text-3xl md:text-4xl leading-tight">
+              {t("home_visibility_title")}
+            </h2>
+            <p className="text-[#434343] text-sm sm:text-base md:text-lg leading-relaxed">
+              {t("home_visibility_desc")}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 mt-2">
+              <button
+                className="btn btn-primary w-full sm:w-auto cursor-pointer"
+                onClick={handleDemoClick}
+              >
+                {t("home_request_demo")}
+              </button>
+              <button
+                onClick={handleInstallClick}
+                className="btn btn-neutral w-full sm:w-auto cursor-pointer"
+              >
+                {t("home_get_mobile")}
+              </button>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Project Management CTA Section */}
-      <section className="flex flex-col-reverse md:flex-row items-center justify-center gap-8 py-8  lg:px-10 px-4 md:px-0 bg-accent">
-        <div className="flex flex-col gap-4">
-          <h2 className="font-bold text-white text-2xl md:text-6xl">
-            {t("home_pm_cta")}
-          </h2>
-          <button
-            className="btn btn-primary w-full lg:w-2xs lg:mt-10 md:w-auto mt-2 cursor-pointer"
-            onClick={handleDemoClick}
-          >
-            {t("home_request_demo")}
-          </button>
+      <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-accent">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
+          <div className="flex flex-col gap-4 w-full md:w-1/2">
+            <h2 className="font-bold text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
+              {t("home_pm_cta")}
+            </h2>
+            <button
+              className="btn btn-primary w-full sm:w-auto self-start cursor-pointer mt-4"
+              onClick={handleDemoClick}
+            >
+              {t("home_request_demo")}
+            </button>
+          </div>
+          <div className="w-full md:w-1/2 shrink-0">
+            <img src="footer_img.webp" alt="" className="w-full h-auto rounded-xl" />
+          </div>
         </div>
-        <img src="footer_img.webp" alt="" className="w-full md:w-1/2 h-auto" />
       </section>
 
       {/* DaisyUI Modal using modal/modal-open classes */}
@@ -880,15 +911,16 @@ const Home = () => {
       )}
 
       {/* Footer Section */}
-      <footer className="bg-primary/15 text-[#a35608] py-8 px-4 md:px-0 lg:p-10">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="ONE-365 Logo" className="w-48" />
+      <footer className="bg-primary/15 text-[#a35608] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+          <div className="flex items-center">
+            <img src="/logo.png" alt="ONE-365 Logo" className="w-36 sm:w-44" />
           </div>
-          <div className="text-sm text-center md:text-right">
-            &copy; {new Date().getFullYear()} ONE-365. All rights reserved.
+          <div className="text-xs sm:text-sm text-center">
+            &copy; {new Date().getFullYear()} ONE-365.{" "}
+            {language === "en" ? "All rights reserved." : "Todos los derechos reservados."}
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap justify-center sm:justify-end gap-3 sm:gap-4 text-sm">
             <a href="mailto:support@one365.com" className="hover:underline">
               {t("footer_contact")}
             </a>
