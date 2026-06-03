@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -25,6 +26,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const ProjectOversight = () => {
+  const navigate = useNavigate();
   // Fetch projects data
   const { data: projectsResponse, isLoading, error, refetch } = useProjects();
   const projects = projectsResponse?.data || [];
@@ -686,9 +688,29 @@ const ProjectOversight = () => {
                       <h2 className="text-2xl font-bold">
                         {selectedProject.name}
                       </h2>
-                      <p className="text-neutral-500">
+                      <p className="text-neutral-500 mb-3">
                         {selectedProject.description}
                       </p>
+                      <div className="flex flex-wrap gap-2">
+                        <button 
+                          className="btn btn-primary btn-sm flex gap-1"
+                          onClick={() => {
+                            localStorage.setItem("onsite360_selected_project_id", selectedProject.id);
+                            navigate("/task-management");
+                          }}
+                        >
+                          📋 View Kanban Board
+                        </button>
+                        <button 
+                          className="btn btn-secondary btn-sm flex gap-1"
+                          onClick={() => {
+                            localStorage.setItem("onsite360_selected_project_id", selectedProject.id);
+                            navigate("/schedule-management");
+                          }}
+                        >
+                          📅 View Gantt & Timeline
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <button
@@ -730,26 +752,44 @@ const ProjectOversight = () => {
 
                   {selectedProject._count && (
                     <>
-                      <div className="stat bg-base-100 rounded-xl shadow">
+                      <div 
+                        className="stat bg-base-100 rounded-xl shadow cursor-pointer hover:bg-base-300 hover:scale-[1.02] transition-all"
+                        onClick={() => {
+                          localStorage.setItem("onsite360_selected_project_id", selectedProject.id);
+                          navigate("/task-management");
+                        }}
+                      >
                         <div className="stat-title">Tasks</div>
                         <div className="stat-value text-primary">
                           {selectedProject._count.tasks}
                         </div>
-                        <div className="stat-desc">Total tasks</div>
+                        <div className="stat-desc font-medium text-xs text-primary/70">Click to view Kanban Board</div>
                       </div>
-                      <div className="stat bg-base-100 rounded-xl shadow">
+                      <div 
+                        className="stat bg-base-100 rounded-xl shadow cursor-pointer hover:bg-base-300 hover:scale-[1.02] transition-all"
+                        onClick={() => {
+                          localStorage.setItem("onsite360_selected_project_id", selectedProject.id);
+                          navigate("/document-management");
+                        }}
+                      >
                         <div className="stat-title">Documents</div>
                         <div className="stat-value text-secondary">
                           {selectedProject._count.documents}
                         </div>
-                        <div className="stat-desc">Files uploaded</div>
+                        <div className="stat-desc font-medium text-xs text-secondary/70">Click to view Documents</div>
                       </div>
-                      <div className="stat bg-base-100 rounded-xl shadow">
+                      <div 
+                        className="stat bg-base-100 rounded-xl shadow cursor-pointer hover:bg-base-300 hover:scale-[1.02] transition-all"
+                        onClick={() => {
+                          localStorage.setItem("onsite360_selected_project_id", selectedProject.id);
+                          navigate("/issue-reporting");
+                        }}
+                      >
                         <div className="stat-title">Issues</div>
                         <div className="stat-value text-warning">
                           {selectedProject._count.issue}
                         </div>
-                        <div className="stat-desc">Open issues</div>
+                        <div className="stat-desc font-medium text-xs text-warning/70">Click to view Issues</div>
                       </div>
                     </>
                   )}

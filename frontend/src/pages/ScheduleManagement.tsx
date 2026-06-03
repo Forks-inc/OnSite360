@@ -319,7 +319,15 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
 
 const ScheduleManagement = () => {
   const [activeTab, setActiveTab] = useState<ScheduleTab>("gantt");
-  const [selectedProject, setSelectedProject] = useState<string>("");
+  const [selectedProject, setSelectedProject] = useState<string>(
+    () => localStorage.getItem("onsite360_selected_project_id") || ""
+  );
+
+  useEffect(() => {
+    if (selectedProject) {
+      localStorage.setItem("onsite360_selected_project_id", selectedProject);
+    }
+  }, [selectedProject]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<View>("month");
@@ -404,7 +412,12 @@ const ScheduleManagement = () => {
   // Set default project when projects load
   useEffect(() => {
     if (Array.isArray(projects) && projects.length > 0 && !selectedProject) {
-      setSelectedProject(projects[0].id);
+      const stored = localStorage.getItem("onsite360_selected_project_id");
+      if (stored && projects.some((p: any) => p.id === stored)) {
+        setSelectedProject(stored);
+      } else {
+        setSelectedProject(projects[0].id);
+      }
     }
   }, [projects, selectedProject]);
 

@@ -59,7 +59,15 @@ export default function DailyLogsManagement() {
   const [activeTab, setActiveTab] = useState<DailyLogTab>("view_all");
 
   // Project selection
-  const [selectedProject, setSelectedProject] = useState<string>("");
+  const [selectedProject, setSelectedProject] = useState<string>(
+    () => localStorage.getItem("onsite360_selected_project_id") || ""
+  );
+
+  useEffect(() => {
+    if (selectedProject) {
+      localStorage.setItem("onsite360_selected_project_id", selectedProject);
+    }
+  }, [selectedProject]);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
   // Selected log for details view
@@ -133,8 +141,14 @@ export default function DailyLogsManagement() {
   // Set default project when projects load
   useEffect(() => {
     if (Array.isArray(projects) && projects.length > 0 && !selectedProject) {
-      setSelectedProject(projects[0].id);
-      setLogForm((prev) => ({ ...prev, projectId: projects[0].id }));
+      const stored = localStorage.getItem("onsite360_selected_project_id");
+      if (stored && projects.some((p: any) => p.id === stored)) {
+        setSelectedProject(stored);
+        setLogForm((prev) => ({ ...prev, projectId: stored }));
+      } else {
+        setSelectedProject(projects[0].id);
+        setLogForm((prev) => ({ ...prev, projectId: projects[0].id }));
+      }
     }
   }, [projects, selectedProject]);
 
