@@ -10,6 +10,7 @@ import {
   type Project,
 } from "../hooks/useProjects";
 import { useUsers, type User } from "../hooks/useUsers";
+import { useTranslation } from "../hooks/useTranslation";
 
 // Fix default marker icon for leaflet in React
 // You can use CDN links (as shown) or local assets if you prefer.
@@ -26,6 +27,7 @@ L.Icon.Default.mergeOptions({
 });
 
 const ProjectOversight = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   // Fetch projects data
   const { data: projectsResponse, isLoading, error, refetch } = useProjects();
@@ -62,9 +64,9 @@ const ProjectOversight = () => {
 
   // Access level options for user permissions
   const accessLevelOptions = [
-    { value: 1, label: "Level 1 (Read Only)" },
-    { value: 2, label: "Level 2 (Read/Write)" },
-    { value: 3, label: "Level 3 (Admin Access)" },
+    { value: 1, label: t("access_level_1", "Level 1 (Read Only)") },
+    { value: 2, label: t("access_level_2", "Level 2 (Read/Write)") },
+    { value: 3, label: t("access_level_3", "Level 3 (Admin Access)") },
   ];
 
   // Refs for file inputs to support drag-and-drop
@@ -328,12 +330,12 @@ const ProjectOversight = () => {
       // Add team member modal
       <div className="fixed inset-0 bg-black/20 backdrop-blur-md bg-opacity-40 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-          <h3 className="text-lg font-semibold mb-4">Add User to Project</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("add_user_title", "Add User to Project")}</h3>
 
           <div className="space-y-4">
             <div>
               <label className="label">
-                <span className="label-text font-medium">Select User</span>
+                <span className="label-text font-medium">{t("select_user", "Select User")}</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -342,7 +344,7 @@ const ProjectOversight = () => {
                 disabled={usersLoading}
               >
                 <option value="">
-                  {usersLoading ? "Loading users..." : "Choose a user"}
+                  {usersLoading ? t("loading_users", "Loading users...") : t("choose_user", "Choose a user")}
                 </option>
                 {!usersLoading &&
                   users
@@ -361,7 +363,7 @@ const ProjectOversight = () => {
 
             <div>
               <label className="label">
-                <span className="label-text font-medium">Access Level</span>
+                <span className="label-text font-medium">{t("access_level", "Access Level")}</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -382,14 +384,14 @@ const ProjectOversight = () => {
               className="btn btn-outline btn-sm"
               onClick={() => setShowUserModal(false)}
             >
-              Cancel
+              {t("cancel", "Cancel")}
             </button>
             <button
               className="btn btn-primary btn-sm"
               onClick={handleAddTempUser}
               disabled={!tempUserId}
             >
-              Add User
+              {t("add_user", "Add User")}
             </button>
           </div>
         </div>
@@ -438,9 +440,9 @@ const ProjectOversight = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold mb-1">Project Oversight</h1>
+      <h1 className="text-3xl font-bold mb-1">{t("project_oversight", "Project Oversight")}</h1>
       <p className="text-gray-500 mb-6">
-        Monitor and manage construction projects
+        {t("projects_subtitle", "Monitor and manage construction projects")}
       </p>
 
       {/* User Selection Modal */}
@@ -451,7 +453,7 @@ const ProjectOversight = () => {
         <div className="fixed inset-0 bg-black/20 backdrop-blur-md bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-xl relative">
             <h3 className="text-lg font-semibold mb-2">
-              Pick Project Location
+              {t("pick_project_location", "Pick Project Location")}
             </h3>
             <div style={{ height: 350, width: "100%" }}>
               <MapContainer
@@ -473,13 +475,13 @@ const ProjectOversight = () => {
                 className="btn btn-outline btn-sm"
                 onClick={handleCancelLocation}
               >
-                Cancel
+                {t("cancel", "Cancel")}
               </button>
               <button
                 className="btn btn-primary btn-sm"
                 onClick={handleConfirmLocation}
               >
-                Confirm Location
+                {t("confirm_location", "Confirm Location")}
               </button>
             </div>
           </div>
@@ -492,7 +494,7 @@ const ProjectOversight = () => {
           type="radio"
           name="project_tab_group"
           className="tab"
-          aria-label="Projects"
+          aria-label={t("projects_title", "Projects")}
           checked={activeTab === "projects"}
           onChange={() => setActiveTab("projects")}
         />
@@ -500,9 +502,9 @@ const ProjectOversight = () => {
           <div className="tab-content lg:p-5">
             {/* Projects List Section */}
             <div className="bg-base-200 border border-base-300 p-3 sm:p-4 lg:p-6 rounded-2xl">
-              <h2 className="text-2xl font-bold">Projects</h2>
+              <h2 className="text-2xl font-bold">{t("projects_title", "Projects")}</h2>
               <p className="text-neutral-500 mb-4">
-                Overview of all construction projects
+                {t("projects_subtitle", "Overview of all construction projects")}
               </p>
 
               <div className="space-y-2 lg:space-y-4 sm:space-y-3 ">
@@ -512,19 +514,19 @@ const ProjectOversight = () => {
                   </div>
                 ) : error ? (
                   <div className="alert alert-error">
-                    <span>Failed to load projects. Please try again.</span>
+                    <span>{t("failed_load_projects", "Failed to load projects. Please try again.")}</span>
                     <button className="btn btn-sm" onClick={() => refetch()}>
-                      Retry
+                      {t("retry", "Retry")}
                     </button>
                   </div>
                 ) : projects.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-gray-500">No projects found.</p>
+                    <p className="text-gray-500">{t("no_projects_found", "No projects found.")}</p>
                     <button
                       className="btn btn-primary mt-4"
                       onClick={() => setActiveTab("create_project")}
                     >
-                      Create Your First Project
+                      {t("create_first_project", "Create Your First Project")}
                     </button>
                   </div>
                 ) : (
@@ -548,7 +550,7 @@ const ProjectOversight = () => {
                           }
                           return (
                             <div className="w-28 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-400 flex-shrink-0">
-                              No Image
+                              {t("no_image", "No Image")}
                             </div>
                           );
                         })()}
@@ -561,7 +563,7 @@ const ProjectOversight = () => {
                               className="btn btn-sm btn-soft"
                               onClick={() => handleEditProject(project)}
                             >
-                              Edit
+                              {t("edit", "Edit")}
                             </button>
                           </div>
 
@@ -576,20 +578,20 @@ const ProjectOversight = () => {
                               ? project.description.length > 100
                                 ? `${project.description.substring(0, 300)}...`
                                 : project.description
-                              : "No description provided"}
+                              : t("no_description", "No description provided")}
                           </div>
 
                           {/* Tags */}
                           <div className="flex flex-wrap gap-2 mb-3">
                             <span className="badge badge-neutral">
-                              {project.type || "Unknown Type"}
+                              {project.type || t("unknown_type", "Unknown Type")}
                             </span>
                             <span className="badge badge-ghost">
-                              {project.location || "No location"}
+                              {project.location || t("no_location", "No location")}
                             </span>
                             {project.coordinates && (
                               <span className="badge badge-success text-base-200">
-                                📍 Located
+                                📍 {t("located", "Located")}
                               </span>
                             )}
                           </div>
@@ -598,18 +600,18 @@ const ProjectOversight = () => {
                           <div className="flex gap-4 text-sm text-gray-600 mb-3">
                             {project.squareFeet && (
                               <span>
-                                Size: {project.squareFeet.toLocaleString()} sq ft
+                                {t("size", "Size")}: {project.squareFeet.toLocaleString()} sq ft
                               </span>
                             )}
                             {project.startDate && (
                               <span>
-                                Start:{" "}
+                                {t("start", "Start")}:{" "}
                                 {new Date(project.startDate).toLocaleDateString()}
                               </span>
                             )}
                             {project.endDate && (
                               <span>
-                                End:{" "}
+                                {t("end", "End")}:{" "}
                                 {new Date(project.endDate).toLocaleDateString()}
                               </span>
                             )}
@@ -641,7 +643,7 @@ const ProjectOversight = () => {
                           className="btn btn-primary btn-md hidden lg:block"
                           onClick={() => handleViewProject(project)}
                         >
-                          View Details
+                          {t("view_details", "View Details")}
                         </button>
                       </div>
                     </div>
@@ -656,7 +658,7 @@ const ProjectOversight = () => {
           type="radio"
           name="project_tab_group"
           className="tab"
-          aria-label="Project Details"
+          aria-label={t("project_details_tab", "Project Details")}
           checked={activeTab === "project_details"}
           onChange={() => setActiveTab("project_details")}
         />
@@ -680,7 +682,7 @@ const ProjectOversight = () => {
                       }
                       return (
                         <div className="w-32 h-24 bg-gray-100 rounded-md flex items-center justify-center text-sm text-gray-400">
-                          No Image
+                          {t("no_image", "No Image")}
                         </div>
                       );
                     })()}
@@ -699,7 +701,7 @@ const ProjectOversight = () => {
                             navigate("/task-management");
                           }}
                         >
-                          📋 View Kanban Board
+                          📋 {t("view_kanban", "View Kanban Board")}
                         </button>
                         <button 
                           className="btn btn-secondary btn-sm flex gap-1"
@@ -708,7 +710,7 @@ const ProjectOversight = () => {
                             navigate("/schedule-management");
                           }}
                         >
-                          📅 View Gantt & Timeline
+                          📅 {t("view_gantt", "View Gantt & Timeline")}
                         </button>
                       </div>
                     </div>
@@ -717,36 +719,36 @@ const ProjectOversight = () => {
                     className="btn btn-outline btn-sm"
                     onClick={() => setActiveTab("projects")}
                   >
-                    ← Back to Projects
+                    ← {t("back_projects", "Back to Projects")}
                   </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                   {selectedProject.budget && (
                     <div className="stat bg-base-100 rounded-xl shadow">
-                      <div className="stat-title">Budget</div>
+                      <div className="stat-title">{t("budget", "Budget")}</div>
                       <div className="stat-value ">
                         {formatCurrency(selectedProject.budget)}
                       </div>
-                      <div className="stat-desc">Total allocated</div>
+                      <div className="stat-desc">{t("total_allocated", "Total allocated")}</div>
                     </div>
                   )}
 
                   {selectedProject.squareFeet && (
                     <div className="stat bg-base-100 rounded-xl shadow">
-                      <div className="stat-title">Size</div>
+                      <div className="stat-title">{t("size", "Size")}</div>
                       <div className="stat-value ">
                         {selectedProject.squareFeet.toLocaleString()}
                       </div>
-                      <div className="stat-desc">Square feet</div>
+                      <div className="stat-desc">{t("square_feet", "Square feet")}</div>
                     </div>
                   )}
 
                   {selectedProject.type && (
                     <div className="stat bg-base-100 rounded-xl shadow">
-                      <div className="stat-title">Type</div>
+                      <div className="stat-title">{t("type", "Type")}</div>
                       <div className="stat-value ">{selectedProject.type}</div>
-                      <div className="stat-desc">Project category</div>
+                      <div className="stat-desc">{t("project_category", "Project category")}</div>
                     </div>
                   )}
 
@@ -759,11 +761,11 @@ const ProjectOversight = () => {
                           navigate("/task-management");
                         }}
                       >
-                        <div className="stat-title">Tasks</div>
+                        <div className="stat-title">{t("tasks", "Tasks")}</div>
                         <div className="stat-value text-primary">
                           {selectedProject._count.tasks}
                         </div>
-                        <div className="stat-desc font-medium text-xs text-primary/70">Click to view Kanban Board</div>
+                        <div className="stat-desc font-medium text-xs text-primary/70">{t("click_kanban", "Click to view Kanban Board")}</div>
                       </div>
                       <div 
                         className="stat bg-base-100 rounded-xl shadow cursor-pointer hover:bg-base-300 hover:scale-[1.02] transition-all"
@@ -772,11 +774,11 @@ const ProjectOversight = () => {
                           navigate("/document-management");
                         }}
                       >
-                        <div className="stat-title">Documents</div>
+                        <div className="stat-title">{t("documents", "Documents")}</div>
                         <div className="stat-value text-secondary">
                           {selectedProject._count.documents}
                         </div>
-                        <div className="stat-desc font-medium text-xs text-secondary/70">Click to view Documents</div>
+                        <div className="stat-desc font-medium text-xs text-secondary/70">{t("click_documents", "Click to view Documents")}</div>
                       </div>
                       <div 
                         className="stat bg-base-100 rounded-xl shadow cursor-pointer hover:bg-base-300 hover:scale-[1.02] transition-all"
@@ -785,11 +787,11 @@ const ProjectOversight = () => {
                           navigate("/issue-reporting");
                         }}
                       >
-                        <div className="stat-title">Issues</div>
+                        <div className="stat-title">{t("issues", "Issues")}</div>
                         <div className="stat-value text-warning">
                           {selectedProject._count.issue}
                         </div>
-                        <div className="stat-desc font-medium text-xs text-warning/70">Click to view Issues</div>
+                        <div className="stat-desc font-medium text-xs text-warning/70">{t("click_issues", "Click to view Issues")}</div>
                       </div>
                     </>
                   )}
@@ -798,12 +800,12 @@ const ProjectOversight = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="bg-base-100 rounded-xl p-4">
                     <h3 className="text-lg font-semibold mb-4">
-                      Project Timeline
+                      {t("project_timeline", "Project Timeline")}
                     </h3>
                     <div className="space-y-3">
                       {selectedProject.startDate && (
                         <div className="flex justify-between">
-                          <span>Start Date:</span>
+                          <span>{t("start_date", "Start Date")}:</span>
                           <span className="font-medium">
                             {new Date(
                               selectedProject.startDate
@@ -813,7 +815,7 @@ const ProjectOversight = () => {
                       )}
                       {selectedProject.endDate && (
                         <div className="flex justify-between">
-                          <span>End Date:</span>
+                          <span>{t("end_date", "End Date")}:</span>
                           <span className="font-medium">
                             {new Date(
                               selectedProject.endDate
@@ -823,19 +825,19 @@ const ProjectOversight = () => {
                       )}
                       {selectedProject.startDate && selectedProject.endDate && (
                         <div className="flex justify-between">
-                          <span>Duration:</span>
+                          <span>{t("duration", "Duration")}:</span>
                           <span className="font-medium">
                             {Math.ceil(
                               (new Date(selectedProject.endDate).getTime() -
                                 new Date(selectedProject.startDate).getTime()) /
                                 (1000 * 60 * 60 * 24)
                             )}{" "}
-                            days
+                            {t("days", "days")}
                           </span>
                         </div>
                       )}
                       <div className="flex justify-between">
-                        <span>Created:</span>
+                        <span>{t("created", "Created")}:</span>
                         <span className="font-medium">
                           {new Date(
                             selectedProject.createdAt
@@ -843,7 +845,7 @@ const ProjectOversight = () => {
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Last Updated:</span>
+                        <span>{t("last_updated", "Last Updated")}:</span>
                         <span className="font-medium">
                           {new Date(
                             selectedProject.updatedAt
@@ -855,13 +857,13 @@ const ProjectOversight = () => {
 
                   <div className="bg-base-100 rounded-xl p-4">
                     <h3 className="text-lg font-semibold mb-4">
-                      Project Details
+                      {t("project_details", "Project Details")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex justify-between bg-base-200 p-2 rounded-xl">
-                        <span>Location:</span>
+                        <span>{t("location", "Location")}:</span>
                         <span className="font-medium">
-                          {selectedProject.location || "Not specified"}
+                          {selectedProject.location || t("not_specified", "Not specified")}
                           {selectedProject.coordinates &&
                             ` (${selectedProject.coordinates.lat.toFixed(
                               5
@@ -869,16 +871,16 @@ const ProjectOversight = () => {
                         </span>
                       </div>
                       <div className="flex justify-between gap-2 bg-base-200 p-2 rounded-xl">
-                        <span>Description:</span>
+                        <span>{t("description", "Description")}:</span>
                         <span className="font-medium">
                           {selectedProject.description ||
-                            "No description provided"}
+                            t("no_description", "No description provided")}
                         </span>
                       </div>
                       {selectedProject.userProjects &&
                         selectedProject.userProjects.length > 0 && (
                           <div>
-                            <span>Team Members:</span>
+                            <span>{t("team_members", "Team Members")}:</span>
                             <div className="flex flex-wrap gap-2 mt-2">
                               {selectedProject.userProjects.map(
                                 (userProject) => (
@@ -904,7 +906,7 @@ const ProjectOversight = () => {
             <div className="tab-content p-5">
               <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
                 <h2 className="text-xl font-semibold text-base-content text-center">
-                  Please select a project to view its details.
+                  {t("select_project_warn", "Please select a project to view its details.")}
                 </h2>
               </div>
             </div>
@@ -914,16 +916,16 @@ const ProjectOversight = () => {
           type="radio"
           name="project_tab_group"
           className="tab"
-          aria-label="Create Project"
+          aria-label={t("create_project", "Create Project")}
           checked={activeTab === "create_project"}
           onChange={() => setActiveTab("create_project")}
         />
         {activeTab === "create_project" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl w-full">
-              <h2 className="text-2xl font-bold mb-1">Create New Project</h2>
+              <h2 className="text-2xl font-bold mb-1">{t("create_new_project", "Create New Project")}</h2>
               <p className="text-neutral-500 mb-6">
-                Add a new construction project to the system.
+                {t("create_project_desc", "Add a new construction project to the system.")}
               </p>
               <form
                 className="space-y-6"
@@ -933,38 +935,38 @@ const ProjectOversight = () => {
                 {/* Basic Information Section */}
                 <div className="bg-base-100 p-4 rounded-xl">
                   <h3 className="text-lg font-semibold mb-4">
-                    Basic Information
+                    {t("basic_information", "Basic Information")}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="label">
                         <span className="label-text font-medium">
-                          Project Name
+                          {t("project_name", "Project Name")}
                         </span>
                       </label>
                       <input
                         type="text"
                         className="input input-bordered w-full"
                         name="projectName"
-                        placeholder="Enter project name"
+                        placeholder={t("enter_project_name", "Enter project name")}
                         required
                       />
                     </div>
                     <div>
                       <label className="label">
-                        <span className="label-text font-medium">Type</span>
+                        <span className="label-text font-medium">{t("type", "Type")}</span>
                       </label>
                       <select
                         className="select select-bordered w-full"
                         name="type"
                         required
                       >
-                        <option value="">Select type</option>
-                        <option value="Commercial">Commercial</option>
-                        <option value="Residential">Residential</option>
-                        <option value="Industrial">Industrial</option>
-                        <option value="Mixed Use">Mixed Use</option>
-                        <option value="Other">Other</option>
+                        <option value="">{t("select_type", "Select type")}</option>
+                        <option value="Commercial">{t("commercial", "Commercial")}</option>
+                        <option value="Residential">{t("residential", "Residential")}</option>
+                        <option value="Industrial">{t("industrial", "Industrial")}</option>
+                        <option value="Mixed Use">{t("mixed_use", "Mixed Use")}</option>
+                        <option value="Other">{t("other", "Other")}</option>
                       </select>
                     </div>
                   </div>
@@ -973,18 +975,18 @@ const ProjectOversight = () => {
                 {/* Project Details Section */}
                 <div className="bg-base-100 p-4 rounded-xl">
                   <h3 className="text-lg font-semibold mb-4">
-                    Project Details
+                    {t("project_details", "Project Details")}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="label">
-                        <span className="label-text font-medium">Budget</span>
+                        <span className="label-text font-medium">{t("budget", "Budget")}</span>
                       </label>
                       <input
                         type="number"
                         className="input input-bordered w-full"
                         name="budget"
-                        placeholder="Enter budget amount"
+                        placeholder={t("enter_budget", "Enter budget amount")}
                         required
                         min={0}
                       />
@@ -992,14 +994,14 @@ const ProjectOversight = () => {
                     <div>
                       <label className="label">
                         <span className="label-text font-medium">
-                          Square Feet
+                          {t("square_feet", "Square Feet")}
                         </span>
                       </label>
                       <input
                         type="number"
                         className="input input-bordered w-full"
                         name="squareFeet"
-                        placeholder="Enter total square feet"
+                        placeholder={t("enter_square_feet", "Enter total square feet")}
                         min={0}
                         required
                       />
@@ -1009,12 +1011,12 @@ const ProjectOversight = () => {
 
                 {/* Timeline Section */}
                 <div className="bg-base-100 p-4 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4">Timeline</h3>
+                  <h3 className="text-lg font-semibold mb-4">{t("timeline", "Timeline")}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="label">
                         <span className="label-text font-medium">
-                          Start Date
+                          {t("start_date", "Start Date")}
                         </span>
                       </label>
                       <input
@@ -1026,7 +1028,7 @@ const ProjectOversight = () => {
                     </div>
                     <div>
                       <label className="label">
-                        <span className="label-text font-medium">End Date</span>
+                        <span className="label-text font-medium">{t("end_date", "End Date")}</span>
                       </label>
                       <input
                         type="date"
@@ -1041,13 +1043,13 @@ const ProjectOversight = () => {
                 {/* Team Members Section */}
                 <div className="bg-base-100 p-4 rounded-xl">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Team Members</h3>
+                    <h3 className="text-lg font-semibold">{t("team_members", "Team Members")}</h3>
                     <button
                       type="button"
                       className="btn btn-primary btn-sm"
                       onClick={() => setShowUserModal(true)}
                     >
-                      Add Team Member
+                      {t("add_team_member", "Add Team Member")}
                     </button>
                   </div>
 
@@ -1056,10 +1058,10 @@ const ProjectOversight = () => {
                       <table className="table w-full">
                         <thead>
                           <tr>
-                            <th>Name</th>
-                            <th>Role</th>
-                            <th>Access Level</th>
-                            <th>Actions</th>
+                            <th>{t("worker_name", "Name")}</th>
+                            <th>{t("role_name", "Role")}</th>
+                            <th>{t("access_level", "Access Level")}</th>
+                            <th>{t("actions", "Actions")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1098,7 +1100,7 @@ const ProjectOversight = () => {
                                   className="btn btn-error btn-xs"
                                   onClick={() => handleRemoveUser(user.userId)}
                                 >
-                                  Remove
+                                  {t("remove", "Remove")}
                                 </button>
                               </td>
                             </tr>
@@ -1108,20 +1110,19 @@ const ProjectOversight = () => {
                     </div>
                   ) : (
                     <div className="text-center py-4 text-gray-500">
-                      No team members added yet. Click "Add Team Member" to get
-                      started.
+                      {t("no_members_desc", 'No team members added yet. Click "Add Team Member" to get started.')}
                     </div>
                   )}
                 </div>
 
                 {/* Location Section */}
                 <div className="bg-base-100 p-4 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4">Location</h3>
+                  <h3 className="text-lg font-semibold mb-4">{t("location", "Location")}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="label">
                         <span className="label-text font-medium">
-                          Coordinates
+                          {t("coordinates", "Coordinates")}
                         </span>
                       </label>
                       <div className="flex gap-2 items-center">
@@ -1130,7 +1131,7 @@ const ProjectOversight = () => {
                           className="btn btn-outline btn-sm flex-1"
                           onClick={handlePickLocation}
                         >
-                          Pick Location on Map
+                          {t("pick_map_location", "Pick Location on Map")}
                         </button>
                         {locationCoords && (
                           <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
@@ -1143,14 +1144,14 @@ const ProjectOversight = () => {
                     <div>
                       <label className="label">
                         <span className="label-text font-medium">
-                          Address/Description
+                          {t("address_description", "Address/Description")}
                         </span>
                       </label>
                       <input
                         type="text"
                         className="input input-bordered w-full"
                         name="locationText"
-                        placeholder="Enter address or description"
+                        placeholder={t("enter_address_placeholder", "Enter address or description")}
                         value={locationText}
                         onChange={(e) => setLocationText(e.target.value)}
                         required
@@ -1161,11 +1162,11 @@ const ProjectOversight = () => {
 
                 {/* Media Upload Section */}
                 <div className="bg-base-100 p-4 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4">Media</h3>
+                  <h3 className="text-lg font-semibold mb-4">{t("media", "Media")}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                     <div>
                       <label className="label">
-                        <span className="label-text font-medium">Project Image</span>
+                        <span className="label-text font-medium">{t("project_image", "Project Image")}</span>
                       </label>
                       <div
                         className="border border-dashed border-base-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer bg-base-50 hover:bg-base-100 transition-colors"
@@ -1197,7 +1198,7 @@ const ProjectOversight = () => {
                               />
                             </svg>
                             <span className="text-gray-400 text-sm">
-                              Drag & drop an image here, or click to select
+                              {t("drag_drop_image", "Drag & drop an image here, or click to select")}
                             </span>
                           </div>
                         )}
@@ -1216,12 +1217,12 @@ const ProjectOversight = () => {
 
                 {/* Description Section */}
                 <div className="bg-base-100 p-4 rounded-xl">
-                  <h3 className="text-lg font-semibold mb-4">Description</h3>
+                  <h3 className="text-lg font-semibold mb-4">{t("description", "Description")}</h3>
                   <textarea
                     className="textarea textarea-bordered w-full"
                     rows={4}
                     name="description"
-                    placeholder="Detailed description of the project..."
+                    placeholder={t("description_placeholder", "Detailed description of the project...")}
                     required
                   ></textarea>
                 </div>
@@ -1233,14 +1234,14 @@ const ProjectOversight = () => {
                     className="btn btn-outline"
                     onClick={() => setActiveTab("projects")}
                   >
-                    Cancel
+                    {t("cancel", "Cancel")}
                   </button>
                   <button
                     type="submit"
                     className="btn btn-primary"
                     disabled={createProject.isPending}
                   >
-                    {createProject.isPending ? "Creating..." : "Create Project"}
+                    {createProject.isPending ? t("creating", "Creating...") : t("create_project", "Create Project")}
                   </button>
                 </div>
               </form>
@@ -1252,7 +1253,7 @@ const ProjectOversight = () => {
           type="radio"
           name="project_tab_group"
           className="tab"
-          aria-label="Edit Project"
+          aria-label={t("edit_project", "Edit Project")}
           checked={activeTab === "edit_project"}
           onChange={() => setActiveTab("edit_project")}
         />
@@ -1267,9 +1268,9 @@ const ProjectOversight = () => {
                 >
                   <div className="flex justify-between items-center mb-6">
                     <div>
-                      <h2 className="text-2xl font-bold">Edit Project</h2>
+                      <h2 className="text-2xl font-bold">{t("edit_project", "Edit Project")}</h2>
                       <p className="text-neutral-500">
-                        Modify project details and settings.
+                        {t("edit_project_desc", "Modify project details and settings.")}
                       </p>
                     </div>
                     <button
@@ -1277,20 +1278,20 @@ const ProjectOversight = () => {
                       className="btn btn-outline btn-sm"
                       onClick={() => setActiveTab("projects")}
                     >
-                      ← Back to Projects
+                      ← {t("back_projects", "Back to Projects")}
                     </button>
                   </div>
 
                   {/* Basic Information Section */}
                   <div className="bg-base-100 p-4 rounded-xl">
                     <h3 className="text-lg font-semibold mb-4">
-                      Basic Information
+                      {t("basic_information", "Basic Information")}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="label">
                           <span className="label-text font-medium">
-                            Project Name
+                            {t("project_name", "Project Name")}
                           </span>
                         </label>
                         <input
@@ -1303,7 +1304,7 @@ const ProjectOversight = () => {
                       </div>
                       <div>
                         <label className="label">
-                          <span className="label-text font-medium">Type</span>
+                          <span className="label-text font-medium">{t("type", "Type")}</span>
                         </label>
                         <select
                           className="select select-bordered w-full"
@@ -1311,19 +1312,19 @@ const ProjectOversight = () => {
                           defaultValue={selectedProject.type || ""}
                           required
                         >
-                          <option value="">Select type</option>
-                          <option value="Commercial">Commercial</option>
-                          <option value="Residential">Residential</option>
-                          <option value="Industrial">Industrial</option>
-                          <option value="Mixed Use">Mixed Use</option>
-                          <option value="Other">Other</option>
+                          <option value="">{t("select_type", "Select type")}</option>
+                          <option value="Commercial">{t("commercial", "Commercial")}</option>
+                          <option value="Residential">{t("residential", "Residential")}</option>
+                          <option value="Industrial">{t("industrial", "Industrial")}</option>
+                          <option value="Mixed Use">{t("mixed_use", "Mixed Use")}</option>
+                          <option value="Other">{t("other", "Other")}</option>
                         </select>
                       </div>
                     </div>
                     <div className="mt-4">
                       <label className="label">
                         <span className="label-text font-medium">
-                          Description
+                          {t("description", "Description")}
                         </span>
                       </label>
                       <textarea
@@ -1331,7 +1332,7 @@ const ProjectOversight = () => {
                         name="description"
                         defaultValue={selectedProject.description || ""}
                         rows={3}
-                        placeholder="Enter project description..."
+                        placeholder={t("description_placeholder", "Enter project description...")}
                       />
                     </div>
                   </div>
@@ -1339,12 +1340,12 @@ const ProjectOversight = () => {
                   {/* Project Details Section */}
                   <div className="bg-base-100 p-4 rounded-xl">
                     <h3 className="text-lg font-semibold mb-4">
-                      Project Details
+                      {t("project_details", "Project Details")}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="label">
-                          <span className="label-text font-medium">Budget</span>
+                          <span className="label-text font-medium">{t("budget", "Budget")}</span>
                         </label>
                         <input
                           type="number"
@@ -1357,7 +1358,7 @@ const ProjectOversight = () => {
                       <div>
                         <label className="label">
                           <span className="label-text font-medium">
-                            Square Feet
+                            {t("square_feet", "Square Feet")}
                           </span>
                         </label>
                         <input
@@ -1374,12 +1375,12 @@ const ProjectOversight = () => {
 
                   {/* Timeline Section */}
                   <div className="bg-base-100 p-4 rounded-xl">
-                    <h3 className="text-lg font-semibold mb-4">Timeline</h3>
+                    <h3 className="text-lg font-semibold mb-4">{t("timeline", "Timeline")}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="label">
                           <span className="label-text font-medium">
-                            Start Date
+                            {t("start_date", "Start Date")}
                           </span>
                         </label>
                         <input
@@ -1398,7 +1399,7 @@ const ProjectOversight = () => {
                       <div>
                         <label className="label">
                           <span className="label-text font-medium">
-                            End Date
+                            {t("end_date", "End Date")}
                           </span>
                         </label>
                         <input
@@ -1420,13 +1421,13 @@ const ProjectOversight = () => {
                   {/* Team Members Section */}
                   <div className="bg-base-100 p-4 rounded-xl">
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold">Team Members</h3>
+                      <h3 className="text-lg font-semibold">{t("team_members", "Team Members")}</h3>
                       <button
                         type="button"
                         className="btn btn-primary btn-sm"
                         onClick={() => setShowUserModal(true)}
                       >
-                        Add Team Member
+                        {t("add_team_member", "Add Team Member")}
                       </button>
                     </div>
 
@@ -1435,10 +1436,10 @@ const ProjectOversight = () => {
                         <table className="table w-full">
                           <thead>
                             <tr>
-                              <th>Name</th>
-                              <th>Role</th>
-                              <th>Access Level</th>
-                              <th>Actions</th>
+                              <th>{t("worker_name", "Name")}</th>
+                              <th>{t("role_name", "Role")}</th>
+                              <th>{t("access_level", "Access Level")}</th>
+                              <th>{t("actions", "Actions")}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1479,7 +1480,7 @@ const ProjectOversight = () => {
                                       handleRemoveUser(user.userId)
                                     }
                                   >
-                                    Remove
+                                    {t("remove", "Remove")}
                                   </button>
                                 </td>
                               </tr>
@@ -1489,20 +1490,19 @@ const ProjectOversight = () => {
                       </div>
                     ) : (
                       <div className="text-center py-4 text-gray-500">
-                        No team members assigned yet. Click "Add Team Member" to
-                        get started.
+                        {t("no_members_desc", 'No team members assigned yet. Click "Add Team Member" to get started.')}
                       </div>
                     )}
                   </div>
 
                   {/* Location Section */}
                   <div className="bg-base-100 p-4 rounded-xl">
-                    <h3 className="text-lg font-semibold mb-4">Location</h3>
+                    <h3 className="text-lg font-semibold mb-4">{t("location", "Location")}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="label">
                           <span className="label-text font-medium">
-                            Coordinates
+                            {t("coordinates", "Coordinates")}
                           </span>
                         </label>
                         <div className="flex gap-2 items-center">
@@ -1511,7 +1511,7 @@ const ProjectOversight = () => {
                             className="btn btn-outline btn-sm flex-1"
                             onClick={handlePickLocation}
                           >
-                            Pick Location on Map
+                            {t("pick_map_location", "Pick Location on Map")}
                           </button>
                           <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
                             {locationCoords
@@ -1524,21 +1524,21 @@ const ProjectOversight = () => {
                                 )}, ${selectedProject.coordinates.lng.toFixed(
                                   5
                                 )}`
-                              : "No coordinates"}
+                              : t("no_coordinates", "No coordinates")}
                           </span>
                         </div>
                       </div>
                       <div>
                         <label className="label">
                           <span className="label-text font-medium">
-                            Address/Description
+                            {t("address_description", "Address/Description")}
                           </span>
                         </label>
                         <input
                           type="text"
                           className="input input-bordered w-full"
                           name="locationText"
-                          placeholder="Enter address or description"
+                          placeholder={t("enter_address_placeholder", "Enter address or description")}
                           value={locationText}
                           onChange={(e) => setLocationText(e.target.value)}
                           required
@@ -1549,11 +1549,11 @@ const ProjectOversight = () => {
 
                   {/* Media Upload Section */}
                   <div className="bg-base-100 p-4 rounded-xl">
-                    <h3 className="text-lg font-semibold mb-4">Media</h3>
+                    <h3 className="text-lg font-semibold mb-4">{t("media", "Media")}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                       <div>
                         <label className="label">
-                          <span className="label-text font-medium">Project Image</span>
+                          <span className="label-text font-medium">{t("project_image", "Project Image")}</span>
                         </label>
                         <div
                           className="border border-dashed border-base-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer bg-base-50 hover:bg-base-100 transition-colors"
@@ -1585,7 +1585,7 @@ const ProjectOversight = () => {
                                 />
                               </svg>
                               <span className="text-gray-400 text-sm">
-                                Drag & drop an image here, or click to select
+                                {t("drag_drop_image", "Drag & drop an image here, or click to select")}
                               </span>
                             </div>
                           )}
@@ -1604,7 +1604,7 @@ const ProjectOversight = () => {
 
                   {/* Description Section */}
                   <div className="bg-base-100 p-4 rounded-xl">
-                    <h3 className="text-lg font-semibold mb-4">Description</h3>
+                    <h3 className="text-lg font-semibold mb-4">{t("description", "Description")}</h3>
                     <textarea
                       className="textarea textarea-bordered w-full"
                       rows={4}
@@ -1621,16 +1621,16 @@ const ProjectOversight = () => {
                       className="btn btn-outline"
                       onClick={() => setActiveTab("projects")}
                     >
-                      Cancel
+                      {t("cancel", "Cancel")}
                     </button>
                     <button type="submit" className="btn btn-primary">
-                      Save Changes
+                      {t("save_changes", "Save Changes")}
                     </button>
                   </div>
                 </form>
               ) : (
                 <h2 className="text-xl font-semibold text-base-content text-center">
-                  Select a project to edit
+                  {t("select_project_edit", "Select a project to edit")}
                 </h2>
               )}
             </div>

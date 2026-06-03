@@ -9,8 +9,10 @@ import {
 } from "../hooks/useUsers";
 import { useRoles } from "../hooks/useRoles";
 import PasswordInput from "../components/PasswordInput";
+import { useTranslation } from "../hooks/useTranslation";
 
 const UserManagement = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("users");
   const [editingUser, setEditingUser] = useState<User | null>(null);
 
@@ -26,7 +28,7 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    if (window.confirm(t("confirm_delete_user", "Are you sure you want to delete this user?"))) {
       deleteUser.mutate(id, {
         onSuccess: () => {
           console.log(`User with ID ${id} deleted successfully.`);
@@ -96,12 +98,13 @@ const UserManagement = () => {
 
   const getRoleName = (roleId: string) => {
     const role = roles?.find((r) => r.id === roleId);
-    return role?.name || "Unknown Role";
+    return role?.name || t("unknown_role", "Unknown Role");
   };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-1">User Management</h1>
-      <p className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base">Manage user accounts and access</p>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-1">{t("user_management_title", "User Management")}</h1>
+      <p className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base">{t("user_management_subtitle", "Manage user accounts and access")}</p>
 
       {/* Tabs navigation */}
       <div className="tabs tabs-border">
@@ -109,7 +112,7 @@ const UserManagement = () => {
           type="radio"
           name="user_tab_group"
           className="tab"
-          aria-label="Users"
+          aria-label={t("users", "Users")}
           checked={activeTab === "users"}
           onChange={() => setActiveTab("users")}
         />
@@ -117,9 +120,9 @@ const UserManagement = () => {
           <div className="tab-content p-3 sm:p-5">
             {/* Users List Section */}
             <div className="bg-base-200 border border-base-300 p-4 sm:p-6 rounded-2xl">
-              <h2 className="text-xl sm:text-2xl font-bold">Users</h2>
+              <h2 className="text-xl sm:text-2xl font-bold">{t("users", "Users")}</h2>
               <p className="text-neutral-500 mb-4 text-sm sm:text-base">
-                Manage user accounts and access
+                {t("user_management_subtitle", "Manage user accounts and access")}
               </p>
 
               <div className="space-y-4">
@@ -144,21 +147,21 @@ const UserManagement = () => {
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                         <span className="badge badge-success badge-sm sm:badge-lg text-xs px-2 py-1">
-                          Active
+                          {t("active", "Active")}
                         </span>
                         <div className="flex gap-2">
                           <button 
                             className="btn btn-soft btn-accent btn-sm flex-1 sm:flex-none"
                             onClick={() => handleEditUser(user)}
                           >
-                            Edit
+                            {t("edit", "Edit")}
                           </button>
                           <button 
                             className="btn btn-sm btn-outline btn-error"
                             onClick={() => handleDeleteUser(user.id)}
                             disabled={deleteUser.isPending}
                           >
-                            {deleteUser.isPending ? "Deleting..." : "Delete"}
+                            {deleteUser.isPending ? t("deleting", "Deleting...") : t("delete", "Delete")}
                           </button>
                         </div>
                       </div>
@@ -166,7 +169,7 @@ const UserManagement = () => {
                   ))
                 ) : (
                   <div className="text-center text-gray-500 py-8">
-                    No users found. Create your first user to get started.
+                    {t("no_users_found_desc", "No users found. Create your first user to get started.")}
                   </div>
                 )}
               </div>
@@ -177,16 +180,16 @@ const UserManagement = () => {
           type="radio"
           name="user_tab_group"
           className="tab"
-          aria-label="Add User"
+          aria-label={t("add_user_tab", "Add User")}
           checked={activeTab === "add_user"}
           onChange={() => setActiveTab("add_user")}
         />
         {activeTab === "add_user" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl w-full">
-              <h2 className="text-2xl font-bold mb-1">Add New User</h2>
+              <h2 className="text-2xl font-bold mb-1">{t("add_new_user", "Add New User")}</h2>
               <p className="text-neutral-500 mb-6">
-                Create a new user account and assign permissions.
+                {t("create_user_desc", "Create a new user account and assign permissions.")}
               </p>
               <form 
                 className="flex flex-col gap-4"
@@ -195,7 +198,7 @@ const UserManagement = () => {
                 <div className="flex gap-4">
                   <div className="w-1/2">
                     <label className="label">
-                      <span className="label-text font-medium">First Name</span>
+                      <span className="label-text font-medium">{t("first_name", "First Name")}</span>
                     </label>
                     <input
                       type="text"
@@ -206,7 +209,7 @@ const UserManagement = () => {
                   </div>
                   <div className="w-1/2">
                     <label className="label">
-                      <span className="label-text font-medium">Last Name</span>
+                      <span className="label-text font-medium">{t("last_name", "Last Name")}</span>
                     </label>
                     <input
                       type="text"
@@ -221,7 +224,7 @@ const UserManagement = () => {
                   <div className="w-1/2">
                     <label className="label">
                       <span className="label-text font-medium">
-                        Email Address
+                        {t("email_label", "Email Address")}
                       </span>
                     </label>
                     <input
@@ -234,7 +237,7 @@ const UserManagement = () => {
                   <div className="w-1/2">
                     <PasswordInput
                       id="add-user-password"
-                      label="Password"
+                      label={t("password_label", "Password")}
                       name="password"
                       showGenerator={true}
                       required
@@ -245,14 +248,14 @@ const UserManagement = () => {
                 <div className="flex gap-4">
                   <div className="w-1/2">
                     <label className="label">
-                      <span className="label-text font-medium">Role</span>
+                      <span className="label-text font-medium">{t("role", "Role")}</span>
                     </label>
                     <select 
                       className="select select-bordered w-full"
                       name="roleId"
                       required
                     >
-                      <option value="">Select a role</option>
+                      <option value="">{t("select_role", "Select a role")}</option>
                       {roles?.map((role) => (
                         <option key={role.id} value={role.id}>
                           {role.name}
@@ -262,13 +265,13 @@ const UserManagement = () => {
                   </div>
                   <div className="w-1/2">
                     <label className="label">
-                      <span className="label-text font-medium">Department</span>
+                      <span className="label-text font-medium">{t("department", "Department")}</span>
                     </label>
                     <select className="select select-bordered w-full">
-                      <option>Engineering</option>
-                      <option>Operations</option>
-                      <option>Finance</option>
-                      <option>HR</option>
+                      <option value="Engineering">{t("dept_engineering", "Engineering")}</option>
+                      <option value="Operations">{t("dept_operations", "Operations")}</option>
+                      <option value="Finance">{t("dept_finance", "Finance")}</option>
+                      <option value="HR">{t("dept_hr", "HR")}</option>
                     </select>
                   </div>
                 </div>
@@ -276,13 +279,13 @@ const UserManagement = () => {
                 <div>
                   <label className="label">
                     <span className="label-text font-medium">
-                      Notes (Optional)
+                      {t("notes_optional", "Notes (Optional)")}
                     </span>
                   </label>
                   <textarea
                     className="textarea textarea-bordered w-full"
                     rows={3}
-                    placeholder="Additional notes about the user…"
+                    placeholder={t("notes_placeholder", "Additional notes about the user…")}
                   ></textarea>
                 </div>
                 <div className="flex justify-end gap-2 mt-2">
@@ -291,14 +294,14 @@ const UserManagement = () => {
                     className="btn btn-outline"
                     onClick={() => setActiveTab("users")}
                   >
-                    Cancel
+                    {t("cancel", "Cancel")}
                   </button>
                   <button 
                     type="submit" 
                     className="btn btn-primary"
                     disabled={createUser.isPending}
                   >
-                    {createUser.isPending ? "Creating..." : "Create User"}
+                    {createUser.isPending ? t("creating", "Creating...") : t("create_user", "Create User")}
                   </button>
                 </div>
               </form>
@@ -309,16 +312,16 @@ const UserManagement = () => {
           type="radio"
           name="user_tab_group"
           className="tab"
-          aria-label="Edit User"
+          aria-label={t("edit_user_title", "Edit User")}
           checked={activeTab === "edit_user"}
           onChange={() => setActiveTab("edit_user")}
         />
         {activeTab === "edit_user" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl w-full">
-              <h2 className="text-2xl font-bold mb-1">Edit User</h2>
+              <h2 className="text-2xl font-bold mb-1">{t("edit_user_title", "Edit User")}</h2>
               <p className="text-neutral-500 mb-6">
-                Modify user account information and permissions.
+                {t("edit_user_desc", "Modify user account information and permissions.")}
               </p>
               {editingUser ? (
                 <form 
@@ -328,7 +331,7 @@ const UserManagement = () => {
                   <div className="flex gap-4">
                     <div className="w-1/2">
                       <label className="label">
-                        <span className="label-text font-medium">First Name</span>
+                        <span className="label-text font-medium">{t("first_name", "First Name")}</span>
                       </label>
                       <input
                         type="text"
@@ -340,7 +343,7 @@ const UserManagement = () => {
                     </div>
                     <div className="w-1/2">
                       <label className="label">
-                        <span className="label-text font-medium">Last Name</span>
+                        <span className="label-text font-medium">{t("last_name", "Last Name")}</span>
                       </label>
                       <input
                         type="text"
@@ -356,7 +359,7 @@ const UserManagement = () => {
                     <div className="w-1/2">
                       <label className="label">
                         <span className="label-text font-medium">
-                          Email Address
+                          {t("email_label", "Email Address")}
                         </span>
                       </label>
                       <input
@@ -370,9 +373,9 @@ const UserManagement = () => {
                     <div className="w-1/2">
                       <PasswordInput
                         id="edit-user-password"
-                        label="New Password (Optional)"
+                        label={t("new_password_optional", "New Password (Optional)")}
                         name="password"
-                        placeholder="Leave blank to keep current password"
+                        placeholder={t("new_password_placeholder", "Leave blank to keep current password")}
                         showGenerator={true}
                         labelClassName="font-medium"
                       />
@@ -381,7 +384,7 @@ const UserManagement = () => {
                   <div className="flex gap-4">
                     <div className="w-1/2">
                       <label className="label">
-                        <span className="label-text font-medium">Role</span>
+                        <span className="label-text font-medium">{t("role", "Role")}</span>
                       </label>
                       <select 
                         className="select select-bordered w-full"
@@ -389,7 +392,7 @@ const UserManagement = () => {
                         defaultValue={editingUser.roleId}
                         required
                       >
-                        <option value="">Select a role</option>
+                        <option value="">{t("select_role", "Select a role")}</option>
                         {roles?.map((role) => (
                           <option key={role.id} value={role.id}>
                             {role.name}
@@ -399,13 +402,13 @@ const UserManagement = () => {
                     </div>
                     <div className="w-1/2">
                       <label className="label">
-                        <span className="label-text font-medium">Department</span>
+                        <span className="label-text font-medium">{t("department", "Department")}</span>
                       </label>
                       <select className="select select-bordered w-full">
-                        <option>Engineering</option>
-                        <option>Operations</option>
-                        <option>Finance</option>
-                        <option>HR</option>
+                        <option value="Engineering">{t("dept_engineering", "Engineering")}</option>
+                        <option value="Operations">{t("dept_operations", "Operations")}</option>
+                        <option value="Finance">{t("dept_finance", "Finance")}</option>
+                        <option value="HR">{t("dept_hr", "HR")}</option>
                       </select>
                     </div>
                   </div>
@@ -419,19 +422,19 @@ const UserManagement = () => {
                         setEditingUser(null);
                       }}
                     >
-                      Cancel
+                      {t("cancel", "Cancel")}
                     </button>
                     <button 
                       type="submit" 
                       className="btn btn-primary"
                       disabled={updateUser.isPending}
                     >
-                      {updateUser.isPending ? "Updating..." : "Update User"}
+                      {updateUser.isPending ? t("updating", "Updating...") : t("update_user", "Update User")}
                     </button>
                   </div>
                 </form>
               ) : (
-                <p>No user selected for editing.</p>
+                <p>{t("no_user_selected_edit", "No user selected for editing.")}</p>
               )}
             </div>
           </div>
@@ -440,16 +443,16 @@ const UserManagement = () => {
           type="radio"
           name="user_tab_group"
           className="tab"
-          aria-label="Import Users"
+          aria-label={t("import_users", "Import Users")}
           checked={activeTab === "import_users"}
           onChange={() => setActiveTab("import_users")}
         />
         {activeTab === "import_users" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-              <h2 className="text-2xl font-bold mb-2">Import Users</h2>
+              <h2 className="text-2xl font-bold mb-2">{t("import_users", "Import Users")}</h2>
               <p className="text-neutral-500 mb-4">
-                Upload a CSV file to import multiple users at once.
+                {t("import_users_desc", "Upload a CSV file to import multiple users at once.")}
               </p>
               <div className="border-dashed border-2 border-base-300 rounded-lg p-6 flex flex-col items-center justify-center mb-4">
                 <svg
@@ -467,24 +470,24 @@ const UserManagement = () => {
                   />
                 </svg>
                 <p className="text-blue-500 cursor-pointer">
-                  Choose a CSV file
+                  {t("choose_csv", "Choose a CSV file")}
                 </p>
-                <p className="text-gray-500 text-sm">or drag and drop</p>
+                <p className="text-gray-500 text-sm">{t("drag_and_drop", "or drag and drop")}</p>
               </div>
               <div className="bg-base-100 border border-base-300 rounded-lg p-4 mb-4">
                 <h3 className="text-lg font-bold mb-2">
-                  CSV Format Requirements:
+                  {t("csv_requirements", "CSV Format Requirements:")}
                 </h3>
                 <ul className="list-disc list-inside text-sm text-gray-500">
-                  <li>First Name, Last Name, Email, Phone, Role, Department</li>
-                  <li>Email addresses must be unique</li>
-                  <li>Role must match existing system roles</li>
-                  <li>Maximum 1000 users per import</li>
+                  <li>{t("csv_columns", "First Name, Last Name, Email, Phone, Role, Department")}</li>
+                  <li>{t("csv_req_email", "Email addresses must be unique")}</li>
+                  <li>{t("csv_req_role", "Role must match existing system roles")}</li>
+                  <li>{t("csv_req_max", "Maximum 1000 users per import")}</li>
                 </ul>
               </div>
               <div className="flex justify-end gap-2">
-                <button className="btn btn-outline">Cancel</button>
-                <button className="btn btn-primary">Import Users</button>
+                <button className="btn btn-outline" onClick={() => setActiveTab("users")}>{t("cancel", "Cancel")}</button>
+                <button className="btn btn-primary">{t("import_users", "Import Users")}</button>
               </div>
             </div>
           </div>
@@ -493,18 +496,18 @@ const UserManagement = () => {
           type="radio"
           name="user_tab_group"
           className="tab"
-          aria-label="Export Users"
+          aria-label={t("export_users", "Export Users")}
           checked={activeTab === "export_users"}
           onChange={() => setActiveTab("export_users")}
         />
         {activeTab === "export_users" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-              <h2 className="text-2xl font-bold mb-2">Export Users</h2>
+              <h2 className="text-2xl font-bold mb-2">{t("export_users", "Export Users")}</h2>
               <p className="text-neutral-500 mb-4">
-                Download a CSV or Excel file of all users.
+                {t("export_users_desc", "Download a CSV or Excel file of all users.")}
               </p>
-              <button className="btn btn-primary">Export</button>
+              <button className="btn btn-primary">{t("export", "Export")}</button>
             </div>
           </div>
         )}

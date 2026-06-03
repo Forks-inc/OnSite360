@@ -1,147 +1,39 @@
 # Tasks Module
 
-This module handles task management functionality for the OnSite360 construction management system.
+Manages tasks and their comment threads for OnSite360 projects, plus per-user task statistics.
 
-## Features
+## Base Route
 
-### Task Management
-- **Create Task**: Create new tasks with comprehensive details
-- **Update Task**: Modify existing tasks
-- **Delete Task**: Remove tasks
-- **List Tasks**: Get tasks with various filtering options
-- **Get Task Details**: Retrieve detailed task information
+`/v1/tasks`
 
-### Comment System
-- **Add Comments**: Comment on tasks for collaboration
-- **Update Comments**: Edit your own comments
-- **Delete Comments**: Remove your own comments
-- **List Comments**: View all comments for a task
+## Endpoints
 
-### Additional Features
-- **User Tasks**: Get tasks assigned to current user
-- **Project Summary**: Get task statistics for a project
-- **User Statistics**: Get task statistics for current user
+### Tasks
+| Method | Path | Description |
+|--------|------|-------------|
+| POST   | `/` | Create a task |
+| GET    | `/` | List tasks (filterable) |
+| GET    | `/my-tasks` | Tasks assigned to the current user |
+| GET    | `/project/:projectId/summary` | Task summary for a project |
+| GET    | `/stats/user` | Task statistics for a user |
+| GET    | `/:id` | Get a task |
+| PATCH  | `/:id` | Update a task |
+| DELETE | `/:id` | Delete a task |
 
-## API Endpoints
+### Comments
+| Method | Path | Description |
+|--------|------|-------------|
+| POST   | `/comments` | Add a comment to a task |
+| GET    | `/:taskId/comments` | List comments for a task |
+| PATCH  | `/comments/:commentId` | Edit your comment |
+| DELETE | `/comments/:commentId` | Delete your comment |
 
-### Task Operations
-- `POST /tasks` - Create a new task
-- `GET /tasks` - Get all tasks (with filtering)
-- `GET /tasks/:id` - Get specific task
-- `PATCH /tasks/:id` - Update task
-- `DELETE /tasks/:id` - Delete task
-- `GET /tasks/my-tasks` - Get current user's tasks
-- `GET /tasks/project/:projectId/summary` - Get project task summary
-- `GET /tasks/stats/user` - Get user task statistics
+## Key Files
 
-### Comment Operations
-- `POST /tasks/comments` - Add comment to task
-- `GET /tasks/:taskId/comments` - Get task comments
-- `PATCH /tasks/comments/:commentId` - Update comment
-- `DELETE /tasks/comments/:commentId` - Delete comment
+- `tasks.controller.ts` / `tasks.service.ts`
+- `dto/` — `create-task.dto.ts`, `update-task.dto.ts`, `create-comment.dto.ts`, `update-comment.dto.ts`
+- `entities/` — `task.entity.ts`, `comment.entity.ts`
 
-## Query Parameters
+## Related Models
 
-### GET /tasks
-- `projectId` - Filter by project
-- `assigneeId` - Filter by assignee
-- `status` - Filter by task status
-
-### GET /tasks/my-tasks
-- `projectId` - Filter by project
-- `status` - Filter by task status
-
-## Task Status Options
-- `Pending` - Task is waiting to be started
-- `In Progress` - Task is currently being worked on
-- `Completed` - Task has been finished
-- `Cancelled` - Task has been cancelled
-
-## Task Priority Options
-- `Low` - Low priority task
-- `Medium` - Medium priority task (default)
-- `High` - High priority task
-- `Critical` - Critical priority task
-
-## DTOs
-
-### CreateTaskDto
-Complete task creation with all optional fields including:
-- Basic info (title, description)
-- Assignment (projectId, assigneeId)
-- Status and priority
-- Time tracking (estimatedHours, actualHours)
-- Dates (dueDate, startedAt, completedAt)
-- Metadata (tags, attachments)
-
-### UpdateTaskDto
-Partial update DTO that extends CreateTaskDto
-
-### CreateCommentDto
-- `taskId` - ID of the task to comment on
-- `content` - Comment content
-
-### UpdateCommentDto
-Partial update for comments
-
-## Entities
-
-### Task Entity
-Comprehensive task representation with:
-- Core task data
-- Related project information
-- Assignee details
-- Attachments
-- Comments with user information
-
-### Comment Entity
-Comment representation with:
-- Comment data
-- User information
-- Timestamps
-
-## Security & Access Control
-
-All endpoints require authentication and verify user access:
-- Users must have access to the project to manage tasks
-- Only comment authors can update/delete their comments
-- Project-level access control through UserProject relationship
-
-## Database Relations
-
-The module leverages Prisma relations:
-- `Task` belongs to `Project`
-- `Task` can be assigned to `User`
-- `Task` can have many `Document` attachments
-- `Task` can have many `Comment`s
-- `Comment` belongs to `User` and `Task`
-
-## Usage Examples
-
-### Creating a Task
-```typescript
-const task = await tasksService.create({
-  title: "Install electrical wiring",
-  description: "Install electrical wiring for the main building",
-  projectId: "project-uuid",
-  assigneeId: "user-uuid",
-  priority: TaskPriority.HIGH,
-  dueDate: "2024-02-15T17:00:00Z",
-  estimatedHours: 8,
-  tags: ["electrical", "priority"]
-}, userId);
-```
-
-### Adding a Comment
-```typescript
-const comment = await tasksService.createComment({
-  taskId: "task-uuid",
-  content: "Work is progressing well, should finish on time."
-}, userId);
-```
-
-### Getting Project Summary
-```typescript
-const summary = await tasksService.getProjectTaskSummary(projectId, userId);
-// Returns statistics like total tasks, completion rate, overdue tasks
-```
+`Task`, `Comment`, `User`, `Project`.

@@ -25,6 +25,7 @@ import "../styles/gantt.css";
 import { type Project } from "../hooks/useProjects";
 import { useUserProjects } from "../hooks/useUsers";
 import { useAuthStore } from "../stores/useAuthStore";
+import { useTranslation } from "../hooks/useTranslation";
 import {
   useProjectPhases,
   useScheduleEvents,
@@ -130,6 +131,7 @@ interface GanttInstance {
 
 // GanttChart component using frappe-gantt
 const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
+  const { t, language } = useTranslation();
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<GanttInstance | null>(null);
   const [viewMode, setViewMode] = useState("Day");
@@ -147,7 +149,7 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
 
       if (!tasks.length) {
         setIsLoading(false);
-        setError("No tasks available to display");
+        setError(t("no_tasks_display_error", "No tasks available to display"));
         return;
       }
 
@@ -190,7 +192,7 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
             padding: 18,
             view_mode: viewMode,
             date_format: "YYYY-MM-DD",
-            language: "en",
+            language: language === "es" ? "es" : "en",
             custom_popup_html: null,
           }) as GanttInstance;
         }
@@ -198,7 +200,7 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
         setIsLoading(false);
       } catch (error) {
         console.error("Failed to load frappe-gantt:", error);
-        setError("Failed to load Gantt chart. Please try refreshing the page.");
+        setError(t("failed_load_gantt", "Failed to load Gantt chart. Please try refreshing the page."));
         setIsLoading(false);
       }
     };
@@ -237,14 +239,14 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
             </button>
           ))}
         </div>
-        {error === "No tasks available to display" ? (
+        {error === t("no_tasks_display_error", "No tasks available to display") ? (
           <div className="text-center py-12">
             <div className="text-6xl text-base-content/20 mb-4">📊</div>
             <h3 className="text-xl font-semibold text-base-content/70 mb-2">
-              No tasks to display
+              {t("no_tasks_to_display", "No tasks to display")}
             </h3>
             <p className="text-base-content/50">
-              Add some tasks to see them in the Gantt chart
+              {t("add_tasks_to_see_gantt", "Add some tasks to see them in the Gantt chart")}
             </p>
           </div>
         ) : (
@@ -279,19 +281,19 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span>Completed</span>
+            <span>{t("completed", "Completed")}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-blue-500 rounded"></div>
-            <span>In Progress</span>
+            <span>{t("in_progress", "In Progress")}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-gray-400 rounded"></div>
-            <span>Pending</span>
+            <span>{t("pending", "Pending")}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-            <span>Milestone</span>
+            <span>{t("milestone", "Milestone")}</span>
           </div>
         </div>
       </div>
@@ -304,7 +306,7 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-base-100 z-10">
             <div className="loading loading-spinner loading-lg"></div>
-            <span className="ml-2">Loading Gantt chart...</span>
+            <span className="ml-2">{t("loading_gantt_chart", "Loading Gantt chart...")}</span>
           </div>
         )}
         <div
@@ -318,6 +320,7 @@ const GanttChart = ({ tasks }: { tasks: GanttTask[] }) => {
 };
 
 const ScheduleManagement = () => {
+  const { t, language } = useTranslation();
   const [activeTab, setActiveTab] = useState<ScheduleTab>("gantt");
   const [selectedProject, setSelectedProject] = useState<string>(
     () => localStorage.getItem("onsite360_selected_project_id") || ""
@@ -870,15 +873,13 @@ const ScheduleManagement = () => {
           <div className="text-center">
             <div className="text-6xl mb-4">📅</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">
-              No Projects Available
+              {t("no_projects_available", "No Projects Available")}
             </h2>
             <p className="text-gray-500">
-              You don't have access to any projects or no projects have been
-              created yet.
+              {t("no_projects_assigned_desc", "You don't have access to any projects or no projects have been created yet.")}
             </p>
             <p className="text-gray-500 mt-2">
-              Please contact your administrator or create a new project to get
-              started.
+              {t("please_contact_admin_or_create_project", "Please contact your administrator or create a new project to get started.")}
             </p>
           </div>
         </div>
@@ -890,10 +891,9 @@ const ScheduleManagement = () => {
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Schedule Management</h1>
+          <h1 className="text-3xl font-bold">{t("schedule_title", "Schedule & Gantt")}</h1>
           <p className="text-gray-500 mt-1">
-            Manage project schedules: Gantt charts, timelines, calendars, and
-            daily logs.
+            {t("schedule_subtitle", "Gantt charts, milestones, and project timeline scheduling")}
           </p>
         </div>
         {/* Task view selection */}
@@ -907,7 +907,7 @@ const ScheduleManagement = () => {
               disabled={projectsLoading}
             >
               {projectsLoading ? (
-                <option>Loading projects...</option>
+                <option>{t("loading_projects", "Loading projects...")}</option>
               ) : hasProjects ? (
                 projects.map((project: Project) => (
                   <option key={project.id} value={project.id}>
@@ -915,7 +915,7 @@ const ScheduleManagement = () => {
                   </option>
                 ))
               ) : (
-                <option>No projects available</option>
+                <option>{t("no_projects", "No projects available")}</option>
               )}
             </select>
           </div>
@@ -930,7 +930,7 @@ const ScheduleManagement = () => {
           }`}
           onClick={() => setActiveTab("gantt")}
         >
-          Gantt Chart
+          {t("gantt_chart_tab", "Gantt Chart")}
         </button>
         <button
           className={`tab text-base ${
@@ -938,7 +938,7 @@ const ScheduleManagement = () => {
           }`}
           onClick={() => setActiveTab("timeline")}
         >
-          Timeline
+          {t("timeline_tab", "Timeline")}
         </button>
         <button
           className={`tab text-base ${
@@ -946,7 +946,7 @@ const ScheduleManagement = () => {
           }`}
           onClick={() => setActiveTab("calendar")}
         >
-          Calendar
+          {t("calendar_tab", "Calendar")}
         </button>
         <button
           className={`tab text-base ${
@@ -954,7 +954,7 @@ const ScheduleManagement = () => {
           }`}
           onClick={() => setActiveTab("logs")}
         >
-          Daily Logs
+          {t("daily_logs_tab", "Daily Logs")}
         </button>
       </div>
       <div className="bg-base-200 border border-base-300 p-4 sm:p-6 lg:p-6 rounded-2xl">
@@ -971,17 +971,17 @@ const ScheduleManagement = () => {
                 <div className="text-center py-12">
                   <div className="text-6xl text-base-content/20 mb-4">📊</div>
                   <h3 className="text-xl font-semibold text-base-content/70 mb-2">
-                    No project phases to display
+                    {t("no_project_phases_to_display", "No project phases to display")}
                   </h3>
                   <p className="text-base-content/50 mb-6">
-                    Create project phases to see them in the Gantt chart
+                    {t("create_project_phases_gantt", "Create project phases to see them in the Gantt chart")}
                   </p>
                   <button
                     className="btn btn-primary"
                     onClick={() => setActiveTab("timeline")}
                   >
                     <MdAdd className="mr-2" />
-                    Add Project Phase
+                    {t("add_project_phase", "Add Project Phase")}
                   </button>
                 </div>
               ) : (
@@ -994,7 +994,7 @@ const ScheduleManagement = () => {
           {activeTab === "timeline" && (
             <div className="my-1">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Project Phases</h2>
+                <h2 className="text-xl font-semibold">{t("project_phases", "Project Phases")}</h2>
                 <button
                   className="btn btn-primary"
                   onClick={() => {
@@ -1013,7 +1013,7 @@ const ScheduleManagement = () => {
                   }}
                 >
                   <MdAdd className="mr-2" />
-                  Add Phase
+                  {t("add_phase", "Add Phase")}
                 </button>
               </div>
 
@@ -1025,11 +1025,10 @@ const ScheduleManagement = () => {
                 <div className="text-center py-12">
                   <div className="text-6xl text-base-content/20 mb-4">📋</div>
                   <h3 className="text-xl font-semibold text-base-content/70 mb-2">
-                    No project phases yet
+                    {t("no_project_phases_yet", "No project phases yet")}
                   </h3>
                   <p className="text-base-content/50 mb-6">
-                    Create your first project phase to get started with timeline
-                    management
+                    {t("create_first_phase_timeline_desc", "Create your first project phase to get started with timeline management")}
                   </p>
                   <button
                     className="btn btn-primary"
@@ -1049,7 +1048,7 @@ const ScheduleManagement = () => {
                     }}
                   >
                     <MdAdd className="mr-2" />
-                    Add First Phase
+                    {t("add_first_phase", "Add First Phase")}
                   </button>
                 </div>
               ) : (
@@ -1076,11 +1075,11 @@ const ScheduleManagement = () => {
                             </h3>
                           </div>
                           <div className="badge badge-success text-base-200">
-                            {phase.progress}% Complete
+                            {phase.progress}% {t("complete", "Complete")}
                           </div>
                           {phase.parentId && (
                             <div className="badge badge-soft badge-sm">
-                              Sub-phase
+                              {t("sub_phase", "Sub-phase")}
                             </div>
                           )}
                           {/* buttons */}
@@ -1108,24 +1107,24 @@ const ScheduleManagement = () => {
                         )}
                         {phase.parent && (
                           <div className="text-sm text-base-content/50 mb-2">
-                            Parent: {phase.parent.name}
+                            {t("parent", "Parent")}: {phase.parent.name}
                           </div>
                         )}
                         <div className="flex items-center gap-4 text-sm text-base-content/60">
                           <span>
-                            Start:{" "}
+                            {t("start_label", "Start")}:{" "}
                             {moment(phase.startDate).format("MMM DD, YYYY")}
                           </span>
                           <span>
-                            End: {moment(phase.endDate).format("MMM DD, YYYY")}
+                            {t("end_label", "End")}: {moment(phase.endDate).format("MMM DD, YYYY")}
                           </span>
                           <span>
-                            Duration:{" "}
+                            {t("duration_label", "Duration")}:{" "}
                             {moment(phase.endDate).diff(
                               moment(phase.startDate),
                               "days"
                             )}{" "}
-                            days
+                            {t("days", "days")}
                           </span>
                         </div>
                         <div className="w-full bg-base-200 rounded-full h-2 mt-2">
@@ -1148,8 +1147,7 @@ const ScheduleManagement = () => {
               {/* Heading */}
               <div className="flex justify-between items-center my-3">
                 <div className="text-xs text-gray-500 mt-2">
-                  Click on an event to view details or date to view logs for
-                  that day.
+                  {t("calendar_helper_text", "Click on an event to view details or date to view logs for that day.")}
                 </div>
                 <button
                   className="btn btn-primary btn-sm"
@@ -1172,30 +1170,30 @@ const ScheduleManagement = () => {
                   }}
                 >
                   <MdAdd className="mr-2" />
-                  Add Event
+                  {t("add_event", "Add Event")}
                 </button>
               </div>
               {/* Legend */}
               <div className="mt-4 flex flex-wrap gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-green-500 rounded"></div>
-                  <span className="text-sm">Deliveries</span>
+                  <span className="text-sm">{t("deliveries", "Deliveries")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                  <span className="text-sm">Inspections</span>
+                  <span className="text-sm">{t("inspections", "Inspections")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-red-500 rounded"></div>
-                  <span className="text-sm">Tasks</span>
+                  <span className="text-sm">{t("tasks", "Tasks")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-purple-500 rounded"></div>
-                  <span className="text-sm">Milestones</span>
+                  <span className="text-sm">{t("milestones", "Milestones")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                  <span className="text-sm">Meetings</span>
+                  <span className="text-sm">{t("meetings", "Meetings")}</span>
                 </div>
               </div>
 
@@ -1271,14 +1269,14 @@ const ScheduleManagement = () => {
                 <div>
                   {selectedDate && (
                     <p className="text-base-content font-bold text-2xl mt-1">
-                      {moment(selectedDate).format("dddd, MMMM D, YYYY")}
+                      {moment(selectedDate).locale(language).format("dddd, MMMM D, YYYY")}
                     </p>
                   )}
                 </div>
                 <div className="flex items-center gap-3">
                   {selectedDate && (
                     <div className="badge badge-primary badge-lg">
-                      {dailyLogs.length} logs
+                      {dailyLogs.length} {dailyLogs.length === 1 ? t("daily_log", "Daily Log") : t("logs_count", "logs")}
                     </div>
                   )}
                 </div>
@@ -1303,17 +1301,21 @@ const ScheduleManagement = () => {
                             </div>
                             <div>
                               <h3 className="text-lg font-bold text-gray-800">
-                                Daily Log
+                                {t("daily_log", "Daily Log")}
                               </h3>
                               <div className="flex items-center gap-2">
                                 {log.logger && (
                                   <span className="text-sm text-base-content/60">
-                                    by {log.logger.firstName} {log.logger.lastName}
+                                    {t("by_author", "by")} {log.logger.firstName} {log.logger.lastName}
                                   </span>
                                 )}
                                 <span className="text-xs text-gray-500">•</span>
                                 <span className="text-xs text-gray-500">
-                                  {moment(log.createdAt).format("MMM D, YYYY [at] h:mm A")}
+                                  {moment(log.createdAt).locale(language).format(
+                                    language === "es"
+                                      ? "D [de] MMM, YYYY [a las] h:mm A"
+                                      : "MMM D, YYYY [at] h:mm A"
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -1324,16 +1326,16 @@ const ScheduleManagement = () => {
                               <div className="flex items-center gap-2">
                                 <MdWbSunny className="text-orange-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Weather:
+                                  {t("weather", "Weather")}:
                                 </span>
-                                <span className="text-sm">{log.weather}</span>
+                                <span className="text-sm">{t(log.weather.toLowerCase(), log.weather)}</span>
                               </div>
                             )}
                             {log.workHours && (
                               <div className="flex items-center gap-2">
                                 <MdSchedule className="text-blue-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Work Hours:
+                                  {t("work_hours", "Work Hours")}:
                                 </span>
                                 <span className="text-sm">{log.workHours}</span>
                               </div>
@@ -1342,7 +1344,7 @@ const ScheduleManagement = () => {
                               <div className="flex items-center gap-2">
                                 <MdGroup className="text-purple-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Workers:
+                                  {t("workers_present", "Workers Present")}:
                                 </span>
                                 <span className="text-sm">{log.workersPresent}</span>
                               </div>
@@ -1352,7 +1354,7 @@ const ScheduleManagement = () => {
                               <div className="flex items-center gap-2">
                                 <MdLocationOn className="text-blue-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Location:
+                                  {t("location", "Location")}:
                                 </span>
                                 <a
                                   href={`https://www.google.com/maps?q=${log.coordinates.lat},${log.coordinates.lng}`}
@@ -1360,7 +1362,7 @@ const ScheduleManagement = () => {
                                   rel="noopener noreferrer"
                                   className="text-sm text-blue-600 hover:underline"
                                 >
-                                  View on map
+                                  {t("view_on_map", "View on map")}
                                 </a>
                               </div>
                             )}
@@ -1370,7 +1372,7 @@ const ScheduleManagement = () => {
                               <div className="flex items-center gap-2">
                                 <MdAttachFile className="text-amber-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Files:
+                                  {t("files", "Files")}:
                                 </span>
                                 <span className="text-sm">
                                   {log.files.length}
@@ -1384,7 +1386,7 @@ const ScheduleManagement = () => {
                               <div className="flex items-center gap-2 mb-2">
                                 <MdAssignment className="text-green-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Summary:
+                                  {t("summary", "Summary")}:
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700 bg-base-200 p-3 rounded">
@@ -1398,7 +1400,7 @@ const ScheduleManagement = () => {
                               <div className="flex items-center gap-2 mb-2">
                                 <MdNotes className="text-purple-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Notes:
+                                  {t("notes", "Notes")}:
                                 </span>
                               </div>
                               <p className="text-sm text-gray-700 bg-base-200 p-3 rounded">
@@ -1413,7 +1415,7 @@ const ScheduleManagement = () => {
                               <div className="flex items-center gap-2 mb-2">
                                 <MdAttachFile className="text-amber-500" />
                                 <span className="text-sm font-medium text-gray-600">
-                                  Attachments:
+                                  {t("attachments", "Attachments")}:
                                 </span>
                                 <span className="badge badge-sm">
                                   {log.files.length}
@@ -1442,7 +1444,7 @@ const ScheduleManagement = () => {
                                       <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium truncate">{fileName}</p>
                                         <p className="text-xs text-gray-500">
-                                          {isImage ? "Image" : fileName.split(".").pop()?.toUpperCase()}
+                                          {isImage ? t("image", "Image") : fileName.split(".").pop()?.toUpperCase()}
                                         </p>
                                       </div>
                                       <MdDownload className="text-gray-400" />
@@ -1481,23 +1483,11 @@ const ScheduleManagement = () => {
                             <div className="bg-blue-100 p-2 rounded-lg">
                               <MdWork className="text-blue-600" />
                             </div>
-                            <h4 className="font-semibold">Activities</h4>
+                            <h4 className="font-semibold">{t("activities", "Activities")}</h4>
                             {log.activities && log.activities.length > 0 && (
                               <span className="badge badge-sm">{log.activities.length}</span>
                             )}
                           </div>
-                          {/* {user &&
-                            user.id === log.loggedById &&
-                            moment(log.date).format("YYYY-MM-DD") ===
-                              moment().format("YYYY-MM-DD") && (
-                              <button
-                                className="btn btn-xs btn-primary"
-                                onClick={() => handleAddActivity(log)}
-                              >
-                                <MdAdd className="mr-1" />
-                                Add Activity
-                              </button>
-                            )} */}
                         </div>
                         {log.activities && log.activities.length > 0 ? (
                           <div className="space-y-3">
@@ -1514,7 +1504,7 @@ const ScheduleManagement = () => {
                                         <div className="flex items-center gap-2 mb-2">
                                           <MdAssignment className="text-blue-600 text-lg" />
                                           <span className="text-sm font-bold text-gray-700">
-                                            Related Task: {activity.task.title}
+                                            {t("related_task", "Related Task")}: {activity.task.title}
                                           </span>
                                         </div>
                                       </div>
@@ -1536,7 +1526,7 @@ const ScheduleManagement = () => {
                                               : "badge-ghost"
                                           }`}
                                         >
-                                          {activity.status.replace("_", " ")}
+                                          {t(activity.status.toLowerCase(), activity.status.replace("_", " "))}
                                         </span>
                                       )}
                                     </div>
@@ -1556,7 +1546,7 @@ const ScheduleManagement = () => {
                                         activity.progress !== null && (
                                           <div className="flex items-center gap-2">
                                             <span className="text-sm text-gray-600 font-medium">
-                                              Progress: {activity.progress}%
+                                              {t("progress", "Progress")}: {activity.progress}%
                                             </span>
                                           </div>
                                         )}
@@ -1567,7 +1557,7 @@ const ScheduleManagement = () => {
                                       <div className="flex items-center gap-2 mb-4">
                                         <MdLocationOn className="text-blue-500" />
                                         <span className="text-sm font-medium text-gray-600">
-                                          Location:
+                                          {t("location", "Location")}:
                                         </span>
                                         <a
                                           href={`https://www.google.com/maps?q=${activity.coordinates.lat},${activity.coordinates.lng}`}
@@ -1575,7 +1565,7 @@ const ScheduleManagement = () => {
                                           rel="noopener noreferrer"
                                           className="text-sm text-blue-600 hover:underline"
                                         >
-                                          View on map
+                                          {t("view_on_map", "View on map")}
                                         </a>
                                       </div>
                                     )}
@@ -1605,7 +1595,7 @@ const ScheduleManagement = () => {
                                         <div className="flex items-center gap-2 mb-1">
                                           <MdNotes className="text-gray-400" />
                                           <span className="text-sm font-medium text-gray-600">
-                                            Notes:
+                                            {t("notes", "Notes")}:
                                           </span>
                                         </div>
                                         <p className="text-sm text-gray-700">
@@ -1620,7 +1610,7 @@ const ScheduleManagement = () => {
                                         <div className="flex items-center gap-2 mb-2">
                                           <MdAttachFile className="text-amber-500" />
                                           <span className="text-sm font-medium text-gray-600">
-                                            Attachments:
+                                            {t("attachments", "Attachments")}:
                                           </span>
                                           <span className="badge badge-sm">
                                             {activity.files.length}
@@ -1666,7 +1656,7 @@ const ScheduleManagement = () => {
                                           onClick={() =>
                                             handleEditActivity(activity)
                                           }
-                                          title="Edit Activity"
+                                          title={t("edit_activity", "Edit Activity")}
                                         >
                                           <MdEdit />
                                         </button>
@@ -1675,7 +1665,7 @@ const ScheduleManagement = () => {
                                           onClick={() =>
                                             handleDeleteActivity(activity.id)
                                           }
-                                          title="Delete Activity"
+                                          title={t("delete", "Delete")}
                                         >
                                           <MdDelete />
                                         </button>
@@ -1689,10 +1679,10 @@ const ScheduleManagement = () => {
                           <div className="text-center py-8 bg-base-200 rounded-lg border border-base-300">
                             <MdWork className="mx-auto text-4xl text-gray-300 mb-4" />
                             <h4 className="text-lg font-semibold text-gray-600 mb-2">
-                              No Activities Yet
+                              {t("no_activities_yet", "No Activities Yet")}
                             </h4>
                             <p className="text-gray-500 mb-6">
-                              No activities recorded for this log.
+                              {t("no_activities_recorded", "No activities recorded for this log.")}
                             </p>
                             {user && user.id === log.loggedById && (
                               <button
@@ -1700,7 +1690,7 @@ const ScheduleManagement = () => {
                                 onClick={() => handleAddActivity(log)}
                               >
                                 <MdAdd />
-                                Add First Activity
+                                {t("add_first_activity", "Add First Activity")}
                               </button>
                             )}
                           </div>
@@ -1713,29 +1703,28 @@ const ScheduleManagement = () => {
                 <div className="text-center py-12">
                   <div className="text-6xl text-base-content/20 mb-4">📝</div>
                   <h3 className="text-xl font-semibold text-base-content/70 mb-2">
-                    No logs found
+                    {t("no_logs_found", "No logs found")}
                   </h3>
                   <p className="text-base-content/50">
-                    No construction logs were recorded for{" "}
-                    {moment(selectedDate).format("MMMM D, YYYY")}
+                    {t("no_construction_logs_recorded", "No construction logs were recorded for")}{" "}
+                    {moment(selectedDate).locale(language).format("MMMM D, YYYY")}
                   </p>
                 </div>
               ) : (
                 <div className="text-center py-12">
                   <div className="text-6xl text-base-content/20 mb-4">📅</div>
                   <h3 className="text-xl font-semibold text-base-content/70 mb-2">
-                    Select a date
+                    {t("select_a_date", "Select a date")}
                   </h3>
                   <p className="text-base-content/50 mb-6">
-                    Choose a date from the calendar to view daily construction
-                    logs
+                    {t("choose_date_calendar_desc", "Choose a date from the calendar to view daily construction logs")}
                   </p>
                   <button
                     className="btn btn-primary"
                     onClick={() => setActiveTab("calendar")}
                   >
                     <MdCalendarToday className="mr-2" />
-                    Go to Calendar
+                    {t("go_to_calendar", "Go to Calendar")}
                   </button>
                 </div>
               )}
@@ -1746,7 +1735,7 @@ const ScheduleManagement = () => {
                     className="btn btn-ghost btn-sm"
                     onClick={() => setSelectedDate(null)}
                   >
-                    Clear Selection
+                    {t("clear_selection", "Clear Selection")}
                   </button>
                 )}
               </div>
@@ -1760,12 +1749,12 @@ const ScheduleManagement = () => {
         <div className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg mb-4">
-              {editingPhase ? "Edit Phase" : "Add New Phase"}
+              {editingPhase ? t("edit_phase", "Edit Phase") : t("add_new_phase", "Add New Phase")}
             </h3>
             <form onSubmit={handlePhaseSubmit} className="space-y-4">
               <div className="flex flex-col w-full form-control">
                 <label className="label">
-                  <span className="label-text">Phase Name</span>
+                  <span className="label-text">{t("phase_name", "Phase Name")}</span>
                 </label>
                 <input
                   type="text"
@@ -1779,7 +1768,7 @@ const ScheduleManagement = () => {
               </div>
               <div className="flex flex-col w-full form-control">
                 <label className="label">
-                  <span className="label-text">Description</span>
+                  <span className="label-text">{t("description", "Description")}</span>
                 </label>
                 <textarea
                   className="textarea w-full textarea-bordered"
@@ -1795,7 +1784,7 @@ const ScheduleManagement = () => {
               </div>
               <div className="flex flex-col w-full form-control">
                 <label className="label">
-                  <span className="label-text">Parent Phase (Optional)</span>
+                  <span className="label-text">{t("parent_phase_optional", "Parent Phase (Optional)")}</span>
                 </label>
                 <select
                   className="select w-full select-bordered"
@@ -1807,7 +1796,7 @@ const ScheduleManagement = () => {
                     }))
                   }
                 >
-                  <option value="">No parent (Top-level phase)</option>
+                  <option value="">{t("no_parent_top_level", "No parent (Top-level phase)")}</option>
                   {projectPhases
                     .filter((phase) => {
                       // Don't show self as parent
@@ -1825,15 +1814,14 @@ const ScheduleManagement = () => {
                 </select>
                 {phaseForm.parentId && (
                   <div className="text-xs text-base-content/60 mt-1">
-                    This phase will be displayed as a sub-phase of the selected
-                    parent.
+                    {t("sub_phase_helper_text", "This phase will be displayed as a sub-phase of the selected parent.")}
                   </div>
                 )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Start Date</span>
+                    <span className="label-text">{t("start_date", "Start Date")}</span>
                   </label>
                   <input
                     type="datetime-local"
@@ -1850,7 +1838,7 @@ const ScheduleManagement = () => {
                 </div>
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">End Date</span>
+                    <span className="label-text">{t("end_date", "End Date")}</span>
                   </label>
                   <input
                     type="datetime-local"
@@ -1871,7 +1859,7 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Progress (%)</span>
+                    <span className="label-text">{t("progress_percentage", "Progress (%)")}</span>
                   </label>
                   <input
                     type="number"
@@ -1889,7 +1877,7 @@ const ScheduleManagement = () => {
                 </div>
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Color</span>
+                    <span className="label-text">{t("color", "Color")}</span>
                   </label>
                   <input
                     type="color"
@@ -1910,7 +1898,7 @@ const ScheduleManagement = () => {
                   className="btn"
                   onClick={() => setShowPhaseModal(false)}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -1924,9 +1912,9 @@ const ScheduleManagement = () => {
                   updatePhaseMutation.isPending ? (
                     <span className="loading loading-spinner loading-sm"></span>
                   ) : editingPhase ? (
-                    "Update Phase"
+                    t("update_phase", "Update Phase")
                   ) : (
-                    "Create Phase"
+                    t("create_phase", "Create Phase")
                   )}
                 </button>
               </div>
@@ -1940,12 +1928,12 @@ const ScheduleManagement = () => {
         <div className="modal modal-open">
           <div className="modal-box max-w-2xl">
             <h3 className="font-bold text-lg mb-4">
-              {editingEvent ? "Edit Event" : "Add New Event"}
+              {editingEvent ? t("edit_event", "Edit Event") : t("add_new_event", "Add New Event")}
             </h3>
             <form onSubmit={handleEventSubmit} className="space-y-4">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Event Title</span>
+                  <span className="label-text">{t("event_title", "Event Title")}</span>
                 </label>
                 <input
                   type="text"
@@ -1959,7 +1947,7 @@ const ScheduleManagement = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Description</span>
+                  <span className="label-text">{t("description", "Description")}</span>
                 </label>
                 <textarea
                   className="textarea textarea-bordered"
@@ -1976,7 +1964,7 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Event Type</span>
+                    <span className="label-text">{t("event_type", "Event Type")}</span>
                   </label>
                   <select
                     className="select select-bordered"
@@ -1988,17 +1976,17 @@ const ScheduleManagement = () => {
                       }))
                     }
                   >
-                    <option value="MEETING">Meeting</option>
-                    <option value="TASK">Task</option>
-                    <option value="MILESTONE">Milestone</option>
-                    <option value="INSPECTION">Inspection</option>
-                    <option value="DELIVERY">Delivery</option>
-                    <option value="OTHER">Other</option>
+                    <option value="MEETING">{t("meeting", "Meeting")}</option>
+                    <option value="TASK">{t("task", "Task")}</option>
+                    <option value="MILESTONE">{t("milestone", "Milestone")}</option>
+                    <option value="INSPECTION">{t("inspection", "Inspection")}</option>
+                    <option value="DELIVERY">{t("delivery", "Delivery")}</option>
+                    <option value="OTHER">{t("other", "Other")}</option>
                   </select>
                 </div>
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Priority</span>
+                    <span className="label-text">{t("priority", "Priority")}</span>
                   </label>
                   <select
                     className="select select-bordered"
@@ -2010,17 +1998,17 @@ const ScheduleManagement = () => {
                       }))
                     }
                   >
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="CRITICAL">Critical</option>
+                    <option value="LOW">{t("low", "Low")}</option>
+                    <option value="MEDIUM">{t("medium", "Medium")}</option>
+                    <option value="HIGH">{t("high", "High")}</option>
+                    <option value="CRITICAL">{t("critical", "Critical")}</option>
                   </select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Start Date</span>
+                    <span className="label-text">{t("start_date", "Start Date")}</span>
                   </label>
                   <input
                     type="datetime-local"
@@ -2037,7 +2025,7 @@ const ScheduleManagement = () => {
                 </div>
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">End Date</span>
+                    <span className="label-text">{t("end_date", "End Date")}</span>
                   </label>
                   <input
                     type="datetime-local"
@@ -2055,7 +2043,7 @@ const ScheduleManagement = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Location</span>
+                  <span className="label-text">{t("location", "Location")}</span>
                 </label>
                 <input
                   type="text"
@@ -2072,7 +2060,7 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Color</span>
+                    <span className="label-text">{t("color", "Color")}</span>
                   </label>
                   <input
                     type="color"
@@ -2088,7 +2076,7 @@ const ScheduleManagement = () => {
                 </div>
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">All Day Event</span>
+                    <span className="label-text">{t("all_day_event", "All Day Event")}</span>
                   </label>
                   <input
                     type="checkbox"
@@ -2109,7 +2097,7 @@ const ScheduleManagement = () => {
                   className="btn"
                   onClick={() => setShowEventModal(false)}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -2123,9 +2111,9 @@ const ScheduleManagement = () => {
                   updateEventMutation.isPending ? (
                     <span className="loading loading-spinner loading-sm"></span>
                   ) : editingEvent ? (
-                    "Update Event"
+                    t("update_event", "Update Event")
                   ) : (
-                    "Create Event"
+                    t("create_event", "Create Event")
                   )}
                 </button>
               </div>
@@ -2159,13 +2147,13 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-base-content/70">
-                    Type
+                    {t("type", "Type")}
                   </label>
-                  <div className="text-base-content">{selectedEvent.type}</div>
+                  <div className="text-base-content">{t(selectedEvent.type.toLowerCase(), selectedEvent.type)}</div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-base-content/70">
-                    Priority
+                    {t("priority", "Priority")}
                   </label>
                   <div
                     className={`badge ${
@@ -2178,7 +2166,7 @@ const ScheduleManagement = () => {
                         : "badge-ghost"
                     }`}
                   >
-                    {selectedEvent.priority}
+                    {t(selectedEvent.priority.toLowerCase(), selectedEvent.priority)}
                   </div>
                 </div>
               </div>
@@ -2186,24 +2174,24 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-base-content/70">
-                    Start Date
+                    {t("start_date", "Start Date")}
                   </label>
                   <div className="text-base-content">
-                    {moment(selectedEvent.startDate).format(
-                      "MMM DD, YYYY h:mm A"
+                    {moment(selectedEvent.startDate).locale(language).format(
+                      language === "es" ? "D MMM, YYYY h:mm A" : "MMM DD, YYYY h:mm A"
                     )}
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-base-content/70">
-                    End Date
+                    {t("end_date", "End Date")}
                   </label>
                   <div className="text-base-content">
                     {selectedEvent.endDate
-                      ? moment(selectedEvent.endDate).format(
-                          "MMM DD, YYYY h:mm A"
+                      ? moment(selectedEvent.endDate).locale(language).format(
+                          language === "es" ? "D MMM, YYYY h:mm A" : "MMM DD, YYYY h:mm A"
                         )
-                      : "No end date"}
+                      : t("no_end_date", "No end date")}
                   </div>
                 </div>
               </div>
@@ -2211,7 +2199,7 @@ const ScheduleManagement = () => {
               {selectedEvent.location && (
                 <div>
                   <label className="text-sm font-medium text-base-content/70">
-                    Location
+                    {t("location", "Location")}
                   </label>
                   <div className="text-base-content">
                     {selectedEvent.location}
@@ -2222,7 +2210,7 @@ const ScheduleManagement = () => {
               {selectedEvent.description && (
                 <div>
                   <label className="text-sm font-medium text-base-content/70">
-                    Description
+                    {t("description", "Description")}
                   </label>
                   <div className="text-base-content">
                     {selectedEvent.description}
@@ -2232,7 +2220,7 @@ const ScheduleManagement = () => {
 
               <div>
                 <label className="text-sm font-medium text-base-content/70">
-                  Status
+                  {t("status", "Status")}
                 </label>
                 <div
                   className={`badge ${
@@ -2245,7 +2233,7 @@ const ScheduleManagement = () => {
                       : "badge-ghost"
                   }`}
                 >
-                  {selectedEvent.status}
+                  {t(selectedEvent.status.toLowerCase(), selectedEvent.status)}
                 </div>
               </div>
 
@@ -2253,7 +2241,7 @@ const ScheduleManagement = () => {
                 selectedEvent.assignees.length > 0 && (
                   <div>
                     <label className="text-sm font-medium text-base-content/70">
-                      Assignees
+                      {t("assignees", "Assignees")}
                     </label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {selectedEvent.assignees.map((assignee) => (
@@ -2267,7 +2255,7 @@ const ScheduleManagement = () => {
 
               <div>
                 <label className="text-sm font-medium text-base-content/70">
-                  Created By
+                  {t("created_by", "Created By")}
                 </label>
                 <div className="text-base-content">
                   {selectedEvent.createdBy.firstName}{" "}
@@ -2282,7 +2270,7 @@ const ScheduleManagement = () => {
                 className="btn"
                 onClick={() => setShowEventDetails(false)}
               >
-                Close
+                {t("close", "Close")}
               </button>
               {user && user.id === selectedEvent.createdBy.id && (
                 <div className="flex gap-2">
@@ -2295,7 +2283,7 @@ const ScheduleManagement = () => {
                     }}
                   >
                     <MdEdit className="mr-2" />
-                    Edit
+                    {t("edit", "Edit")}
                   </button>
                   <button
                     type="button"
@@ -2303,7 +2291,7 @@ const ScheduleManagement = () => {
                     onClick={() => handleDeleteEvent(selectedEvent.id)}
                   >
                     <MdDelete className="mr-2" />
-                    Delete
+                    {t("delete", "Delete")}
                   </button>
                 </div>
               )}
@@ -2317,12 +2305,12 @@ const ScheduleManagement = () => {
         <div className="modal modal-open">
           <div className="modal-box max-w-3xl">
             <h3 className="font-bold text-lg mb-4">
-              {editingLog ? "Edit Daily Log" : "Add Daily Log"}
+              {editingLog ? t("edit_daily_log", "Edit Daily Log") : t("add_daily_log", "Add Daily Log")}
             </h3>
             <form onSubmit={handleLogSubmit} className="space-y-4">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Date</span>
+                  <span className="label-text">{t("date", "Date")}</span>
                 </label>
                 <input
                   type="date"
@@ -2333,8 +2321,8 @@ const ScheduleManagement = () => {
                 <div className="label">
                   <span className="label-text-alt text-info">
                     {editingLog
-                      ? "Log date cannot be changed"
-                      : "Date is automatically set to today and cannot be changed"}
+                      ? t("log_date_no_change", "Log date cannot be changed")
+                      : t("date_auto_today_no_change", "Date is automatically set to today and cannot be changed")}
                   </span>
                 </div>
               </div>
@@ -2342,7 +2330,7 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Weather</span>
+                    <span className="label-text">{t("weather", "Weather")}</span>
                   </label>
                   <input
                     type="text"
@@ -2354,13 +2342,13 @@ const ScheduleManagement = () => {
                         weather: e.target.value,
                       }))
                     }
-                    placeholder="e.g., Sunny, Rainy, Cloudy"
+                    placeholder={t("weather_placeholder", "e.g., Sunny, Rainy, Cloudy")}
                   />
                 </div>
 
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Work Hours</span>
+                    <span className="label-text">{t("work_hours", "Work Hours")}</span>
                   </label>
                   <input
                     type="number"
@@ -2381,7 +2369,7 @@ const ScheduleManagement = () => {
 
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Workers Present</span>
+                  <span className="label-text">{t("workers_present", "Workers Present")}</span>
                 </label>
                 <input
                   type="number"
@@ -2399,7 +2387,7 @@ const ScheduleManagement = () => {
 
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Notes</span>
+                  <span className="label-text">{t("notes", "Notes")}</span>
                 </label>
                 <textarea
                   className="textarea textarea-bordered"
@@ -2408,7 +2396,7 @@ const ScheduleManagement = () => {
                     setLogForm((prev) => ({ ...prev, notes: e.target.value }))
                   }
                   rows={3}
-                  placeholder="General notes about the day's work..."
+                  placeholder={t("general_notes_placeholder", "General notes about the day's work...")}
                 />
               </div>
 
@@ -2429,7 +2417,7 @@ const ScheduleManagement = () => {
                     });
                   }}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -2444,12 +2432,12 @@ const ScheduleManagement = () => {
                   ) : editingLog ? (
                     <>
                       <MdEdit className="mr-2" />
-                      Update Log
+                      {t("update_log", "Update Log")}
                     </>
                   ) : (
                     <>
                       <MdAdd className="mr-2" />
-                      Add Log
+                      {t("add_log", "Add Log")}
                     </>
                   )}
                 </button>
@@ -2463,14 +2451,13 @@ const ScheduleManagement = () => {
       {showDeleteLogModal && logToDelete && (
         <div className="modal modal-open">
           <div className="modal-box">
-            <h3 className="font-bold text-lg mb-4">Confirm Delete</h3>
+            <h3 className="font-bold text-lg mb-4">{t("confirm_delete", "Confirm Delete")}</h3>
             <p className="py-4">
-              Are you sure you want to delete this daily log from{" "}
-              {moment(logToDelete.date).format("MMMM DD, YYYY")}?
+              {t("confirm_delete_log_desc", "Are you sure you want to delete this daily log from")}{" "}
+              {moment(logToDelete.date).locale(language).format("MMMM DD, YYYY")}?
             </p>
             <p className="text-sm text-base-content/70 mb-4">
-              This action cannot be undone and will also delete all associated
-              activities.
+              {t("delete_log_undone_desc", "This action cannot be undone and will also delete all associated activities.")}
             </p>
             <div className="modal-action">
               <button
@@ -2481,7 +2468,7 @@ const ScheduleManagement = () => {
                   setLogToDelete(null);
                 }}
               >
-                Cancel
+                {t("cancel", "Cancel")}
               </button>
               <button
                 type="button"
@@ -2494,7 +2481,7 @@ const ScheduleManagement = () => {
                 ) : (
                   <>
                     <MdDelete className="mr-2" />
-                    Delete Log
+                    {t("delete_log", "Delete Log")}
                   </>
                 )}
               </button>
@@ -2508,12 +2495,12 @@ const ScheduleManagement = () => {
         <div className="modal modal-open">
           <div className="modal-box max-w-2xl">
             <h3 className="font-bold text-lg mb-4">
-              {editingActivity ? "Edit Activity" : "Add Activity"}
+              {editingActivity ? t("edit_activity", "Edit Activity") : t("add_activity", "Add Activity")}
             </h3>
             <form onSubmit={handleActivitySubmit} className="space-y-4">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Description *</span>
+                  <span className="label-text">{t("description", "Description")} *</span>
                 </label>
                 <input
                   type="text"
@@ -2525,7 +2512,7 @@ const ScheduleManagement = () => {
                       activity: e.target.value,
                     }))
                   }
-                  placeholder="Describe the activity..."
+                  placeholder={t("describe_activity_placeholder", "Describe the activity...")}
                   required
                 />
               </div>
@@ -2533,7 +2520,7 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Start Time</span>
+                    <span className="label-text">{t("start_time", "Start Time")}</span>
                   </label>
                   <input
                     type="time"
@@ -2550,7 +2537,7 @@ const ScheduleManagement = () => {
 
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">End Time</span>
+                    <span className="label-text">{t("end_time", "End Time")}</span>
                   </label>
                   <input
                     type="time"
@@ -2569,7 +2556,7 @@ const ScheduleManagement = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Progress (%)</span>
+                    <span className="label-text">{t("progress_percentage", "Progress (%)")}</span>
                   </label>
                   <input
                     type="number"
@@ -2588,7 +2575,7 @@ const ScheduleManagement = () => {
 
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Status</span>
+                    <span className="label-text">{t("status", "Status")}</span>
                   </label>
                   <select
                     className="select select-bordered"
@@ -2605,18 +2592,18 @@ const ScheduleManagement = () => {
                       }))
                     }
                   >
-                    <option value="NOT_STARTED">Not Started</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="COMPLETED">Completed</option>
-                    <option value="ON_HOLD">On Hold</option>
-                    <option value="CANCELLED">Cancelled</option>
+                    <option value="NOT_STARTED">{t("not_started", "Not Started")}</option>
+                    <option value="IN_PROGRESS">{t("in_progress", "In Progress")}</option>
+                    <option value="COMPLETED">{t("completed", "Completed")}</option>
+                    <option value="ON_HOLD">{t("on_hold", "On Hold")}</option>
+                    <option value="CANCELLED">{t("cancelled", "Cancelled")}</option>
                   </select>
                 </div>
               </div>
 
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Notes</span>
+                  <span className="label-text">{t("notes", "Notes")}</span>
                 </label>
                 <textarea
                   className="textarea textarea-bordered"
@@ -2628,7 +2615,7 @@ const ScheduleManagement = () => {
                     }))
                   }
                   rows={3}
-                  placeholder="Additional notes about this activity..."
+                  placeholder={t("additional_notes_placeholder", "Additional notes about this activity...")}
                 />
               </div>
 
@@ -2651,7 +2638,7 @@ const ScheduleManagement = () => {
                     });
                   }}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -2667,12 +2654,12 @@ const ScheduleManagement = () => {
                   ) : editingActivity ? (
                     <>
                       <MdEdit className="mr-2" />
-                      Update Activity
+                      {t("update_activity", "Update Activity")}
                     </>
                   ) : (
                     <>
                       <MdAdd className="mr-2" />
-                      Add Activity
+                      {t("add_activity", "Add Activity")}
                     </>
                   )}
                 </button>

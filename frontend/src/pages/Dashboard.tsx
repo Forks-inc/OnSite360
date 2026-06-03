@@ -52,6 +52,7 @@ import { useUserNotifications, useUserProjects } from "../hooks/useUsers";
 import { useRFIs, type RFI } from "../hooks/useCommunication"; // <-- add this import
 import { useTasks } from "../hooks/useTasks";
 import type { Task } from "../hooks/useTasks";
+import { useTranslation } from "../hooks/useTranslation";
 
 ChartJS.register(
   CategoryScale,
@@ -66,6 +67,7 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   // Chart data configurations
   // Fetch data from API hooks
   const projectsQuery = useProjects();
@@ -455,13 +457,13 @@ const Dashboard = () => {
       value: dashboardCardQuery.data?.outstandingValue
         ? `$${dashboardCardQuery.data.outstandingValue.toLocaleString()}`
         : "--",
-      label: "Outstanding Value",
+      label: t("outstanding_value", "Outstanding Value"),
     },
     {
       id: "team-members",
       icon: <HiOutlineUserGroup className="inline w-7 h-7 text-secondary" />,
       value: dashboardCardQuery.data?.teamMembers ?? "--",
-      label: "Team Members",
+      label: t("team_members", "Team Members"),
     },
     {
       id: "efficiency",
@@ -471,7 +473,7 @@ const Dashboard = () => {
       value: dashboardCardQuery.data?.efficiency
         ? `${dashboardCardQuery.data.efficiency}%`
         : "91%",
-      label: "Efficiency",
+      label: t("efficiency", "Efficiency"),
     },
     {
       id: "project-success-rate",
@@ -480,14 +482,14 @@ const Dashboard = () => {
       value: dashboardCardQuery.data?.completionRate
         ? `${dashboardCardQuery.data.completionRate}%`
         : "87%", // Comment: Using completionRate as alternative
-      label: "Project Success Rate",
+      label: t("project_success_rate", "Project Success Rate"),
     },
     {
       id: "avg-project-roi",
       icon: <HiOutlineTrendingUp className="inline w-7 h-7 text-secondary" />,
       // No direct match, keeping default
       value: "14%",
-      label: "Avg Project ROI",
+      label: t("avg_project_roi", "Avg Project ROI"),
     },
     {
       id: "team-productivity",
@@ -496,7 +498,7 @@ const Dashboard = () => {
       ),
       // No direct match, keeping default
       value: "88%",
-      label: "Team Productivity",
+      label: t("team_productivity", "Team Productivity"),
     },
     {
       id: "urgent-tasks",
@@ -506,19 +508,19 @@ const Dashboard = () => {
         ((tasksQuery.data as Task[]) ?? []).filter(
           (t) => t.priority === "Critical" || t.priority === "High"
         ).length,
-      label: "Urgent Tasks",
+      label: t("urgent_tasks", "Urgent Tasks"),
     },
     {
       id: "tasks-complete",
       icon: <HiOutlineCheckCircle className="inline w-7 h-7 text-secondary" />,
       value: dashboardCardQuery.data?.tasksComplete ?? "--",
-      label: "Tasks Complete",
+      label: t("tasks_complete", "Tasks Complete"),
     },
     {
       id: "active-crew",
       icon: <HiOutlineUser className="inline w-7 h-7 text-secondary" />,
       value: dashboardCardQuery.data?.activeCrew ?? 18,
-      label: "Active Crew",
+      label: t("active_crew", "Active Crew"),
     },
     {
       id: "open-rfis",
@@ -526,7 +528,7 @@ const Dashboard = () => {
         <HiOutlineDocumentReport className="inline w-7 h-7 text-secondary" />
       ),
       value: dashboardCardQuery.data?.openRFIs ?? "--",
-      label: "Open RFIs",
+      label: t("open_rfis", "Open RFIs"),
     },
     {
       id: "conversation-awaiting",
@@ -541,7 +543,7 @@ const Dashboard = () => {
               0
             )
           : "--"), // Comment: Using notifications as alternative
-      label: "Conversation Awaiting",
+      label: t("conversation_awaiting", "Conversation Awaiting"),
     },
     {
       id: "notifications",
@@ -550,14 +552,14 @@ const Dashboard = () => {
         dashboardCardQuery.data?.notifications ??
         (notificationsQuery.data ?? []).length ??
         0,
-      label: "Notifications",
+      label: t("notifications", "Notifications"),
     },
     {
       id: "active-rfis",
       icon: <HiOutlineDocumentText className="inline w-7 h-7 text-secondary" />,
       // Using openRFIs as alternative for active RFIs
       value: dashboardCardQuery.data?.openRFIs ?? 9, // Comment: Using openRFIs as alternative
-      label: "Active RFIs",
+      label: t("active_rfis", "Active RFIs"),
     },
     {
       id: "approvals-pending",
@@ -565,7 +567,7 @@ const Dashboard = () => {
         <HiOutlineClipboardList className="inline w-7 h-7 text-secondary" />
       ),
       value: dashboardCardQuery.data?.approvalsPending ?? "--",
-      label: "Approvals Pending",
+      label: t("approvals_pending", "Approvals Pending"),
     },
     {
       id: "drawing-revisions",
@@ -573,7 +575,7 @@ const Dashboard = () => {
         <HiOutlineDocumentDuplicate className="inline w-7 h-7 text-secondary" />
       ),
       value: dashboardCardQuery.data?.drawingRevisions ?? 2,
-      label: "Drawing Revisions",
+      label: t("drawing_revisions", "Drawing Revisions"),
     },
     {
       id: "calculations",
@@ -582,20 +584,20 @@ const Dashboard = () => {
       value: dashboardCardQuery.data?.averageExpense
         ? `$${dashboardCardQuery.data.averageExpense.toFixed(2)}`
         : 15, // Comment: Using averageExpense as alternative
-      label: "Calculations",
+      label: t("calculations", "Calculations"),
     },
     {
       id: "active-jobs",
       icon: <HiOutlineCollection className="inline w-7 h-7 text-secondary" />,
       // No direct match, keeping default
       value: 6,
-      label: "Active Jobs",
+      label: t("active_jobs", "Active Jobs"),
     },
     {
       id: "hours-this-week",
       icon: <HiOutlineClock className="inline w-7 h-7 text-secondary" />,
       value: dashboardCardQuery.data?.manHoursThisWeek ?? 99,
-      label: "Man Hours This Week",
+      label: t("hours_this_week", "Man Hours This Week"),
     },
     {
       id: "pending-invoices",
@@ -606,7 +608,7 @@ const Dashboard = () => {
       value: dashboardCardQuery.data?.averageExpense
         ? `$${dashboardCardQuery.data.averageExpense.toFixed(2)}`
         : 15, // Comment: Using averageExpense as alternative
-      label: "Average Invoices",
+      label: t("avg_invoices", "Average Invoices"),
     },
     {
       id: "completion-rate",
@@ -614,20 +616,20 @@ const Dashboard = () => {
       value: dashboardCardQuery.data?.completionRate
         ? `${dashboardCardQuery.data.completionRate}%`
         : 49,
-      label: "Completion Rate",
+      label: t("completion_rate", "Completion Rate"),
     },
     {
       id: "overall-progress",
       icon: <HiOutlineTrendingUp className="inline w-7 h-7 text-secondary" />,
       value: dashboardCardQuery.data?.overallProgress ?? 49,
-      label: "Overall Progress",
+      label: t("overall_progress", "Overall Progress"),
     },
     {
       id: "timeline",
       icon: <HiOutlineCalendar className="inline w-7 h-7 text-secondary" />,
       // Using overallProgress as alternative for timeline status
       value: dashboardCardQuery.data?.overallProgress ?? 49, // Comment: Using overallProgress as alternative
-      label: "TimeLine",
+      label: t("timeline", "TimeLine"),
     },
     {
       id: "budget-status",
@@ -639,13 +641,13 @@ const Dashboard = () => {
             dashboardCardQuery.data.budgetStatus.status
           })`
         : `--`, // Using budgetStatusInfo as alternative
-      label: "Budget Status",
+      label: t("budget_status", "Budget Status"),
     },
     {
       id: "milestones",
       icon: <HiOutlineFlag className="inline w-7 h-7 text-secondary" />,
       value: dashboardCardQuery.data?.milestones ?? "--",
-      label: "Milestones",
+      label: t("milestones", "Milestones"),
     },
   ];
 
@@ -1090,16 +1092,16 @@ const Dashboard = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-1">Dashboard</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-1">{t("dashboard", "Dashboard")}</h1>
       <p className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base">
-        System overview and key performance metrics
+        {t("dashboard_subtitle", "System overview and key performance metrics")}
       </p>
 
       {/* Quick Actions - Only for System Admin */}
       {user?.role?.name === "System Admin" && (
         <div className="bg-base-200 rounded-2xl p-4 sm:p-6 border border-base-300 shadow-xl shadow-base-300 mb-4 sm:mb-6">
           <h3 className="text-lg sm:text-xl font-semibold mb-4">
-            Quick Actions
+            {t("quick_actions", "Quick Actions")}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {quickActions.map((action) => (
@@ -1108,7 +1110,7 @@ const Dashboard = () => {
                 className={`btn ${action.className} w-full text-sm sm:text-base`}
                 onClick={action.onClick}
               >
-                {action.label}
+                {t(action.label.toLowerCase().replace(/\s/g, "_"), action.label)}
               </button>
             ))}
           </div>
@@ -1121,10 +1123,10 @@ const Dashboard = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 sm:gap-2">
             <div>
               <h3 className="text-lg sm:text-xl font-semibold">
-                Featured Projects
+                {t("featured_projects", "Featured Projects")}
               </h3>
               <p className="text-sm text-neutral">
-                Projects you're currently working
+                {t("featured_projects_desc", "Projects you're currently working")}
               </p>
             </div>
             {/* <button className="btn btn-primary btn-sm sm:btn-md w-full sm:w-auto">
@@ -1211,16 +1213,16 @@ const Dashboard = () => {
       {/* Map */}
       <div className="bg-base-200 rounded-2xl p-4 sm:p-6 border border-base-300 shadow-xl shadow-base-300 mb-4 sm:mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
-          <h3 className="text-lg sm:text-xl font-semibold">Map</h3>
+          <h3 className="text-lg sm:text-xl font-semibold">{t("map", "Map")}</h3>
           <input
             type="search"
-            placeholder="Enter Map Location"
+            placeholder={t("enter_map_location", "Enter Map Location")}
             className="input input-bordered w-full sm:w-auto sm:max-w-xs text-sm"
           />
         </div>
         <div className="p-2 sm:p-4 w-full relative mt-4">
           <h3 className="text-base sm:text-lg font-semibold mb-2">
-            Project Locations
+            {t("project_locations", "Project Locations")}
           </h3>
           <div style={{ height: 250, width: "100%" }} className="sm:h-[350px]">
             <MapContainer

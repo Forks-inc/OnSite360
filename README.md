@@ -1,117 +1,138 @@
-# Docker Setup Guide
+# OnSite360
 
-This guide will help you set up Docker and run the OnSite360 application.
+OnSite360 is a construction management platform that brings projects, crews, schedules, documents, communication, and field reporting into a single system. It pairs a **NestJS + Prisma + PostgreSQL** API with a **React + Vite (PWA)** web client and an optional on-device **AI copilot** powered by Ollama.
 
-## Prerequisites
+## Table of Contents
 
-1. Install Docker:
-    - For Windows/Mac: Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop)
-    - For Linux: Install [Docker Engine](https://docs.docker.com/engine/install/)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Repository Layout](#repository-layout)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [API Documentation](#api-documentation)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
 
-2. Install Docker Compose (if not included with your Docker installation):
-    - Follow the [official installation guide](https://docs.docker.com/compose/install/)
+## Features
 
-## Getting Started
+- **Project management** — projects, phases, dashboards, statistics, and per-project user assignments.
+- **Task tracking** — tasks, comments, per-user task stats, and project summaries.
+- **Scheduling** — project phases, calendar events, daily logs, and daily activities.
+- **Field reporting** — issues/risk reporting, attendance, crew members, expenses.
+- **Document management** — upload, classify, and serve project documents and RFIs.
+- **Communication** — threads, messages (with attachments), and RFIs.
+- **Access control** — JWT auth with roles and granular permissions.
+- **Notifications** — in-app notifications for users.
+- **AI copilot** — text generation and embeddings via a local LLM service.
+- **PWA web client** — installable, offline-aware React frontend.
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/OnSite360.git
-    cd OnSite360
-    ```
+## Tech Stack
 
-2. Make sure Docker is running on your system.
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 19, Vite, TypeScript, Tailwind CSS, DaisyUI, Zustand, React Query, React Router |
+| Backend | NestJS 11, TypeScript, Prisma ORM, Swagger (OpenAPI) |
+| Database | PostgreSQL |
+| Auth | JWT (Bearer), bcrypt, Helmet |
+| AI | Ollama-compatible LLM service (text + embeddings) |
+| Tooling | Docker, Docker Compose, ESLint, Prettier, Jest |
 
-3. Build and start the containers:
-    ```bash
-    docker-compose up --build
-    ```
-    This command builds the Docker images if they don't exist and starts the containers as defined in the docker-compose.yml file.
+## Architecture
 
-4. To run the application in detached mode (background):
-    ```bash
-    docker-compose up -d --build
-    ```
+The frontend is a single-page PWA that talks to the backend over a versioned REST API (`/v1`). The backend is a modular NestJS application using Prisma as the data layer over PostgreSQL. See [docs/architecture.md](docs/architecture.md) for diagrams and detail.
 
-5. To stop the containers:
-    ```bash
-    docker-compose down
-    ```
+## Repository Layout
 
-## Useful Docker Commands
-
-- View running containers:
-  ```bash
-  docker ps
-  ```
-
-- View logs for a specific container:
-  ```bash
-  docker logs [container_name]
-  ```
-
-- Enter a running container:
-  ```bash
-  docker exec -it [container_name] bash
-  ```
-
-- Rebuild a specific service:
-  ```bash
-  docker-compose build [service_name]
-  ```
-
-  ## Running PostgreSQL with Docker (Development Mode)
-
-  For development, you might want to run only the PostgreSQL database in Docker while running the frontend and backend applications directly on your machine:
-
-  1. Start only the PostgreSQL container:
-    ```bash
-    docker-compose up -d postgres
-    ```
-
-  2. Run the frontend application:
-    ```bash
-    cd frontend
-    npm install
-    npm run dev
-    ```
-
-  3. Run the backend application:
-    ```bash
-    cd backend
-    npm install
-    npm run start:dev
-    ```
-
-  4. Access the applications:
-    - Frontend: http://localhost:5173 (or the port configured in your frontend application)
-    - Backend API: http://localhost:3000 (or the port configured in your backend application)
-    
-  5. To stop the PostgreSQL container when done:
-    ```bash
-    docker-compose stop postgres
-    ```
-
-## Database Seeding
-
-The project includes a database seeding mechanism to populate the database with initial data for development and testing purposes.
-
-### Seed Data
-The seed script creates:
-- An admin user with email `admin@onsite360.com`
-- A sample construction project
-
-### How to Run Seeds
-You can seed the database using the following command:
-
-```bash
-npx prisma db seed
+```
+OnSite360/
+├── backend/      # NestJS API (Prisma, PostgreSQL)
+├── frontend/     # React + Vite PWA
+├── docs/         # Project documentation
+├── docker-compose.yml
+└── README.md
 ```
 
-This command is configured in package.json to run the seed script located at `backend/prisma/seed.ts`.
+## Quick Start
 
-### When to Use
-- During local development setup
-- After resetting the development database
-- When setting up a new testing environment
+### Prerequisites
 
-Team members should run the seed command after initial database setup to ensure everyone has the same baseline data.
+- Node.js 20+
+- Docker & Docker Compose (recommended for PostgreSQL)
+- An Ollama-compatible LLM service (optional, for the copilot)
+
+### 1. Clone
+
+```bash
+git clone https://github.com/yourusername/OnSite360.git
+cd OnSite360
+```
+
+### 2. Start the database
+
+```bash
+docker-compose up -d postgres
+```
+
+### 3. Backend
+
+```bash
+cd backend
+cp .env.example .env        # then edit values
+npm install
+npx prisma generate
+npx prisma migrate dev      # apply schema
+npm run seed                # optional: baseline data
+npm run start:dev
+```
+
+The API runs at `http://localhost:3000` (Swagger UI at `/debug`).
+
+### 4. Frontend
+
+```bash
+cd frontend
+cp .env.example .env        # set VITE_API_URL
+npm install
+npm run dev
+```
+
+The web client runs at `http://localhost:5173`.
+
+### Run everything with Docker
+
+```bash
+docker-compose up --build
+```
+
+## Configuration
+
+Environment variables are documented in [docs/configuration.md](docs/configuration.md). Templates live in `.env.example`, `backend/.env.example`, and `frontend/.env.example`.
+
+After seeding, an admin user is available: `admin@onsite360.com`.
+
+## API Documentation
+
+Interactive Swagger/OpenAPI docs are served at `http://localhost:3000/debug` when the backend is running. A high-level reference is in [docs/api.md](docs/api.md).
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [docs/architecture.md](docs/architecture.md) | System architecture overview |
+| [docs/api.md](docs/api.md) | REST API reference |
+| [docs/prisma.md](docs/prisma.md) | Data model and Prisma usage |
+| [docs/communication-api.md](docs/communication-api.md) | Communication module API |
+| [docs/configuration.md](docs/configuration.md) | Environment variables |
+| [docs/deployment.md](docs/deployment.md) | Deployment guide |
+| [docs/best_practices.md](docs/best_practices.md) | Coding conventions |
+| [docs/Development Environment Setup Guide.md](docs/Development%20Environment%20Setup%20Guide.md) | Full dev setup |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Report vulnerabilities per [SECURITY.md](SECURITY.md).
+
+## License
+
+Proprietary. See [LICENSE.md](LICENSE.md).

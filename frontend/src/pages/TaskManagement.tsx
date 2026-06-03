@@ -40,6 +40,7 @@ import { useUserProjects } from "../hooks/useUsers";
 import { useProject, type Project } from "../hooks/useProjects";
 import { useAuthStore } from "../stores/useAuthStore";
 import TagsInput from "../components/TagsInput";
+import { useTranslation } from "../hooks/useTranslation";
 
 // Convert ApiTask to Card interface for Kanban board
 interface TaskCard extends Card {
@@ -1239,6 +1240,7 @@ const TaskDetails = ({
 };
 
 const TaskManagement = () => {
+  const { t } = useTranslation();
   const [mainTab, setMainTab] = useState<MainTab>("all-tasks");
   const [selectedProject, setSelectedProject] = useState<string>(
     () => localStorage.getItem("onsite360_selected_project_id") || ""
@@ -2088,10 +2090,9 @@ const TaskManagement = () => {
 
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Task Management</h1>
+          <h1 className="text-3xl font-bold">{t("tasks_title", "Task Management")}</h1>
           <p className="text-gray-500 mt-1">
-            Manage all project tasks: site work, procurement, inspections,
-            handover, and custom tasks.
+            {t("tasks_subtitle", "Manage all project tasks: site work, procurement, inspections, handover, and custom tasks.")}
           </p>
         </div>
         <div className="flex items-center justify-end mb-1">
@@ -2103,7 +2104,7 @@ const TaskManagement = () => {
               disabled={projectsLoading}
             >
               {projectsLoading ? (
-                <option>Loading projects...</option>
+                <option>{t("loading_projects", "Loading projects...")}</option>
               ) : hasProjects ? (
                 projects.map((project) => (
                   <option key={project.id} value={project.id}>
@@ -2111,7 +2112,7 @@ const TaskManagement = () => {
                   </option>
                 ))
               ) : (
-                <option>No projects available</option>
+                <option>{t("no_projects", "No projects available")}</option>
               )}
             </select>
           </div>
@@ -2126,7 +2127,7 @@ const TaskManagement = () => {
           }`}
           onClick={() => setMainTab("all-tasks")}
         >
-          All Tasks
+          {t("all_tasks_tab", "All Tasks")}
           {tasksRefetching && (
             <span className="loading loading-spinner loading-xs"></span>
           )}
@@ -2138,7 +2139,7 @@ const TaskManagement = () => {
           onClick={() => setMainTab("task-details")}
           disabled={!selectedTask}
         >
-          Task Details
+          {t("task_details_tab", "Task Details")}
         </button>
         <button
           className={`tab text-base ${
@@ -2146,7 +2147,7 @@ const TaskManagement = () => {
           }`}
           onClick={() => setMainTab("analytics")}
         >
-          Analytics
+          {t("analytics_tab", "Analytics")}
         </button>
       </div>
 

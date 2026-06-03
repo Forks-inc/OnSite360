@@ -5,8 +5,10 @@ import {
   useMarkNotificationRead,
   type Notification,
 } from "../hooks/useUsers";
+import { useTranslation } from "../hooks/useTranslation";
 
 const Notifications: React.FC = () => {
+  const { t } = useTranslation();
   const { user: currentUser } = useAuthStore();
   const userId = currentUser?.id || "";
 
@@ -49,11 +51,11 @@ const Notifications: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-1">Notifications</h1>
-      <p className="text-gray-500 mb-6">Unread and read notifications</p>
+      <h1 className="text-3xl font-bold mb-1">{t("notif_title", "Notifications")}</h1>
+      <p className="text-gray-500 mb-6">{t("notif_subtitle", "Unread and read notifications")}</p>
 
       {!userId ? (
-        <div className="text-gray-500">Please sign in to view notifications.</div>
+        <div className="text-gray-500">{t("signin_prompt_notif", "Sign in to see notifications")}</div>
       ) : isLoading ? (
         <div className="flex justify-center py-8">
           <span className="loading loading-spinner loading-lg"></span>
@@ -65,13 +67,13 @@ const Notifications: React.FC = () => {
               className={`tab ${activeTab === "unread" ? "tab-active" : ""}`}
               onClick={() => setActiveTab("unread")}
             >
-              Unread ({unreadNotifications.length})
+              {t("unread_count", "Unread ({count})").replace("{count}", unreadNotifications.length.toString())}
             </button>
             <button
               className={`tab ${activeTab === "read" ? "tab-active" : ""}`}
               onClick={() => setActiveTab("read")}
             >
-              Read ({readNotifications.length})
+              {t("read_count", "Read ({count})").replace("{count}", readNotifications.length.toString())}
             </button>
           </div>
 
@@ -82,15 +84,15 @@ const Notifications: React.FC = () => {
                   <div className="text-6xl text-base-content/20 mb-4">🔔</div>
                   <h3 className="text-xl font-semibold text-base-content/70 mb-2">
                     {isError
-                      ? "Failed to load notifications"
+                      ? t("failed_load_notif", "Failed to load notifications")
                       : activeTab === "unread"
-                      ? "No unread notifications"
-                      : "No read notifications"}
+                      ? t("no_unread_notif", "No unread notifications")
+                      : t("no_read_notif", "No read notifications")}
                   </h3>
                   <p className="text-base-content/50">
                     {isError
-                      ? "There was a problem fetching your notifications. Try again later."
-                      : "You're all caught up."}
+                      ? t("error_fetching_notif", "There was a problem fetching your notifications. Try again later.")
+                      : t("all_caught_up", "You're all caught up.")}
                   </p>
                 </div>
               ) : (
@@ -127,7 +129,7 @@ const Notifications: React.FC = () => {
                           {markRead.loading ? (
                             <span className="loading loading-spinner loading-xs"></span>
                           ) : (
-                            "Mark read"
+                            t("mark_read", "Mark read")
                           )}
                         </button>
                       )}

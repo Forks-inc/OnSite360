@@ -1,54 +1,40 @@
-# React + TypeScript + Vite
+# OnSite360 Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The OnSite360 web client: an installable PWA built with **React 19**, **Vite**, and **TypeScript**. It consumes the [OnSite360 API](../backend/README.md) and provides the project management, scheduling, document, communication, and field-reporting interfaces.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** + **TypeScript** + **Vite 6**
+- **Tailwind CSS 4** + **DaisyUI** for styling
+- **Zustand** for client state, **React Query** for server state
+- **React Router 7** for routing
+- **Axios** API client with auth interceptors
+- **Chart.js**, **Frappe Gantt**, **Leaflet**, **React Big Calendar** for data visualization
+- **vite-plugin-pwa** for offline/installable support
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+cp .env.example .env     # set VITE_API_URL
+npm install
+npm run dev              # http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start the dev server with HMR |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run ESLint |
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Configuration
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Base URL of the backend API (e.g. `http://localhost:3000/v1`) |
+
+## Project Structure
+
+See [src/README.md](src/README.md) for a breakdown of the source tree.

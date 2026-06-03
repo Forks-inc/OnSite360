@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
+import { useTranslation } from "../hooks/useTranslation";
 
 // Register ChartJS components
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -41,6 +42,7 @@ interface UserActivityMetrics {
 }
 
 const SystemLogs = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("server_logs");
   const [logs, setLogs] = useState<ServerLog[]>([]);
   const [systemMetrics, setSystemMetrics] = useState<SystemMetrics | null>(null);
@@ -61,35 +63,35 @@ const SystemLogs = () => {
           timestamp: '2023-07-12T14:32:15Z', 
           level: 'info', 
           source: 'auth-service',
-          message: 'User authenticated successfully'
+          message: t("log_msg_auth_success", "User authenticated successfully")
         },
         { 
           id: '2', 
           timestamp: '2023-07-12T14:35:22Z', 
           level: 'warning', 
           source: 'file-service',
-          message: 'Storage space running low (15% remaining)'
+          message: t("log_msg_storage_low", "Storage space running low (15% remaining)")
         },
         { 
           id: '3', 
           timestamp: '2023-07-12T15:12:08Z', 
           level: 'error', 
           source: 'db-service',
-          message: 'Database connection timeout after 30s'
+          message: t("log_msg_db_timeout", "Database connection timeout after 30s")
         },
         { 
           id: '4', 
           timestamp: '2023-07-12T15:14:45Z', 
           level: 'critical', 
           source: 'api-gateway',
-          message: 'Service unavailable - unable to process requests'
+          message: t("log_msg_service_unavailable", "Service unavailable - unable to process requests")
         },
         { 
           id: '5', 
           timestamp: '2023-07-12T15:18:32Z', 
           level: 'info', 
           source: 'monitoring',
-          message: 'Daily system health check completed'
+          message: t("log_msg_health_check_complete", "Daily system health check completed")
         },
       ]);
 
@@ -124,7 +126,7 @@ const SystemLogs = () => {
 
       setIsLoading(false);
     }, 1000);
-  }, []);
+  }, [t]);
 
   // Format uptime from seconds to days, hours, minutes
   const formatUptime = (seconds: number) => {
@@ -162,7 +164,7 @@ const SystemLogs = () => {
 
   // Chart data for disk usage
   const diskUsageData = {
-    labels: ['Used Space', 'Free Space'],
+    labels: [t("used_space", "Used Space"), t("free_space", "Free Space")],
     datasets: [
       {
         data: systemMetrics ? [systemMetrics.diskSpace.used, systemMetrics.diskSpace.free] : [0, 0],
@@ -177,7 +179,7 @@ const SystemLogs = () => {
 
   // Chart data for user metrics
   const userMetricsData = {
-    labels: ['Active Users', 'Inactive Users'],
+    labels: [t("active", "Active"), t("inactive", "Inactive")],
     datasets: [
       {
         data: userMetrics ? [userMetrics.activeUsers, userMetrics.totalUsers - userMetrics.activeUsers] : [0, 0],
@@ -192,10 +194,10 @@ const SystemLogs = () => {
 
   // System resource usage chart
   const systemResourceData = {
-    labels: ['CPU', 'Memory'],
+    labels: [t("cpu_usage", "CPU Usage"), t("memory_usage", "Memory Usage")],
     datasets: [
       {
-        label: 'Usage %',
+        label: t("usage_percent", "Usage %"),
         data: systemMetrics ? [systemMetrics.cpuUsage, systemMetrics.memoryUsage] : [0, 0],
         backgroundColor: 'rgba(153, 102, 255, 0.6)',
       },
@@ -204,9 +206,9 @@ const SystemLogs = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-1">System Logs & Monitoring</h1>
+      <h1 className="text-3xl font-bold mb-1">{t("system_logs_monitoring_title", "System Logs & Monitoring")}</h1>
       <p className="text-gray-500 mb-6">
-        View system performance, logs, and metrics for troubleshooting and monitoring
+        {t("system_logs_monitoring_subtitle", "View system performance, logs, and metrics for troubleshooting and monitoring")}
       </p>
 
       {/* Tabs navigation */}
@@ -215,7 +217,7 @@ const SystemLogs = () => {
           type="radio"
           name="system_logs_tab_group"
           className="tab"
-          aria-label="Server Logs"
+          aria-label={t("server_logs", "Server Logs")}
           checked={activeTab === "server_logs"}
           onChange={() => setActiveTab("server_logs")}
         />
@@ -223,40 +225,40 @@ const SystemLogs = () => {
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Server Logs</h2>
+                <h2 className="text-2xl font-bold">{t("server_logs", "Server Logs")}</h2>
                 <div className="flex gap-2">
                   <select 
                     className="select select-bordered select-sm"
                     value={logLevel}
                     onChange={(e) => setLogLevel(e.target.value)}
                   >
-                    <option value="all">All Levels</option>
-                    <option value="info">Info</option>
-                    <option value="warning">Warning</option>
-                    <option value="error">Error</option>
-                    <option value="critical">Critical</option>
+                    <option value="all">{t("all_levels", "All Levels")}</option>
+                    <option value="info">{t("info", "Info")}</option>
+                    <option value="warning">{t("warning", "Warning")}</option>
+                    <option value="error">{t("error", "Error")}</option>
+                    <option value="critical">{t("critical", "Critical")}</option>
                   </select>
                   <select 
                     className="select select-bordered select-sm"
                     value={timeRange}
                     onChange={(e) => setTimeRange(e.target.value)}
                   >
-                    <option value="1h">Last Hour</option>
-                    <option value="24h">Last 24 Hours</option>
-                    <option value="7d">Last 7 Days</option>
-                    <option value="30d">Last 30 Days</option>
+                    <option value="1h">{t("last_hour", "Last Hour")}</option>
+                    <option value="24h">{t("last_24_hours", "Last 24 Hours")}</option>
+                    <option value="7d">{t("last_7_days", "Last 7 Days")}</option>
+                    <option value="30d">{t("last_30_days", "Last 30 Days")}</option>
                   </select>
                   <button className="btn btn-sm btn-outline">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    Export
+                    {t("export", "Export")}
                   </button>
                   <button className="btn btn-sm btn-outline">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Refresh
+                    {t("refresh", "Refresh")}
                   </button>
                 </div>
               </div>
@@ -270,10 +272,10 @@ const SystemLogs = () => {
                   <table className="table table-zebra w-full">
                     <thead>
                       <tr>
-                        <th>Timestamp</th>
-                        <th>Level</th>
-                        <th>Source</th>
-                        <th>Message</th>
+                        <th>{t("timestamp", "Timestamp")}</th>
+                        <th>{t("log_level", "Level")}</th>
+                        <th>{t("source", "Source")}</th>
+                        <th>{t("message", "Message")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -282,7 +284,7 @@ const SystemLogs = () => {
                           <td className="whitespace-nowrap">{formatTimestamp(log.timestamp)}</td>
                           <td>
                             <span className={`badge ${getLogLevelBadge(log.level)} badge-sm`}>
-                              {log.level.toUpperCase()}
+                              {t(log.level, log.level).toUpperCase()}
                             </span>
                           </td>
                           <td>{log.source}</td>
@@ -294,13 +296,15 @@ const SystemLogs = () => {
                 </div>
               ) : (
                 <div className="text-center py-10 text-gray-500">
-                  No logs found matching your filter criteria.
+                  {t("no_logs_found_matching", "No logs found matching your filter criteria.")}
                 </div>
               )}
 
               <div className="flex justify-between items-center mt-4">
                 <div className="text-sm text-gray-500">
-                  Showing {filteredLogs.length} of {logs.length} logs
+                  {t("showing_logs_count", "Showing {count} of {total} logs")
+                    .replace("{count}", filteredLogs.length.toString())
+                    .replace("{total}", logs.length.toString())}
                 </div>
                 <div className="join">
                   <button className="join-item btn btn-sm">«</button>
@@ -318,14 +322,14 @@ const SystemLogs = () => {
           type="radio"
           name="system_logs_tab_group"
           className="tab"
-          aria-label="System Health"
+          aria-label={t("system_health", "System Health")}
           checked={activeTab === "system_health"}
           onChange={() => setActiveTab("system_health")}
         />
         {activeTab === "system_health" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-              <h2 className="text-2xl font-bold mb-6">System Health & Performance</h2>
+              <h2 className="text-2xl font-bold mb-6">{t("system_health_performance", "System Health & Performance")}</h2>
               
               {isLoading ? (
                 <div className="flex justify-center py-10">
@@ -335,10 +339,10 @@ const SystemLogs = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* System Overview Stats */}
                   <div className="bg-base-100 p-4 rounded-xl">
-                    <h3 className="text-lg font-bold mb-3">System Overview</h3>
+                    <h3 className="text-lg font-bold mb-3">{t("system_health", "System Health")}</h3>
                     <div className="stats stats-vertical shadow w-full">
                       <div className="stat">
-                        <div className="stat-title">CPU Usage</div>
+                        <div className="stat-title">{t("cpu_usage", "CPU Usage")}</div>
                         <div className="stat-value">{systemMetrics.cpuUsage}%</div>
                         <div className="stat-desc">
                           <progress 
@@ -350,7 +354,7 @@ const SystemLogs = () => {
                       </div>
                       
                       <div className="stat">
-                        <div className="stat-title">Memory Usage</div>
+                        <div className="stat-title">{t("memory_usage", "Memory Usage")}</div>
                         <div className="stat-value">{systemMetrics.memoryUsage}%</div>
                         <div className="stat-desc">
                           <progress 
@@ -362,7 +366,7 @@ const SystemLogs = () => {
                       </div>
                       
                       <div className="stat">
-                        <div className="stat-title">System Uptime</div>
+                        <div className="stat-title">{t("system_uptime", "System Uptime")}</div>
                         <div className="stat-value text-lg">{formatUptime(systemMetrics.uptime)}</div>
                       </div>
                     </div>
@@ -370,21 +374,21 @@ const SystemLogs = () => {
 
                   {/* Disk Usage */}
                   <div className="bg-base-100 p-4 rounded-xl flex flex-col">
-                    <h3 className="text-lg font-bold mb-3">Disk Usage</h3>
+                    <h3 className="text-lg font-bold mb-3">{t("disk_usage", "Disk Usage")}</h3>
                     <div className="flex-1 flex flex-col items-center justify-center">
                       <div style={{ width: '180px', height: '180px' }}>
                         <Pie data={diskUsageData} />
                       </div>
                       <div className="stats shadow mt-3 w-full">
                         <div className="stat">
-                          <div className="stat-title">Total Space</div>
+                          <div className="stat-title">{t("total_space", "Total Space")}</div>
                           <div className="stat-value text-lg">{systemMetrics.diskSpace.total} GB</div>
                         </div>
                         <div className="stat">
-                          <div className="stat-title">Used Space</div>
+                          <div className="stat-title">{t("used_space_gb", "Used Space")}</div>
                           <div className="stat-value text-lg">{systemMetrics.diskSpace.used} GB</div>
                           <div className="stat-desc">
-                            {Math.round((systemMetrics.diskSpace.used / systemMetrics.diskSpace.total) * 100)}% used
+                            {t("percent_used", "{percent}% used").replace("{percent}", Math.round((systemMetrics.diskSpace.used / systemMetrics.diskSpace.total) * 100).toString())}
                           </div>
                         </div>
                       </div>
@@ -393,7 +397,7 @@ const SystemLogs = () => {
 
                   {/* Resource Usage Over Time */}
                   <div className="bg-base-100 p-4 rounded-xl md:col-span-2">
-                    <h3 className="text-lg font-bold mb-3">Resource Usage</h3>
+                    <h3 className="text-lg font-bold mb-3">{t("resource_usage", "Resource Usage")}</h3>
                     <Bar 
                       data={systemResourceData}
                       options={{
@@ -403,14 +407,14 @@ const SystemLogs = () => {
                             max: 100,
                             title: {
                               display: true,
-                              text: 'Usage %'
+                              text: t("usage_percent", "Usage %")
                             }
                           }
                         },
                         plugins: {
                           title: {
                             display: true,
-                            text: 'Current System Resource Usage'
+                            text: t("current_resource_usage", "Current System Resource Usage")
                           }
                         }
                       }}
@@ -419,7 +423,7 @@ const SystemLogs = () => {
                 </div>
               ) : (
                 <div className="text-center py-10 text-gray-500">
-                  No system metrics available. Please check your monitoring service.
+                  {t("no_system_metrics", "No system metrics available. Please check your monitoring service.")}
                 </div>
               )}
             </div>
@@ -430,14 +434,14 @@ const SystemLogs = () => {
           type="radio"
           name="system_logs_tab_group"
           className="tab"
-          aria-label="Database"
+          aria-label={t("database", "Database")}
           checked={activeTab === "database"}
           onChange={() => setActiveTab("database")}
         />
         {activeTab === "database" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-              <h2 className="text-2xl font-bold mb-6">Database Metrics</h2>
+              <h2 className="text-2xl font-bold mb-6">{t("database_metrics", "Database Metrics")}</h2>
               
               {isLoading ? (
                 <div className="flex justify-center py-10">
@@ -447,82 +451,82 @@ const SystemLogs = () => {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div className="stat bg-base-100 rounded-xl shadow">
-                      <div className="stat-title">Active Connections</div>
+                      <div className="stat-title">{t("active_connections", "Active Connections")}</div>
                       <div className="stat-value">{dbMetrics.connections}</div>
                     </div>
                     <div className="stat bg-base-100 rounded-xl shadow">
-                      <div className="stat-title">Avg Query Time</div>
+                      <div className="stat-title">{t("avg_query_time", "Avg Query Time")}</div>
                       <div className="stat-value">{dbMetrics.queryResponseTime}s</div>
                     </div>
                     <div className="stat bg-base-100 rounded-xl shadow">
-                      <div className="stat-title">Database Size</div>
+                      <div className="stat-title">{t("database_size", "Database Size")}</div>
                       <div className="stat-value">{dbMetrics.size} GB</div>
                     </div>
                     <div className="stat bg-base-100 rounded-xl shadow">
-                      <div className="stat-title">Total Tables</div>
+                      <div className="stat-title">{t("total_tables", "Total Tables")}</div>
                       <div className="stat-value">{dbMetrics.tables}</div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-base-100 p-4 rounded-xl">
-                      <h3 className="text-lg font-bold mb-3">Backup Status</h3>
+                      <h3 className="text-lg font-bold mb-3">{t("backup_status", "Backup Status")}</h3>
                       <div className="overflow-x-auto">
                         <table className="table w-full">
                           <tbody>
                             <tr>
-                              <td className="font-medium">Last Backup</td>
+                              <td className="font-medium">{t("last_backup", "Last Backup")}</td>
                               <td>{new Date(dbMetrics.lastBackup).toLocaleString()}</td>
                             </tr>
                             <tr>
-                              <td className="font-medium">Backup Status</td>
-                              <td><span className="badge badge-success">Successful</span></td>
+                              <td className="font-medium">{t("backup_status", "Backup Status")}</td>
+                              <td><span className="badge badge-success">{t("successful", "Successful")}</span></td>
                             </tr>
                             <tr>
-                              <td className="font-medium">Backup Size</td>
+                              <td className="font-medium">{t("backup_size", "Backup Size")}</td>
                               <td>3.8 GB</td>
                             </tr>
                             <tr>
-                              <td className="font-medium">Backup Retention</td>
+                              <td className="font-medium">{t("backup_retention", "Backup Retention")}</td>
                               <td>30 days</td>
                             </tr>
                           </tbody>
                         </table>
                       </div>
-                      <button className="btn btn-sm btn-primary mt-4">Run Manual Backup</button>
+                      <button className="btn btn-sm btn-primary mt-4">{t("run_manual_backup", "Run Manual Backup")}</button>
                     </div>
 
                     <div className="bg-base-100 p-4 rounded-xl">
-                      <h3 className="text-lg font-bold mb-3">Recent Database Operations</h3>
+                      <h3 className="text-lg font-bold mb-3">{t("recent_db_operations", "Recent Database Operations")}</h3>
                       <div className="overflow-x-auto">
                         <table className="table w-full">
                           <thead>
                             <tr>
-                              <th>Time</th>
-                              <th>Operation</th>
-                              <th>Status</th>
+                              <th>{t("time", "Time")}</th>
+                              <th>{t("operation", "Operation")}</th>
+                              <th>{t("status", "Status")}</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
                               <td>10:32 AM</td>
-                              <td>Index Rebuild</td>
-                              <td><span className="badge badge-success">Completed</span></td>
+                              <td>{t("index_rebuild", "Index Rebuild")}</td>
+                              <td><span className="badge badge-success">{t("completed", "Completed")}</span></td>
                             </tr>
                             <tr>
                               <td>09:15 AM</td>
-                              <td>Schema Update</td>
-                              <td><span className="badge badge-success">Completed</span></td>
+                              <td>{t("schema_update", "Schema Update")}</td>
+                              <td><span className="badge badge-success">{t("completed", "Completed")}</span></td>
                             </tr>
                             <tr>
                               <td>08:05 AM</td>
-                              <td>Scheduled Backup</td>
-                              <td><span className="badge badge-success">Completed</span></td>
+                              <td>{t("scheduled_backup", "Scheduled Backup")}</td>
+                              <td><span className="badge badge-success">{t("completed", "Completed")}</span></td>
                             </tr>
                             <tr>
                               <td>Yesterday 11:42 PM</td>
-                              <td>Vacuum Full</td>
-                              <td><span className="badge badge-success">Completed</span></td>
+                              <td>{t("vacuum_full", "Vacuum Full")}</td>
+                              <td><span className="badge badge-success">{t("completed", "Completed")}</span></td>
                             </tr>
                           </tbody>
                         </table>
@@ -532,7 +536,7 @@ const SystemLogs = () => {
                 </>
               ) : (
                 <div className="text-center py-10 text-gray-500">
-                  No database metrics available. Please check your database connection.
+                  {t("no_database_metrics", "No database metrics available. Please check your database connection.")}
                 </div>
               )}
             </div>
@@ -543,14 +547,14 @@ const SystemLogs = () => {
           type="radio"
           name="system_logs_tab_group"
           className="tab"
-          aria-label="User Activity"
+          aria-label={t("user_activity", "User Activity")}
           checked={activeTab === "user_activity"}
           onChange={() => setActiveTab("user_activity")}
         />
         {activeTab === "user_activity" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-              <h2 className="text-2xl font-bold mb-6">User Activity Monitoring</h2>
+              <h2 className="text-2xl font-bold mb-6">{t("user_activity_monitoring", "User Activity Monitoring")}</h2>
               
               {isLoading ? (
                 <div className="flex justify-center py-10">
@@ -559,33 +563,33 @@ const SystemLogs = () => {
               ) : userMetrics ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-base-100 p-4 rounded-xl">
-                    <h3 className="text-lg font-bold mb-3">User Statistics</h3>
+                    <h3 className="text-lg font-bold mb-3">{t("user_statistics", "User Statistics")}</h3>
                     <div className="stats stats-vertical shadow w-full">
                       <div className="stat">
-                        <div className="stat-title">Total Registered Users</div>
+                        <div className="stat-title">{t("total_registered_users", "Total Registered Users")}</div>
                         <div className="stat-value">{userMetrics.totalUsers}</div>
                       </div>
                       <div className="stat">
-                        <div className="stat-title">Currently Active Users</div>
+                        <div className="stat-title">{t("currently_active_users", "Currently Active Users")}</div>
                         <div className="stat-value">{userMetrics.activeUsers}</div>
-                        <div className="stat-desc">{Math.round((userMetrics.activeUsers / userMetrics.totalUsers) * 100)}% of total users</div>
+                        <div className="stat-desc">{t("percent_of_total_users", "{percent}% of total users").replace("{percent}", Math.round((userMetrics.activeUsers / userMetrics.totalUsers) * 100).toString())}</div>
                       </div>
                       <div className="stat">
-                        <div className="stat-title">New Users Today</div>
+                        <div className="stat-title">{t("new_users_today", "New Users Today")}</div>
                         <div className="stat-value">{userMetrics.newUsersToday}</div>
                       </div>
                     </div>
                   </div>
 
                   <div className="bg-base-100 p-4 rounded-xl flex flex-col">
-                    <h3 className="text-lg font-bold mb-3">User Activity Distribution</h3>
+                    <h3 className="text-lg font-bold mb-3">{t("user_activity_distribution", "User Activity Distribution")}</h3>
                     <div className="flex-1 flex flex-col items-center justify-center">
                       <div style={{ width: '180px', height: '180px' }}>
                         <Pie data={userMetricsData} />
                       </div>
                       <div className="stats shadow mt-3 w-full">
                         <div className="stat">
-                          <div className="stat-title">Active Sessions</div>
+                          <div className="stat-title">{t("active_sessions", "Active Sessions")}</div>
                           <div className="stat-value">{userMetrics.activeSessionsCount}</div>
                         </div>
                       </div>
@@ -593,15 +597,15 @@ const SystemLogs = () => {
                   </div>
 
                   <div className="bg-base-100 p-4 rounded-xl md:col-span-2">
-                    <h3 className="text-lg font-bold mb-3">Recent Login Activity</h3>
+                    <h3 className="text-lg font-bold mb-3">{t("recent_login_activity", "Recent Login Activity")}</h3>
                     <div className="overflow-x-auto">
                       <table className="table w-full">
                         <thead>
                           <tr>
-                            <th>Time</th>
-                            <th>User</th>
-                            <th>IP Address</th>
-                            <th>Status</th>
+                            <th>{t("time", "Time")}</th>
+                            <th>{t("user", "User")}</th>
+                            <th>{t("ip_address", "IP Address")}</th>
+                            <th>{t("status", "Status")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -609,31 +613,31 @@ const SystemLogs = () => {
                             <td>10:45 AM</td>
                             <td>john.doe@example.com</td>
                             <td>192.168.1.105</td>
-                            <td><span className="badge badge-success">Success</span></td>
+                            <td><span className="badge badge-success">{t("success", "Success")}</span></td>
                           </tr>
                           <tr>
                             <td>10:32 AM</td>
                             <td>sarah.smith@example.com</td>
                             <td>192.168.1.127</td>
-                            <td><span className="badge badge-success">Success</span></td>
+                            <td><span className="badge badge-success">{t("success", "Success")}</span></td>
                           </tr>
                           <tr>
                             <td>10:15 AM</td>
                             <td>unknown@example.com</td>
                             <td>45.238.12.72</td>
-                            <td><span className="badge badge-error">Failed</span></td>
+                            <td><span className="badge badge-error">{t("failed", "Failed")}</span></td>
                           </tr>
                           <tr>
                             <td>09:58 AM</td>
                             <td>michael.brown@example.com</td>
                             <td>192.168.1.114</td>
-                            <td><span className="badge badge-success">Success</span></td>
+                            <td><span className="badge badge-success">{t("success", "Success")}</span></td>
                           </tr>
                           <tr>
                             <td>09:42 AM</td>
                             <td>emily.jones@example.com</td>
                             <td>192.168.1.132</td>
-                            <td><span className="badge badge-success">Success</span></td>
+                            <td><span className="badge badge-success">{t("success", "Success")}</span></td>
                           </tr>
                         </tbody>
                       </table>
@@ -642,7 +646,7 @@ const SystemLogs = () => {
                 </div>
               ) : (
                 <div className="text-center py-10 text-gray-500">
-                  No user activity metrics available.
+                  {t("no_user_activity_metrics", "No user activity metrics available.")}
                 </div>
               )}
             </div>

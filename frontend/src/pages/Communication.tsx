@@ -20,6 +20,7 @@ import {
 import { type Project } from "../hooks/useProjects";
 import { useUsers, useUserProjects } from "../hooks/useUsers";
 import { useAuthStore } from "../stores/useAuthStore";
+import { useTranslation } from "../hooks/useTranslation";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -52,6 +53,7 @@ ChartJS.register(
 );
 
 const Communication = () => {
+  const { t } = useTranslation();
   // Auth store
   const { user: currentUser } = useAuthStore();
 
@@ -210,10 +212,10 @@ const Communication = () => {
   };
 
   const rfiPriorityChartData = {
-    labels: ["Low", "Medium", "High", "Critical"],
+    labels: [t("low", "Low"), t("medium", "Medium"), t("high", "High"), t("critical", "Critical")],
     datasets: [
       {
-        label: "RFIs by Priority",
+        label: t("rfis_by_priority", "RFIs by Priority"),
         data: [
           analyticsData.rfisByPriority.Low || 0,
           analyticsData.rfisByPriority.Medium || 0,
@@ -230,7 +232,7 @@ const Communication = () => {
     labels: Object.keys(analyticsData.threadsByProject).slice(0, 5), // Top 5 projects
     datasets: [
       {
-        label: "Threads",
+        label: t("threads_tab", "Threads"),
         data: Object.values(analyticsData.threadsByProject).slice(0, 5),
         borderColor: "#3b82f6",
         backgroundColor: "rgba(59, 130, 246, 0.1)",
@@ -554,9 +556,9 @@ const Communication = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-1">Communication</h1>
+      <h1 className="text-3xl font-bold mb-1">{t("communication", "Communication")}</h1>
       <p className="text-gray-500 mb-6">
-        Team discussions, RFIs, and analytics dashboard
+        {t("communication_subtitle", "Team discussions, RFIs, and analytics dashboard")}
       </p>
 
       {/* Tabs navigation */}
@@ -565,7 +567,7 @@ const Communication = () => {
           type="radio"
           name="comm_tab_group"
           className="tab"
-          aria-label="Threads"
+          aria-label={t("threads_tab", "Threads")}
           checked={activeTab === "threads"}
           onChange={() => setActiveTab("threads")}
         />
@@ -574,16 +576,16 @@ const Communication = () => {
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
               <div className="flex justify-between items-center mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold">Discussion Threads</h2>
+                  <h2 className="text-2xl font-bold">{t("discussion_threads", "Discussion Threads")}</h2>
                   <p className="text-neutral-500">
-                    Group conversations and project discussions
+                    {t("discussion_threads_desc", "Group conversations and project discussions")}
                   </p>
                 </div>
                 <button
                   className="btn btn-primary"
                   onClick={() => setShowCreateThreadModal(true)}
                 >
-                  + New Thread
+                  + {t("new_thread", "New Thread")}
                 </button>
               </div>
 
@@ -593,11 +595,11 @@ const Communication = () => {
                 </div>
               ) : threadsError ? (
                 <div className="text-center py-8 text-error">
-                  Failed to load threads. Please try again.
+                  {t("failed_load_threads", "Failed to load threads. Please try again.")}
                 </div>
               ) : threads.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No threads found. Create your first thread to get started.
+                  {t("no_threads_found", "No threads found. Create your first thread to get started.")}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -624,11 +626,11 @@ const Communication = () => {
                         )}
                         <div className="flex items-center flex-wrap gap-2">
                           <span className="text-xs text-accent">
-                            Created:{" "}
+                            {t("created", "Created")}:{" "}
                             {new Date(thread.createdAt).toLocaleString()}
                           </span>
                           <span className="text-xs badge badge-success text-base-200 font-medium">
-                            Participants: {thread.users.length}
+                            {t("participants", "Participants")}: {thread.users.length}
                           </span>
                         </div>
                       </div>
@@ -637,13 +639,13 @@ const Communication = () => {
                           className="btn btn-primary btn-sm"
                           onClick={() => handleSelectThread(thread)}
                         >
-                          Join Chat
+                          {t("join_chat", "Join Chat")}
                         </button>
                         <button
                           className="btn btn-soft btn-sm"
                           onClick={() => handleEditThread(thread)}
                         >
-                          Edit
+                          {t("edit", "Edit")}
                         </button>
                       </div>
                     </div>
@@ -658,7 +660,7 @@ const Communication = () => {
           type="radio"
           name="comm_tab_group"
           className="tab"
-          aria-label="Chat"
+          aria-label={t("chat_tab", "Chat")}
           checked={activeTab === "chat"}
           onChange={() => setActiveTab("chat")}
         />
@@ -668,12 +670,12 @@ const Communication = () => {
               {/* Left Sidebar: Threads List */}
               <div className="w-full lg:w-80 flex flex-col bg-base-200 border border-base-300 rounded-2xl overflow-hidden shrink-0">
                 <div className="p-4 border-b border-base-300 bg-base-300/40 flex justify-between items-center">
-                  <h3 className="font-bold text-lg text-base-content">Chats</h3>
+                  <h3 className="font-bold text-lg text-base-content">{t("chats_heading", "Chats")}</h3>
                   <button
                     className="btn btn-primary btn-xs"
                     onClick={() => setShowCreateThreadModal(true)}
                   >
-                    + New Thread
+                    + {t("new_thread", "New Thread")}
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -683,7 +685,7 @@ const Communication = () => {
                     </div>
                   ) : threads.length === 0 ? (
                     <div className="text-center py-8 text-gray-500 text-sm">
-                      No chats available
+                      {t("no_chats_available", "No chats available")}
                     </div>
                   ) : (
                     threads.map((thread) => {
@@ -734,7 +736,7 @@ const Communication = () => {
                     }`}
                   >
                     <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-lg font-bold">Thread Information</h2>
+                      <h2 className="text-lg font-bold">{t("thread_information", "Thread Information")}</h2>
                       <button
                         className="btn btn-circle btn-sm"
                         onClick={() => setShowThreadInfo(false)}
@@ -753,25 +755,25 @@ const Communication = () => {
                         
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
-                            <span className="font-medium">Type:</span>
-                            <span>General</span>
+                            <span className="font-medium">{t("type", "Type")}:</span>
+                            <span>{t("general", "General")}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">Status:</span>
+                            <span className="font-medium">{t("status", "Status")}:</span>
                             <span className="badge badge-sm badge-success">
-                              Active
+                              {t("active", "Active")}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">Privacy:</span>
-                            <span>Public</span>
+                            <span className="font-medium">{t("privacy", "Privacy")}:</span>
+                            <span>{t("public", "Public")}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">Messages:</span>
+                            <span className="font-medium">{t("messages", "Messages")}:</span>
                             <span>{messages.length}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="font-medium">Created:</span>
+                            <span className="font-medium">{t("created", "Created")}:</span>
                             <span>{new Date(selectedThread.createdAt).toLocaleDateString()}</span>
                           </div>
                         </div>
@@ -780,14 +782,14 @@ const Communication = () => {
                       {/* Project Info */}
                       {selectedThread.project && (
                         <div className="bg-base-100 p-4 rounded-xl">
-                          <h4 className="font-bold mb-2">Project</h4>
+                          <h4 className="font-bold mb-2">{t("project", "Project")}</h4>
                           <p className="text-sm">{selectedThread.project.name}</p>
                         </div>
                       )}
 
                       {/* Participants */}
                       <div className="bg-base-100 p-4 rounded-xl">
-                        <h4 className="font-bold mb-2">Participants ({selectedThread.users.length})</h4>
+                        <h4 className="font-bold mb-2">{t("participants", "Participants")} ({selectedThread.users.length})</h4>
                         <div className="space-y-2">
                           {selectedThread.users.map((user) => (
                             <div key={user.id} className="flex items-center gap-2">
@@ -816,26 +818,26 @@ const Communication = () => {
                             <button
                               className="text-lg sm:text-xl font-bold hover:underline cursor-pointer text-left truncate block w-full"
                               onClick={() => setShowThreadInfo(!showThreadInfo)}
-                              title="Click to view thread information"
+                              title={t("click_thread_info", "Click to view thread information")}
                             >
                               {selectedThread.title}
                             </button>
                             <p className="text-xs sm:text-sm truncate">
-                              Participants:{" "}
+                              {t("participants", "Participants")}:{" "}
                               <span className="hidden sm:inline">
                                 {selectedThread.users
                                   .map((u) => `${u.firstName} ${u.lastName}`)
                                   .join(", ")}
                               </span>
                               <span className="sm:hidden">
-                                {selectedThread.users.length} member{selectedThread.users.length !== 1 ? 's' : ''}
+                                {selectedThread.users.length} {t("members", "members")}
                               </span>
                             </p>
                           </div>
                           <button
                             className="btn btn-ghost btn-circle btn-sm shrink-0"
                             onClick={() => setShowThreadInfo(!showThreadInfo)}
-                            title="Thread Information"
+                            title={t("thread_information", "Thread Information")}
                           >
                             <IoInformationCircle size={20} />
                           </button>
@@ -845,8 +847,8 @@ const Communication = () => {
                             className="btn btn-active btn-sm sm:btn-md w-full sm:w-auto"
                             onClick={() => setActiveTab("threads")}
                           >
-                            <span className="hidden sm:inline">All Threads</span>
-                            <span className="sm:hidden">Threads</span>
+                            <span className="hidden sm:inline">{t("all_threads", "All Threads")}</span>
+                            <span className="sm:hidden">{t("threads_tab", "Threads")}</span>
                           </button>
                         </div>
                       </div>
@@ -856,7 +858,7 @@ const Communication = () => {
                     {selectedThreadRFIs.length > 0 && (
                       <div className="bg-base-300 p-4 border-b border-base-300 shrink-0">
                         <h3 className="text-sm font-semibold text-gray-600 mb-2">
-                          Related RFIs ({selectedThreadRFIs.length})
+                          {t("related_rfis", "Related RFIs")} ({selectedThreadRFIs.length})
                         </h3>
                         <div className="space-y-2">
                           {selectedThreadRFIs.map((rfi) => (
@@ -878,7 +880,7 @@ const Communication = () => {
                                         rfi.status
                                       )}`}
                                     >
-                                      {rfi.status}
+                                      {t(rfi.status.toLowerCase().replace(" ", "_"), rfi.status)}
                                     </span>
                                   )}
                                   {rfi.priority && (
@@ -887,7 +889,7 @@ const Communication = () => {
                                         rfi.priority
                                       )}`}
                                     >
-                                      {rfi.priority}
+                                      {t(rfi.priority.toLowerCase(), rfi.priority)}
                                     </span>
                                   )}
                                 </div>
@@ -896,7 +898,7 @@ const Communication = () => {
                                 className="btn btn-xs btn-outline"
                                 onClick={() => setActiveTab("rfis")}
                               >
-                                View RFI
+                                {t("view_rfi", "View RFI")}
                               </button>
                             </div>
                           ))}
@@ -907,7 +909,7 @@ const Communication = () => {
                     <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
                       {messages.length === 0 ? (
                         <div className="text-center text-gray-500 py-8">
-                          No messages yet. Start the conversation!
+                          {t("no_messages_yet", "No messages yet. Start the conversation!")}
                         </div>
                       ) : (
                         messages.map((message) => {
@@ -969,14 +971,14 @@ const Communication = () => {
                       <div className="px-3 sm:px-4 py-2 bg-base-200 border-t border-base-300 shrink-0">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium text-gray-600">
-                            {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
+                            {selectedFiles.length} {t("files_selected", "files selected")}
                           </span>
                           <button
                             type="button"
                             onClick={() => setSelectedFiles([])}
                             className="btn btn-ghost btn-xs"
                           >
-                            Clear all
+                            {t("clear_all", "Clear all")}
                           </button>
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -1015,7 +1017,7 @@ const Communication = () => {
                             type="button"
                             className="btn btn-ghost btn-circle btn-sm sm:btn-md bg-base-200 rounded-full p-1"
                             onClick={handleFileUpload}
-                            title="Upload Documents"
+                            title={t("upload_documents", "Upload Documents")}
                           >
                             <div className="flex items-center justify-center">
                               <IoAttach size={18} />
@@ -1025,7 +1027,7 @@ const Communication = () => {
                             type="button"
                             className="btn btn-ghost btn-circle btn-sm sm:btn-md bg-base-200 rounded-full p-1"
                             onClick={handleCameraCapture}
-                            title="Take Photo"
+                            title={t("take_photo", "Take Photo")}
                           >
                             <div className="flex items-center justify-center">
                               <IoCamera size={18} />
@@ -1035,7 +1037,7 @@ const Communication = () => {
                         <input
                           type="text"
                           className="input input-bordered input-sm sm:input-md flex-1"
-                          placeholder="Type your message..."
+                          placeholder={t("type_message_placeholder", "Type your message...")}
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                           disabled={sendMessageMutation.isPending || sendMessageWithAttachmentsMutation.isPending}
@@ -1052,7 +1054,7 @@ const Communication = () => {
                           {(sendMessageMutation.isPending || sendMessageWithAttachmentsMutation.isPending) ? (
                             <span className="loading loading-spinner loading-sm"></span>
                           ) : (
-                            <span className="hidden sm:inline">Send</span>
+                            <span className="hidden sm:inline">{t("send", "Send")}</span>
                           )}
                           <span className="sm:hidden">📤</span>
                         </button>
@@ -1079,15 +1081,15 @@ const Communication = () => {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">Welcome to ONE-365 Chat</h3>
+                  <h3 className="text-xl font-bold mb-2">{t("welcome_chat_title", "Welcome to ONE-365 Chat")}</h3>
                   <p className="text-gray-500 max-w-md mb-6 text-sm">
-                    Select a conversation thread from the sidebar on the left to start chatting with your team, or click the button below to create a new thread.
+                    {t("welcome_chat_desc", "Select a conversation thread from the sidebar on the left to start chatting with your team, or click the button below to create a new thread.")}
                   </p>
                   <button
                     className="btn btn-primary"
                     onClick={() => setShowCreateThreadModal(true)}
                   >
-                    + Start a New Thread
+                    + {t("start_new_thread", "Start a New Thread")}
                   </button>
                 </div>
               )}
@@ -1099,7 +1101,7 @@ const Communication = () => {
           type="radio"
           name="comm_tab_group"
           className="tab"
-          aria-label="RFIs"
+          aria-label={t("rfis_tab", "RFIs")}
           checked={activeTab === "rfis"}
           onChange={() => setActiveTab("rfis")}
         />
@@ -1109,17 +1111,17 @@ const Communication = () => {
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <h2 className="text-2xl font-bold">
-                    Request for Information (RFI)
+                    {t("rfi_title_tab", "Request for Information (RFI)")}
                   </h2>
                   <p className="text-neutral-500">
-                    Track information requests and responses
+                    {t("rfi_subtitle_tab", "Track information requests and responses")}
                   </p>
                 </div>
                 <button
                   className="btn btn-primary"
                   onClick={() => setShowCreateRFIModal(true)}
                 >
-                  + New RFI
+                  + {t("new_rfi", "New RFI")}
                 </button>
               </div>
 
@@ -1129,7 +1131,7 @@ const Communication = () => {
                 </div>
               ) : rfis.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No RFIs found. Create your first RFI to get started.
+                  {t("no_rfis_found", "No RFIs found. Create your first RFI to get started.")}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -1150,7 +1152,7 @@ const Communication = () => {
                                   rfi.priority
                                 )}`}
                               >
-                                {rfi.priority}
+                                {t(rfi.priority.toLowerCase(), rfi.priority)}
                               </span>
                             )}
                             {rfi.status && (
@@ -1159,7 +1161,7 @@ const Communication = () => {
                                   rfi.status
                                 )}`}
                               >
-                                {rfi.status}
+                                {t(rfi.status.toLowerCase().replace(" ", "_"), rfi.status)}
                               </span>
                             )}
                           </div>
@@ -1170,18 +1172,18 @@ const Communication = () => {
                             {rfi.description}
                           </div>
                           <div className="text-sm text-gray-600">
-                            <span className="font-medium">Thread:</span>{" "}
-                            {rfi.thread?.title || "No thread linked"} |
-                            <span className="font-medium"> Created by:</span>{" "}
+                            <span className="font-medium">{t("thread_meta", "Thread")}:</span>{" "}
+                            {rfi.thread?.title || t("no_thread_linked", "No thread linked")} |
+                            <span className="font-medium"> {t("created_by", "Created by")}:</span>{" "}
                             {rfi.requester
                               ? `${rfi.requester.firstName} ${rfi.requester.lastName}`
-                              : "Unknown"}
+                              : t("unknown", "Unknown")}
                             {rfi.assignees && rfi.assignees.length > 0 && (
                               <>
                                 |{" "}
                                 <span className="font-medium">
                                   {" "}
-                                  Assigned to:
+                                  {t("assigned_to_lbl", "Assigned to")}:
                                 </span>{" "}
                                 {rfi.assignees
                                   .map((a) => `${a.firstName} ${a.lastName}`)
@@ -1190,20 +1192,20 @@ const Communication = () => {
                             )}
                           </div>
                           <div className="text-sm text-gray-600">
-                            <span className="font-medium">Created:</span>{" "}
+                            <span className="font-medium">{t("created", "Created")}:</span>{" "}
                             {new Date(rfi.createdAt).toLocaleDateString()} |
-                            <span className="font-medium"> Updated:</span>{" "}
+                            <span className="font-medium"> {t("updated_lbl", "Updated")}:</span>{" "}
                             {new Date(rfi.updatedAt).toLocaleDateString()}
                             {rfi.dueDate && (
                               <>
-                                | <span className="font-medium"> Due:</span>{" "}
+                                | <span className="font-medium"> {t("due_lbl", "Due")}:</span>{" "}
                                 {new Date(rfi.dueDate).toLocaleDateString()}
                               </>
                             )}
                           </div>
                           {rfi.answer && (
                             <div className="mt-2 p-2 bg-base-200 rounded text-sm">
-                              <span className="font-medium">Answer:</span>{" "}
+                              <span className="font-medium">{t("answer_lbl", "Answer")}:</span>{" "}
                               {rfi.answer}
                             </div>
                           )}
@@ -1221,20 +1223,20 @@ const Communication = () => {
                                 }
                               }}
                             >
-                              Open Chat
+                              {t("open_chat", "Open Chat")}
                             </button>
                           )}
                           <button
                             className="btn btn-soft btn-sm"
                             onClick={() => handleEditRFI(rfi)}
                           >
-                            Edit
+                            {t("edit", "Edit")}
                           </button>
                           <button
                             className="btn btn-error btn-sm"
                             onClick={() => handleDeleteRFI(rfi)}
                           >
-                            Delete
+                            {t("delete", "Delete")}
                           </button>
                         </div>
                       </div>
@@ -1260,14 +1262,13 @@ const Communication = () => {
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <h2 className="text-2xl font-bold">
-                    Communication Analytics
+                    {t("communication_analytics", "Communication Analytics")}
                   </h2>
                   <p className="text-neutral-500">
-                    Comprehensive insights into communication performance and
-                    trends
+                    {t("communication_analytics_subtitle", "Comprehensive insights into communication performance and trends")}
                   </p>
                 </div>
-                <div className="badge badge-neutral badge-lg">Last 30 Days</div>
+                <div className="badge badge-neutral badge-lg">{t("last_30_days", "Last 30 Days")}</div>
               </div>
 
               {/* KPI Cards */}
@@ -1282,10 +1283,10 @@ const Communication = () => {
                       <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
                     </svg>
                   </div>
-                  <div className="stat-title text-blue-100">Active Threads</div>
+                  <div className="stat-title text-blue-100">{t("active_threads", "Active Threads")}</div>
                   <div className="stat-value">{threads.length}</div>
                   <div className="stat-desc text-blue-200">
-                    +{analyticsData.recentThreads} this week
+                    +{analyticsData.recentThreads} {t("this_week", "this week")}
                   </div>
                 </div>
 
@@ -1304,13 +1305,12 @@ const Communication = () => {
                       />
                     </svg>
                   </div>
-                  <div className="stat-title text-amber-100">Open RFIs</div>
+                  <div className="stat-title text-amber-100">{t("open_rfis", "Open RFIs")}</div>
                   <div className="stat-value">
                     {analyticsData.rfisByStatus.Open || 0}
                   </div>
                   <div className="stat-desc text-amber-200">
-                    {rfis.filter((r) => r.status === "Open").length} pending
-                    responses
+                    {rfis.filter((r) => r.status === "Open").length} {t("pending_responses", "pending responses")}
                   </div>
                 </div>
 
@@ -1329,7 +1329,7 @@ const Communication = () => {
                     </svg>
                   </div>
                   <div className="stat-title text-emerald-100">
-                    Resolution Rate
+                    {t("resolution_rate", "Resolution Rate")}
                   </div>
                   <div className="stat-value">
                     {rfis.length > 0
@@ -1342,7 +1342,7 @@ const Communication = () => {
                     %
                   </div>
                   <div className="stat-desc text-emerald-200">
-                    {analyticsData.rfisByStatus.Resolved || 0} resolved RFIs
+                    {analyticsData.rfisByStatus.Resolved || 0} {t("resolved_rfis", "resolved RFIs")}
                   </div>
                 </div>
 
@@ -1356,10 +1356,10 @@ const Communication = () => {
                       <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
                     </svg>
                   </div>
-                  <div className="stat-title text-purple-100">Active Users</div>
+                  <div className="stat-title text-purple-100">{t("active_users", "Active Users")}</div>
                   <div className="stat-value">{analyticsData.activeUsers}</div>
                   <div className="stat-desc text-purple-200">
-                    Participating in discussions
+                    {t("participating_discussions", "Participating in discussions")}
                   </div>
                 </div>
               </div>
@@ -1370,10 +1370,10 @@ const Communication = () => {
                 <div className="bg-base-100 rounded-xl p-6 shadow-lg">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold">
-                      RFI Status Distribution
+                      {t("rfi_status_distribution", "RFI Status Distribution")}
                     </h3>
                     <div className="badge badge-neutral badge-sm">
-                      {rfis.length} Total
+                      {rfis.length} {t("total", "Total")}
                     </div>
                   </div>
                   <div className="h-64">
@@ -1384,7 +1384,7 @@ const Communication = () => {
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full text-gray-500">
-                        No RFI data available
+                        {t("no_rfi_data_available", "No RFI data available")}
                       </div>
                     )}
                   </div>
@@ -1394,10 +1394,10 @@ const Communication = () => {
                 <div className="bg-base-100 rounded-xl p-6 shadow-lg">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold">
-                      RFI Priority Breakdown
+                      {t("rfi_priority_breakdown", "RFI Priority Breakdown")}
                     </h3>
                     <div className="badge badge-neutral badge-sm">
-                      By Priority
+                      {t("by_priority", "By Priority")}
                     </div>
                   </div>
                   <div className="h-64">
@@ -1405,7 +1405,7 @@ const Communication = () => {
                       <Bar data={rfiPriorityChartData} options={chartOptions} />
                     ) : (
                       <div className="flex items-center justify-center h-full text-gray-500">
-                        No priority data available
+                        {t("no_priority_data_available", "No priority data available")}
                       </div>
                     )}
                   </div>
@@ -1417,7 +1417,7 @@ const Communication = () => {
                 {/* Thread Activity by Project */}
                 <div className="bg-base-100 rounded-xl p-6 shadow-lg">
                   <h3 className="text-lg font-semibold mb-4">
-                    Thread Activity by Project
+                    {t("thread_activity_project", "Thread Activity by Project")}
                   </h3>
                   <div className="h-48">
                     {Object.keys(analyticsData.threadsByProject).length > 0 ? (
@@ -1427,7 +1427,7 @@ const Communication = () => {
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full text-gray-500">
-                        No project data available
+                        {t("no_project_data_available", "No project data available")}
                       </div>
                     )}
                   </div>
@@ -1436,18 +1436,18 @@ const Communication = () => {
                 {/* Performance Metrics */}
                 <div className="bg-base-100 rounded-xl p-6 shadow-lg">
                   <h3 className="text-lg font-semibold mb-4">
-                    Performance Metrics
+                    {t("performance_metrics", "Performance Metrics")}
                   </h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">
-                        Avg RFI Response Time
+                        {t("avg_rfi_response_time", "Avg RFI Response Time")}
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-lg">
                           {analyticsData.avgResponseTime}
                         </span>
-                        <span className="text-sm text-gray-500">days</span>
+                        <span className="text-sm text-gray-500">{t("days", "days")}</span>
                       </div>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
@@ -1464,7 +1464,7 @@ const Communication = () => {
 
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">
-                        Thread Engagement
+                        {t("thread_engagement", "Thread Engagement")}
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-lg">
@@ -1473,7 +1473,7 @@ const Communication = () => {
                           ).toFixed(1)}
                         </span>
                         <span className="text-sm text-gray-500">
-                          msgs/thread
+                          {t("msgs_per_thread", "msgs/thread")}
                         </span>
                       </div>
                     </div>
@@ -1494,14 +1494,14 @@ const Communication = () => {
 
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">
-                        Recent Activity
+                        {t("recent_activity", "Recent Activity")}
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-lg">
                           {analyticsData.recentRFIs +
                             analyticsData.recentThreads}
                         </span>
-                        <span className="text-sm text-gray-500">this week</span>
+                        <span className="text-sm text-gray-500">{t("this_week", "this week")}</span>
                       </div>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
@@ -1523,10 +1523,10 @@ const Communication = () => {
 
                 {/* RFI Categories */}
                 <div className="bg-base-100 rounded-xl p-6 shadow-lg">
-                  <h3 className="text-lg font-semibold mb-4">RFI Categories</h3>
+                  <h3 className="text-lg font-semibold mb-4">{t("rfi_categories", "RFI Categories")}</h3>
                   <div className="space-y-3">
                     {Object.entries(analyticsData.rfisByCategory)
-                      .sort(([, a], [, b]) => b - a)
+                       .sort(([, a], [, b]) => b - a)
                       .slice(0, 6)
                       .map(([category, count]) => (
                         <div
@@ -1534,7 +1534,7 @@ const Communication = () => {
                           className="flex justify-between items-center"
                         >
                           <span className="text-sm font-medium">
-                            {category}
+                            {t(`category_${category.toLowerCase()}`, category)}
                           </span>
                           <div className="flex items-center gap-2">
                             <div className="w-16 bg-gray-200 rounded-full h-2">
@@ -1561,7 +1561,7 @@ const Communication = () => {
                       ))}
                     {Object.keys(analyticsData.rfisByCategory).length === 0 && (
                       <div className="text-center text-gray-500 py-4">
-                        No category data available
+                        {t("no_category_data_available", "No category data available")}
                       </div>
                     )}
                   </div>
@@ -1582,43 +1582,43 @@ const Communication = () => {
           }}
         >
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">Create New Thread</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("create_new_thread", "Create New Thread")}</h3>
 
             <form onSubmit={handleCreateThread} className="space-y-4">
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Thread Title *</span>
+                  <span className="label-text font-medium">{t("thread_title_required", "Thread Title *")}</span>
                 </label>
                 <input
                   type="text"
                   name="title"
                   className="input input-bordered w-full"
-                  placeholder="Enter thread title..."
+                  placeholder={t("enter_thread_title_placeholder", "Enter thread title...")}
                   required
                 />
               </div>
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Description</span>
+                  <span className="label-text font-medium">{t("description", "Description")}</span>
                 </label>
                 <textarea
                   name="description"
                   className="textarea textarea-bordered w-full h-24"
-                  placeholder="Optional description..."
+                  placeholder={t("optional_description_placeholder", "Optional description...")}
                 />
               </div>
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Project *</span>
+                  <span className="label-text font-medium">{t("project_required", "Project *")}</span>
                 </label>
                 <select
                   name="projectId"
                   className="select select-bordered w-full"
                   required
                 >
-                  <option value="">Select a project</option>
+                  <option value="">{t("select_project", "Select a project")}</option>
                   {projects.map((project: Project) => (
                     <option key={project.id} value={project.id}>
                       {project.name}
@@ -1630,17 +1630,17 @@ const Communication = () => {
               <div>
                 <label className="label">
                   <span className="label-text font-medium">
-                    Add Participants
+                    {t("add_participants", "Add Participants")}
                   </span>
                 </label>
                 <div className="border border-base-300 rounded-lg p-3 min-h-[100px] max-h-32 overflow-y-auto">
                   {usersLoading ? (
                     <div className="text-center text-gray-500">
-                      Loading users...
+                      {t("loading_users", "Loading users...")}
                     </div>
                   ) : users.length === 0 ? (
                     <div className="text-center text-gray-500">
-                      No users available
+                      {t("no_users_available", "No users available")}
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -1658,7 +1658,7 @@ const Communication = () => {
                               className="btn btn-error btn-xs"
                               onClick={() => handleRemoveUser(user.id)}
                             >
-                              Remove
+                              {t("remove", "Remove")}
                             </button>
                           ) : (
                             <button
@@ -1666,7 +1666,7 @@ const Communication = () => {
                               className="btn btn-primary btn-xs"
                               onClick={() => handleAddUser(user.id)}
                             >
-                              Add
+                              {t("add", "Add")}
                             </button>
                           )}
                         </div>
@@ -1677,7 +1677,7 @@ const Communication = () => {
                 {selectedUsers.length > 0 && (
                   <div className="mt-2">
                     <span className="text-sm text-gray-600">
-                      Selected: {selectedUsers.length} participant(s)
+                      {t("selected", "Selected")}: {selectedUsers.length} {t("participant_s", "participant(s)")}
                     </span>
                   </div>
                 )}
@@ -1693,7 +1693,7 @@ const Communication = () => {
                   }}
                   disabled={createThreadMutation.isPending}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -1703,10 +1703,10 @@ const Communication = () => {
                   {createThreadMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm"></span>
-                      Creating...
+                      {t("creating", "Creating...")}
                     </>
                   ) : (
-                    "Create Thread"
+                    t("create_thread", "Create Thread")
                   )}
                 </button>
               </div>
@@ -1725,26 +1725,26 @@ const Communication = () => {
           }}
         >
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">Create New RFI</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("create_new_rfi", "Create New RFI")}</h3>
 
             <form onSubmit={handleCreateRFI} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">RFI Title *</span>
+                    <span className="label-text font-medium">{t("rfi_title_required", "RFI Title *")}</span>
                   </label>
                   <input
                     type="text"
                     name="title"
                     className="input input-bordered w-full"
-                    placeholder="Enter RFI title..."
+                    placeholder={t("enter_rfi_title_placeholder", "Enter RFI title...")}
                     required
                   />
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Project *</span>
+                    <span className="label-text font-medium">{t("project_required", "Project *")}</span>
                   </label>
                   <select
                     name="projectId"
@@ -1760,11 +1760,11 @@ const Communication = () => {
                   >
                     <option value="">
                       {selectedRFIThread
-                        ? `Project: ${
+                        ? `${t("project", "Project")}: ${
                             threads.find((t) => t.id === selectedRFIThread)
-                              ?.project?.name || "Unknown"
+                              ?.project?.name || t("unknown", "Unknown")
                           }`
-                        : "Select a project"}
+                        : t("select_project", "Select a project")}
                     </option>
                     {!selectedRFIThread &&
                       projects.map((project: Project) => (
@@ -1776,7 +1776,7 @@ const Communication = () => {
                   {selectedRFIThread && (
                     <div className="label">
                       <span className="label-text-alt text-info">
-                        Project is set by the selected thread
+                        {t("project_set_by_thread", "Project is set by the selected thread")}
                       </span>
                     </div>
                   )}
@@ -1785,12 +1785,12 @@ const Communication = () => {
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Description *</span>
+                  <span className="label-text font-medium">{t("description_required", "Description *")}</span>
                 </label>
                 <textarea
                   name="description"
                   className="textarea textarea-bordered w-full h-24"
-                  placeholder="Describe the information you need..."
+                  placeholder={t("describe_rfi_placeholder", "Describe the information you need...")}
                   required
                 />
               </div>
@@ -1798,42 +1798,42 @@ const Communication = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Category</span>
+                    <span className="label-text font-medium">{t("category", "Category")}</span>
                   </label>
                   <select
                     name="category"
                     className="select select-bordered w-full"
                   >
-                    <option value="">Select category</option>
-                    <option value="Design">Design</option>
-                    <option value="Construction">Construction</option>
-                    <option value="Materials">Materials</option>
-                    <option value="Specifications">Specifications</option>
-                    <option value="Safety">Safety</option>
-                    <option value="Quality">Quality</option>
-                    <option value="Other">Other</option>
+                    <option value="">{t("select_category", "Select category")}</option>
+                    <option value="Design">{t("category_design", "Design")}</option>
+                    <option value="Construction">{t("category_construction", "Construction")}</option>
+                    <option value="Materials">{t("category_materials", "Materials")}</option>
+                    <option value="Specifications">{t("category_specifications", "Specifications")}</option>
+                    <option value="Safety">{t("category_safety", "Safety")}</option>
+                    <option value="Quality">{t("category_quality", "Quality")}</option>
+                    <option value="Other">{t("category_other", "Other")}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Priority</span>
+                    <span className="label-text font-medium">{t("priority", "Priority")}</span>
                   </label>
                   <select
                     name="priority"
                     className="select select-bordered w-full"
                   >
-                    <option value="">Select priority</option>
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Critical">Critical</option>
+                    <option value="">{t("select_priority", "Select priority")}</option>
+                    <option value="Low">{t("low", "Low")}</option>
+                    <option value="Medium">{t("medium", "Medium")}</option>
+                    <option value="High">{t("high", "High")}</option>
+                    <option value="Critical">{t("critical", "Critical")}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Due Date</span>
+                    <span className="label-text font-medium">{t("due_date", "Due Date")}</span>
                   </label>
                   <input
                     type="date"
@@ -1844,12 +1844,12 @@ const Communication = () => {
               </div>
 
               {/* Thread Selection */}
-              <div className="divider">Thread Association</div>
+              <div className="divider">{t("thread_association", "Thread Association")}</div>
 
               <div>
                 <label className="label">
                   <span className="label-text font-medium">
-                    Link to Existing Thread
+                    {t("link_to_existing_thread", "Link to Existing Thread")}
                   </span>
                 </label>
                 <select
@@ -1857,18 +1857,18 @@ const Communication = () => {
                   onChange={(e) => setSelectedRFIThread(e.target.value)}
                   className="select select-bordered w-full"
                 >
-                  <option value="">Create new thread for this RFI</option>
+                  <option value="">{t("create_new_thread_for_rfi", "Create new thread for this RFI")}</option>
                   {threads.map((thread) => (
                     <option key={thread.id} value={thread.id}>
-                      {thread.title} ({thread.project?.name || "No project"})
+                      {thread.title} ({thread.project?.name || t("no_project", "No project")})
                     </option>
                   ))}
                 </select>
                 <div className="label">
                   <span className="label-text-alt text-gray-500">
                     {selectedRFIThread
-                      ? "RFI will be linked to the selected thread"
-                      : "A new thread will be created automatically for this RFI"}
+                      ? t("rfi_linked_to_thread", "RFI will be linked to the selected thread")
+                      : t("new_thread_automatic_rfi", "A new thread will be created automatically for this RFI")}
                   </span>
                 </div>
               </div>
@@ -1876,16 +1876,16 @@ const Communication = () => {
               {/* Assignees Selection */}
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Assign To</span>
+                  <span className="label-text font-medium">{t("assign_to", "Assign To")}</span>
                 </label>
                 <div className="border border-base-300 rounded-lg p-3 min-h-[100px] max-h-32 overflow-y-auto">
                   {usersLoading ? (
                     <div className="text-center text-gray-500">
-                      Loading users...
+                      {t("loading_users", "Loading users...")}
                     </div>
                   ) : users.length === 0 ? (
                     <div className="text-center text-gray-500">
-                      No users available
+                      {t("no_users_available", "No users available")}
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -1903,7 +1903,7 @@ const Communication = () => {
                               className="btn btn-error btn-xs"
                               onClick={() => handleRemoveAssignee(user.id)}
                             >
-                              Remove
+                              {t("remove", "Remove")}
                             </button>
                           ) : (
                             <button
@@ -1911,7 +1911,7 @@ const Communication = () => {
                               className="btn btn-primary btn-xs"
                               onClick={() => handleAddAssignee(user.id)}
                             >
-                              Add
+                              {t("add", "Add")}
                             </button>
                           )}
                         </div>
@@ -1922,7 +1922,7 @@ const Communication = () => {
                 {selectedAssignees.length > 0 && (
                   <div className="mt-2">
                     <span className="text-sm text-gray-600">
-                      Assigned to: {selectedAssignees.length} user(s)
+                      {t("assigned_to", "Assigned to")}: {selectedAssignees.length} {t("user_s", "user(s)")}
                     </span>
                   </div>
                 )}
@@ -1942,7 +1942,7 @@ const Communication = () => {
                     createThreadMutation.isPending
                   }
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -1956,10 +1956,10 @@ const Communication = () => {
                   createThreadMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm"></span>
-                      Creating...
+                      {t("creating", "Creating...")}
                     </>
                   ) : (
-                    "Create RFI"
+                    t("create_rfi", "Create RFI")
                   )}
                 </button>
               </div>
@@ -1972,7 +1972,7 @@ const Communication = () => {
       {showEditRFIModal && editingRFI && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-md bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">Edit RFI</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("edit_rfi", "Edit RFI")}</h3>
 
             <form
               onSubmit={(e) => {
@@ -2008,13 +2008,13 @@ const Communication = () => {
             >
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">RFI Title *</span>
+                  <span className="label-text font-medium">{t("rfi_title_required", "RFI Title *")}</span>
                 </label>
                 <input
                   type="text"
                   name="title"
                   className="input input-bordered w-full"
-                  placeholder="Enter RFI title..."
+                  placeholder={t("enter_rfi_title_placeholder", "Enter RFI title...")}
                   defaultValue={editingRFI.title}
                   required
                 />
@@ -2022,7 +2022,7 @@ const Communication = () => {
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Project *</span>
+                  <span className="label-text font-medium">{t("project_required", "Project *")}</span>
                 </label>
                 <select
                   name="projectId"
@@ -2030,7 +2030,7 @@ const Communication = () => {
                   defaultValue={editingRFI.projectId}
                   required
                 >
-                  <option value="">Select a project</option>
+                  <option value="">{t("select_project", "Select a project")}</option>
                   {projects.map((project: Project) => (
                     <option key={project.id} value={project.id}>
                       {project.name}
@@ -2041,12 +2041,12 @@ const Communication = () => {
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Description</span>
+                  <span className="label-text font-medium">{t("description", "Description")}</span>
                 </label>
                 <textarea
                   name="description"
                   className="textarea textarea-bordered w-full h-24"
-                  placeholder="Optional description..."
+                  placeholder={t("optional_description_placeholder", "Optional description...")}
                   defaultValue={editingRFI.description}
                 />
               </div>
@@ -2054,61 +2054,61 @@ const Communication = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Category</span>
+                    <span className="label-text font-medium">{t("category", "Category")}</span>
                   </label>
                   <select
                     name="category"
                     className="select select-bordered w-full"
                     defaultValue={editingRFI.category}
                   >
-                    <option value="">Select category</option>
-                    <option value="Design">Design</option>
-                    <option value="Construction">Construction</option>
-                    <option value="Materials">Materials</option>
-                    <option value="Specifications">Specifications</option>
-                    <option value="Safety">Safety</option>
-                    <option value="Quality">Quality</option>
-                    <option value="Other">Other</option>
+                    <option value="">{t("select_category", "Select category")}</option>
+                    <option value="Design">{t("category_design", "Design")}</option>
+                    <option value="Construction">{t("category_construction", "Construction")}</option>
+                    <option value="Materials">{t("category_materials", "Materials")}</option>
+                    <option value="Specifications">{t("category_specifications", "Specifications")}</option>
+                    <option value="Safety">{t("category_safety", "Safety")}</option>
+                    <option value="Quality">{t("category_quality", "Quality")}</option>
+                    <option value="Other">{t("category_other", "Other")}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Priority</span>
+                    <span className="label-text font-medium">{t("priority", "Priority")}</span>
                   </label>
                   <select
                     name="priority"
                     className="select select-bordered w-full"
                     defaultValue={editingRFI.priority}
                   >
-                    <option value="">Select priority</option>
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Critical">Critical</option>
+                    <option value="">{t("select_priority", "Select priority")}</option>
+                    <option value="Low">{t("low", "Low")}</option>
+                    <option value="Medium">{t("medium", "Medium")}</option>
+                    <option value="High">{t("high", "High")}</option>
+                    <option value="Critical">{t("critical", "Critical")}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Status</span>
+                    <span className="label-text font-medium">{t("status", "Status")}</span>
                   </label>
                   <select
                     name="status"
                     className="select select-bordered w-full"
                     defaultValue={editingRFI.status}
                   >
-                    <option value="">Select status</option>
-                    <option value="Open">Open</option>
-                    <option value="In Review">In Review</option>
-                    <option value="Answered">Answered</option>
-                    <option value="Closed">Closed</option>
+                    <option value="">{t("select_status", "Select status")}</option>
+                    <option value="Open">{t("open", "Open")}</option>
+                    <option value="In Review">{t("in_review", "In Review")}</option>
+                    <option value="Answered">{t("answered", "Answered")}</option>
+                    <option value="Closed">{t("closed", "Closed")}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Due Date</span>
+                    <span className="label-text font-medium">{t("due_date", "Due Date")}</span>
                   </label>
                   <input
                     type="date"
@@ -2128,12 +2128,12 @@ const Communication = () => {
               {/* Answer field for RFI */}
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Answer</span>
+                  <span className="label-text font-medium">{t("answer", "Answer")}</span>
                 </label>
                 <textarea
                   name="answer"
                   className="textarea textarea-bordered w-full h-24"
-                  placeholder="Provide answer to this RFI..."
+                  placeholder={t("provide_answer_placeholder", "Provide answer to this RFI...")}
                   defaultValue={editingRFI.answer || ""}
                 />
               </div>
@@ -2141,16 +2141,16 @@ const Communication = () => {
               {/* Assignees Selection */}
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Assign To</span>
+                  <span className="label-text font-medium">{t("assign_to", "Assign To")}</span>
                 </label>
                 <div className="border border-base-300 rounded-lg p-3 min-h-[100px] max-h-32 overflow-y-auto">
                   {usersLoading ? (
                     <div className="text-center text-gray-500">
-                      Loading users...
+                      {t("loading_users", "Loading users...")}
                     </div>
                   ) : users.length === 0 ? (
                     <div className="text-center text-gray-500">
-                      No users available
+                      {t("no_users_available", "No users available")}
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -2168,7 +2168,7 @@ const Communication = () => {
                               className="btn btn-error btn-xs"
                               onClick={() => handleRemoveEditAssignee(user.id)}
                             >
-                              Remove
+                              {t("remove", "Remove")}
                             </button>
                           ) : (
                             <button
@@ -2176,7 +2176,7 @@ const Communication = () => {
                               className="btn btn-primary btn-xs"
                               onClick={() => handleAddEditAssignee(user.id)}
                             >
-                              Add
+                              {t("add", "Add")}
                             </button>
                           )}
                         </div>
@@ -2187,7 +2187,7 @@ const Communication = () => {
                 {editRFISelectedAssignees.length > 0 && (
                   <div className="mt-2">
                     <span className="text-sm text-gray-600">
-                      Assigned to: {editRFISelectedAssignees.length} user(s)
+                      {t("assigned_to", "Assigned to")}: {editRFISelectedAssignees.length} {t("user_s", "user(s)")}
                     </span>
                   </div>
                 )}
@@ -2204,7 +2204,7 @@ const Communication = () => {
                   }}
                   disabled={updateRFIMutation.isPending}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -2214,10 +2214,10 @@ const Communication = () => {
                   {updateRFIMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm"></span>
-                      Updating...
+                      {t("updating", "Updating...")}
                     </>
                   ) : (
-                    "Update RFI"
+                    t("update_rfi", "Update RFI")
                   )}
                 </button>
               </div>
@@ -2230,7 +2230,7 @@ const Communication = () => {
       {showEditThreadModal && editingThread && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-md bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">Update Thread</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("update_thread", "Update Thread")}</h3>
 
             <form
               onSubmit={(e) => {
@@ -2262,13 +2262,13 @@ const Communication = () => {
             >
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Thread Title *</span>
+                  <span className="label-text font-medium">{t("thread_title_required", "Thread Title *")}</span>
                 </label>
                 <input
                   type="text"
                   name="title"
                   className="input input-bordered w-full"
-                  placeholder="Enter thread title..."
+                  placeholder={t("enter_thread_title_placeholder", "Enter thread title...")}
                   defaultValue={editingThread.title}
                   required
                 />
@@ -2276,19 +2276,19 @@ const Communication = () => {
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Description</span>
+                  <span className="label-text font-medium">{t("description", "Description")}</span>
                 </label>
                 <textarea
                   name="description"
                   className="textarea textarea-bordered w-full h-24"
-                  placeholder="Optional description..."
+                  placeholder={t("optional_description_placeholder", "Optional description...")}
                   defaultValue={editingThread.description}
                 />
               </div>
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Project *</span>
+                  <span className="label-text font-medium">{t("project_required", "Project *")}</span>
                 </label>
                 <select
                   name="projectId"
@@ -2296,7 +2296,7 @@ const Communication = () => {
                   defaultValue={editingThread.projectId}
                   required
                 >
-                  <option value="">Select a project</option>
+                  <option value="">{t("select_project", "Select a project")}</option>
                   {projects.map((project: Project) => (
                     <option key={project.id} value={project.id}>
                       {project.name}
@@ -2308,17 +2308,17 @@ const Communication = () => {
               <div>
                 <label className="label">
                   <span className="label-text font-medium">
-                    Add Participants
+                    {t("add_participants", "Add Participants")}
                   </span>
                 </label>
                 <div className="border border-base-300 rounded-lg p-3 min-h-[100px] max-h-32 overflow-y-auto">
                   {usersLoading ? (
                     <div className="text-center text-gray-500">
-                      Loading users...
+                      {t("loading_users", "Loading users...")}
                     </div>
                   ) : users.length === 0 ? (
                     <div className="text-center text-gray-500">
-                      No users available
+                      {t("no_users_available", "No users available")}
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -2338,7 +2338,7 @@ const Communication = () => {
                                 handleRemoveEditThreadUser(user.id)
                               }
                             >
-                              Remove
+                              {t("remove", "Remove")}
                             </button>
                           ) : (
                             <button
@@ -2346,7 +2346,7 @@ const Communication = () => {
                               className="btn btn-primary btn-xs"
                               onClick={() => handleAddEditThreadUser(user.id)}
                             >
-                              Add
+                              {t("add", "Add")}
                             </button>
                           )}
                         </div>
@@ -2357,7 +2357,7 @@ const Communication = () => {
                 {editThreadSelectedUsers.length > 0 && (
                   <div className="mt-2">
                     <span className="text-sm text-gray-600">
-                      Selected: {editThreadSelectedUsers.length} participant(s)
+                      {t("selected", "Selected")}: {editThreadSelectedUsers.length} {t("participant_s", "participant(s)")}
                     </span>
                   </div>
                 )}
@@ -2374,7 +2374,7 @@ const Communication = () => {
                   }}
                   disabled={updateThreadMutation.isPending}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -2384,10 +2384,10 @@ const Communication = () => {
                   {updateThreadMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm"></span>
-                      Updating...
+                      {t("updating", "Updating...")}
                     </>
                   ) : (
-                    "Update Thread"
+                    t("update_thread", "Update Thread")
                   )}
                 </button>
               </div>
@@ -2400,20 +2400,19 @@ const Communication = () => {
       {showDeleteRFIModal && deletingRFI && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("confirm_deletion", "Confirm Deletion")}</h3>
             <p className="text-gray-700 mb-4">
-              Are you sure you want to delete this RFI? This action cannot be
-              undone.
+              {t("confirm_delete_rfi_desc", "Are you sure you want to delete this RFI? This action cannot be undone.")}
             </p>
             <div className="flex justify-end gap-2">
               <button
                 className="btn btn-outline"
                 onClick={() => setShowDeleteRFIModal(false)}
               >
-                Cancel
+                {t("cancel", "Cancel")}
               </button>
               <button className="btn btn-error" onClick={confirmDeleteRFI}>
-                Delete
+                {t("delete", "Delete")}
               </button>
             </div>
           </div>

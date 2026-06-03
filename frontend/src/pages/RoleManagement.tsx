@@ -10,8 +10,10 @@ import {
   type CreateRoleDto,
 } from "../hooks/useRoles";
 import { usePermissions } from "../hooks/usePermissions";
+import { useTranslation } from "../hooks/useTranslation";
 
 const RolesAndPermissions = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("current_user_roles");
   const [currentStep, setCurrentStep] = useState(1);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
@@ -40,7 +42,7 @@ const RolesAndPermissions = () => {
   };
 
   const handleDeleteRole = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this role?")) {
+    if (window.confirm(t("confirm_delete_role", "Are you sure you want to delete this role?"))) {
       deleteRole.mutate(id, {
         onSuccess: () => {
           console.log(`Role with ID ${id} deleted successfully.`);
@@ -54,7 +56,7 @@ const RolesAndPermissions = () => {
 
   const handleCreateRole = () => {
     if (!roleName.trim()) {
-      alert("Please enter a role name");
+      alert(t("role_name_required_alert", "Please enter a role name"));
       return;
     }
 
@@ -79,7 +81,7 @@ const RolesAndPermissions = () => {
 
   const handleUpdateRole = () => {
     if (!editingRole || !roleName.trim()) {
-      alert("Please enter a role name");
+      alert(t("role_name_required_alert", "Please enter a role name"));
       return;
     }
 
@@ -153,9 +155,9 @@ const RolesAndPermissions = () => {
   return (
     <div className="p-8">
       {/* Heading */}
-      <h1 className="text-3xl font-bold mb-1">User Roles Management</h1>
+      <h1 className="text-3xl font-bold mb-1">{t("roles_management_title", "User Roles Management")}</h1>
       <p className="text-gray-500 mb-6">
-        Configure user roles and module permissions
+        {t("roles_management_subtitle", "Configure user roles and module permissions")}
       </p>
 
       {/* Tabs navigation */}
@@ -164,7 +166,7 @@ const RolesAndPermissions = () => {
           type="radio"
           name="roles_tab_group"
           className="tab"
-          aria-label="Current User Roles"
+          aria-label={t("current_user_roles", "Current User Roles")}
           checked={activeTab === "current_user_roles"}
           onChange={() => setActiveTab("current_user_roles")}
         />
@@ -187,7 +189,7 @@ const RolesAndPermissions = () => {
                       >
                         <div className="flex flex-col gap-1 bg-base-100 rounded-2xl p-3">
                           <div className="absolute top-4 right-4 bg-warning text-warning-content text-xs rounded-full px-3 py-1 font-semibold">
-                            {role.rolePermissions.length} permissions
+                            {role.rolePermissions.length} {t("permissions_count_lbl", "permissions")}
                           </div>
                           <div className="text-lg font-semibold">
                             {role.name}
@@ -212,7 +214,7 @@ const RolesAndPermissions = () => {
                               ))
                             ) : (
                               <span className="text-sm text-gray-500 italic">
-                                No permissions assigned
+                                {t("no_permissions_assigned", "No permissions assigned")}
                               </span>
                             )}
                           </div>
@@ -239,7 +241,7 @@ const RolesAndPermissions = () => {
                     ))
                   ) : (
                     <div className="col-span-2 text-center text-gray-500 py-8">
-                      No roles found. Create your first role to get started.
+                      {t("no_roles_found", "No roles found. Create your first role to get started.")}
                     </div>
                   )}
                 </div>
@@ -253,7 +255,7 @@ const RolesAndPermissions = () => {
           type="radio"
           name="roles_tab_group"
           className="tab"
-          aria-label="Create User Role"
+          aria-label={t("create_user_role", "Create User Role")}
           checked={activeTab === "create_user_role"}
           onChange={() => setActiveTab("create_user_role")}
         />
@@ -271,8 +273,8 @@ const RolesAndPermissions = () => {
                   }`}
                   onClick={() => setCurrentStep(1)}
                 >
-                  <p className="text-xs">Step 01</p>
-                  <h1 className="font-semibold">Specify Role Details</h1>
+                  <p className="text-xs">{t("step_lbl", "Step")} 01</p>
+                  <h1 className="font-semibold">{t("specify_role_details", "Specify Role Details")}</h1>
                 </div>
                 {/* Step 02 */}
                 <div
@@ -283,8 +285,8 @@ const RolesAndPermissions = () => {
                   }`}
                   onClick={() => setCurrentStep(2)}
                 >
-                  <p className="text-xs">Step 02</p>
-                  <h1 className="font-semibold">Set Permissions</h1>
+                  <p className="text-xs">{t("step_lbl", "Step")} 02</p>
+                  <h1 className="font-semibold">{t("set_permissions", "Set Permissions")}</h1>
                 </div>
                 {/* Step 03 */}
                 <div
@@ -295,34 +297,32 @@ const RolesAndPermissions = () => {
                   }`}
                   onClick={() => setCurrentStep(3)}
                 >
-                  <p className="text-xs">Step 03</p>
-                  <h1 className="font-semibold">Review and Create</h1>
+                  <p className="text-xs">{t("step_lbl", "Step")} 03</p>
+                  <h1 className="font-semibold">{t("review_and_create", "Review and Create")}</h1>
                 </div>
               </div>
 
               {/* User roles Details Form */}
               {currentStep === 1 && (
                 <div className="w-full bg-base-200 rounded-2xl p-6 border border-base-300">
-                  <h2 className="text-xl font-semibold mb-4">Role Details</h2>
+                  <h2 className="text-xl font-semibold mb-4">{t("role_details", "Role Details")}</h2>
                   <form className="flex flex-col gap-4">
                     <div>
                       <label className="label">
                         <span className="label-text font-medium">
-                          Role Name
+                          {t("role_name_label", "Role Name")}
                         </span>
                       </label>
                       <input
                         type="text"
                         className="input input-bordered w-full"
-                        placeholder="Enter role name"
+                        placeholder={t("enter_role_name_placeholder", "Enter role name")}
                         value={roleName}
                         onChange={(e) => setRoleName(e.target.value)}
                         maxLength={64}
                       />
                       <span className="text-xs text-gray-500 mt-1 block">
-                        The role name can have up to 64 characters. Use
-                        descriptive names like "Project Manager" or "Site
-                        Supervisor"
+                        {t("role_name_helper_text", "The role name can have up to 64 characters. Use descriptive names like \"Project Manager\" or \"Site Supervisor\"")}
                       </span>
                     </div>
 
@@ -344,10 +344,7 @@ const RolesAndPermissions = () => {
                         </svg>
                       </span>
                       <span className="text-xs text-gray-700">
-                        After creating the role, you'll be able to assign it to
-                        users in the User Management section. Roles define what
-                        permissions users have across different parts of the
-                        system.
+                        {t("role_assigned_help", "After creating the role, you'll be able to assign it to users in the User Management section. Roles define what permissions users have across different parts of the system.")}
                       </span>
                     </div>
                     <div className="flex justify-end mt-4">
@@ -357,7 +354,7 @@ const RolesAndPermissions = () => {
                         onClick={() => setCurrentStep(2)}
                         disabled={!roleName.trim()}
                       >
-                        Next: Set Permissions
+                        {t("next_set_permissions", "Next: Set Permissions")}
                       </button>
                     </div>
                   </form>
@@ -368,15 +365,12 @@ const RolesAndPermissions = () => {
               {currentStep === 2 && (
                 <div className="w-full bg-base-200 rounded-2xl p-6 border border-base-300">
                   <h2 className="text-xl font-semibold mb-4">
-                    Set Permissions
+                    {t("set_permissions", "Set Permissions")}
                   </h2>
                   <div className="flex flex-col gap-4">
                     <div className="bg-base-100 border border-info rounded-lg p-3">
                       <p className="text-sm text-gray-700">
-                        Select permissions for this role. Each permission can
-                        have different access levels (1-5). Higher levels
-                        typically grant more access. For permissions, you can
-                        also specify which components are available.
+                        {t("set_permissions_desc", "Select permissions for this role. Each permission can have different access levels (1-5). Higher levels typically grant more access. For permissions, you can also specify which components are available.")}
                       </p>
                     </div>
 
@@ -384,10 +378,10 @@ const RolesAndPermissions = () => {
                       <table className="table w-full">
                         <thead>
                           <tr>
-                            <th>Permission</th>
-                            <th>Page</th>
-                            <th>Access Level / Components</th>
-                            <th>Action</th>
+                            <th>{t("permission_th", "Permission")}</th>
+                            <th>{t("page_th", "Page")}</th>
+                            <th>{t("access_level_components_th", "Access Level / Components")}</th>
+                            <th>{t("action_th", "Action")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -422,15 +416,15 @@ const RolesAndPermissions = () => {
                                           }
                                         }}
                                       >
-                                        <option value="0">No Access</option>
+                                        <option value="0">{t("no_access", "No Access")}</option>
                                         <option value="1">
-                                          Level 1 (Read Only)
+                                          {t("level_1_readonly", "Level 1 (Read Only)")}
                                         </option>
                                         <option value="2">
-                                          Level 2 (Read/Write)
+                                          {t("level_2_readwrite", "Level 2 (Read/Write)")}
                                         </option>
                                         <option value="3">
-                                          Level 3 (Admin Access)
+                                          {t("level_3_admin", "Level 3 (Admin Access)")}
                                         </option>
                                       </select>
                                       {selectedPermission && (
@@ -464,10 +458,10 @@ const RolesAndPermissions = () => {
                                             }
                                             className="basic-multi-select"
                                             classNamePrefix="select"
-                                            placeholder="Select components..."
+                                            placeholder={t("select_components_placeholder", "Select components...")}
                                           />
                                           <div className="text-xs text-gray-500 mt-1">
-                                            Select components
+                                            {t("select_components_helper", "Select components")}
                                           </div>
                                         </div>
                                       )}
@@ -497,7 +491,7 @@ const RolesAndPermissions = () => {
                                         }
                                       }}
                                     >
-                                      {selectedPermission ? "Remove" : "Add"}
+                                      {selectedPermission ? t("remove", "Remove") : t("add", "Add")}
                                     </button>
                                   </td>
                                 </tr>
@@ -509,8 +503,7 @@ const RolesAndPermissions = () => {
                                 colSpan={4}
                                 className="text-center text-gray-500"
                               >
-                                No permissions available. Create permissions
-                                first.
+                                {t("no_permissions_available", "No permissions available. Create permissions first.")}
                               </td>
                             </tr>
                           )}
@@ -523,14 +516,14 @@ const RolesAndPermissions = () => {
                         className="btn btn-neutral"
                         onClick={() => setCurrentStep(1)}
                       >
-                        Previous
+                        {t("previous", "Previous")}
                       </button>
                       <button
                         className="btn btn-primary"
                         onClick={() => setCurrentStep(3)}
                         disabled={selectedPermissions.length === 0}
                       >
-                        Next: Review
+                        {t("next_review", "Next: Review")}
                       </button>
                     </div>
                   </div>
@@ -541,20 +534,19 @@ const RolesAndPermissions = () => {
               {currentStep === 3 && (
                 <div className="w-full bg-base-200 rounded-2xl p-6 border border-base-300">
                   <h2 className="text-xl font-semibold">
-                    Review and Create Role
+                    {t("review_and_create_role", "Review and Create Role")}
                   </h2>
                   <p className="text-base-content text-xs mb-6">
-                    Review the role details and permissions before creating the
-                    role.
+                    {t("review_create_role_desc", "Review the role details and permissions before creating the role.")}
                   </p>
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2">Role Details</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("role_details", "Role Details")}</h3>
                     <div className="overflow-x-auto">
                       <table className="table w-full bg-base-100">
                         <thead>
                           <tr>
-                            <th>Role Name</th>
-                            <th>Number of Permissions</th>
+                            <th>{t("role_name_label", "Role Name")}</th>
+                            <th>{t("number_permissions_th", "Number of Permissions")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -562,7 +554,7 @@ const RolesAndPermissions = () => {
                             <td className="font-semibold">{roleName}</td>
                             <td>
                               <span className="badge badge-primary">
-                                {selectedPermissions.length} permissions
+                                {selectedPermissions.length} {t("permissions_count_lbl", "permissions")}
                               </span>
                             </td>
                           </tr>
@@ -572,16 +564,16 @@ const RolesAndPermissions = () => {
                   </div>
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold mb-2">
-                      Permissions Summary
+                      {t("permissions_summary", "Permissions Summary")}
                     </h3>
                     <div className="overflow-x-auto">
                       <table className="table w-full bg-base-100">
                         <thead>
                           <tr>
-                            <th>Permission</th>
-                            <th>Page</th>
-                            <th>Access Level</th>
-                            <th>Components</th>
+                            <th>{t("permission_th", "Permission")}</th>
+                            <th>{t("page_th", "Page")}</th>
+                            <th>{t("access_level", "Access Level")}</th>
+                            <th>{t("components", "Components")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -607,7 +599,7 @@ const RolesAndPermissions = () => {
                                   <td>
                                     <div className="text-xs bg-base-200 p-2 rounded max-w-xs overflow-hidden">
                                       {sp.availableComponents?.join(", ") ||
-                                        "None"}
+                                        t("none", "None")}
                                     </div>
                                   </td>
                                 </tr>
@@ -619,7 +611,7 @@ const RolesAndPermissions = () => {
                                 colSpan={4}
                                 className="text-center text-gray-500"
                               >
-                                No permissions selected
+                                {t("no_permissions_selected", "No permissions selected")}
                               </td>
                             </tr>
                           )}
@@ -632,7 +624,7 @@ const RolesAndPermissions = () => {
                       className="btn btn-neutral"
                       onClick={() => setCurrentStep(2)}
                     >
-                      Back to Permissions
+                      {t("back_to_permissions", "Back to Permissions")}
                     </button>
                     <button
                       className="btn btn-primary"
@@ -643,7 +635,7 @@ const RolesAndPermissions = () => {
                         selectedPermissions.length === 0
                       }
                     >
-                      {createRole.isPending ? "Creating..." : "Create Role"}
+                      {createRole.isPending ? t("creating", "Creating...") : t("create_role", "Create Role")}
                     </button>
                   </div>
                 </div>
@@ -657,42 +649,42 @@ const RolesAndPermissions = () => {
           type="radio"
           name="roles_tab_group"
           className="tab"
-          aria-label="Edit Role"
+          aria-label={t("edit_role", "Edit Role")}
           checked={activeTab === "edit_role"}
           onChange={() => setActiveTab("edit_role")}
         />
         {activeTab === "edit_role" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl w-full">
-              <h2 className="text-2xl font-bold mb-1">Edit Role</h2>
+              <h2 className="text-2xl font-bold mb-1">{t("edit_role", "Edit Role")}</h2>
               <p className="text-neutral-500 mb-6">
-                Modify role details and permissions.
+                {t("modify_role_desc", "Modify role details and permissions.")}
               </p>
               {editingRole ? (
                 <div className="flex flex-col gap-4">
                   <div>
                     <label className="label">
-                      <span className="label-text font-medium">Role Name</span>
+                      <span className="label-text font-medium">{t("role_name_label", "Role Name")}</span>
                     </label>
                     <input
                       type="text"
                       className="input input-bordered w-full"
                       value={roleName}
                       onChange={(e) => setRoleName(e.target.value)}
-                      placeholder="Enter role name"
+                      placeholder={t("enter_role_name_placeholder", "Enter role name")}
                     />
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Permissions</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("permissions", "Permissions")}</h3>
                     <div className="overflow-x-auto">
                       <table className="table w-full">
                         <thead>
                           <tr>
-                            <th>Permission</th>
-                            <th>Page</th>
-                            <th>Access Level / Components</th>
-                            <th>Action</th>
+                            <th>{t("permission_th", "Permission")}</th>
+                            <th>{t("page_th", "Page")}</th>
+                            <th>{t("access_level_components_th", "Access Level / Components")}</th>
+                            <th>{t("action_th", "Action")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -727,15 +719,15 @@ const RolesAndPermissions = () => {
                                           }
                                         }}
                                       >
-                                        <option value="0">No Access</option>
+                                        <option value="0">{t("no_access", "No Access")}</option>
                                         <option value="1">
-                                          Level 1 (Read Only)
+                                          {t("level_1_readonly", "Level 1 (Read Only)")}
                                         </option>
                                         <option value="2">
-                                          Level 2 (Read/Write)
+                                          {t("level_2_readwrite", "Level 2 (Read/Write)")}
                                         </option>
                                         <option value="3">
-                                          Level 3 (Admin Access)
+                                          {t("level_3_admin", "Level 3 (Admin Access)")}
                                         </option>
                                       </select>
                                       {selectedPermission && (
@@ -769,10 +761,10 @@ const RolesAndPermissions = () => {
                                             }
                                             className="basic-multi-select"
                                             classNamePrefix="select"
-                                            placeholder="Select components..."
+                                            placeholder={t("select_components_placeholder", "Select components...")}
                                           />
                                           <div className="text-xs text-gray-500 mt-1">
-                                            Select components
+                                            {t("select_components_helper", "Select components")}
                                           </div>
                                         </div>
                                       )}
@@ -802,7 +794,7 @@ const RolesAndPermissions = () => {
                                         }
                                       }}
                                     >
-                                      {selectedPermission ? "Remove" : "Add"}
+                                      {selectedPermission ? t("remove", "Remove") : t("add", "Add")}
                                     </button>
                                   </td>
                                 </tr>
@@ -814,8 +806,7 @@ const RolesAndPermissions = () => {
                                 colSpan={4}
                                 className="text-center text-gray-500"
                               >
-                                No permissions available. Create permissions
-                                first.
+                                {t("no_permissions_available", "No permissions available. Create permissions first.")}
                               </td>
                             </tr>
                           )}
@@ -835,7 +826,7 @@ const RolesAndPermissions = () => {
                         setSelectedPermissions([]);
                       }}
                     >
-                      Cancel
+                      {t("cancel", "Cancel")}
                     </button>
                     <button
                       type="button"
@@ -847,12 +838,12 @@ const RolesAndPermissions = () => {
                         selectedPermissions.length === 0
                       }
                     >
-                      {updateRole.isPending ? "Updating..." : "Update Role"}
+                      {updateRole.isPending ? t("updating", "Updating...") : t("update_role", "Update Role")}
                     </button>
                   </div>
                 </div>
               ) : (
-                <p>No role selected for editing.</p>
+                <p>{t("no_role_selected_edit", "No role selected for editing.")}</p>
               )}
             </div>
           </div>

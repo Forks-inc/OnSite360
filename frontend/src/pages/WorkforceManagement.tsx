@@ -28,6 +28,7 @@ import {
 } from "../hooks/useProjects";
 import { useUserProjects } from "../hooks/useUsers";
 import { useAuthStore } from "../stores/useAuthStore";
+import { useTranslation } from "../hooks/useTranslation";
 
 // Add date-fns for date formatting (optional, or use native Date)
 const todayStr = new Date().toISOString().slice(0, 10);
@@ -201,6 +202,7 @@ const WORKFORCE_TAB_LABELS: Record<WorkforceTab, string> = {
 // }
 
 const WorkforceManagement = () => {
+  const { t } = useTranslation();
   // State management
   const [activeTab, setActiveTab] = useState<WorkforceTab>("all");
   const [selectedProject, setSelectedProject] = useState<string>("");
@@ -838,10 +840,9 @@ const WorkforceManagement = () => {
       {/* Heading with project selector */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Workforce Management</h1>
+          <h1 className="text-3xl font-bold">{t("workforce_title", "Workforce & Crew")}</h1>
           <p className="text-gray-500 mt-1">
-            Manage staff assignments, attendance, skills, and safety for your
-            projects.
+            {t("workforce_subtitle", "Manage staff assignments, attendance, skills, and safety for your projects.")}
           </p>
         </div>
         <div>
@@ -852,7 +853,7 @@ const WorkforceManagement = () => {
             disabled={projectsLoading}
           >
             {projectsLoading ? (
-              <option>Loading projects...</option>
+              <option>{t("loading_projects", "Loading projects...")}</option>
             ) : Array.isArray(projects) && projects.length > 0 ? (
               projects.map((project) => (
                 <option key={project.id} value={project.id}>
@@ -860,7 +861,7 @@ const WorkforceManagement = () => {
                 </option>
               ))
             ) : (
-              <option>No projects available</option>
+              <option>{t("no_projects_available", "No projects available")}</option>
             )}
           </select>
         </div>
@@ -879,7 +880,7 @@ const WorkforceManagement = () => {
               {tab === "all"}
               {tab === "attendance"}
               {tab === "analytics"}
-              {WORKFORCE_TAB_LABELS[tab]}
+              {tab === "all" ? t("all_staff", "All Staff") : tab === "attendance" ? t("attendance", "Attendance") : t("analytics_tab", "Analytics")}
             </button>
           ))}
         </div>
@@ -892,28 +893,28 @@ const WorkforceManagement = () => {
               onClick={() => setShowAddWorker(true)}
             >
               <MdPersonAdd />
-              Add Worker
+              {t("add_worker", "Add Worker")}
             </button>
             <button
               className="btn btn-outline flex items-center gap-2"
               onClick={handleExport}
             >
               <MdFileDownload />
-              Export Workforce (CSV)
+              {t("export_workforce", "Export Workforce (CSV)")}
             </button>
             <button
               className="btn btn-outline flex items-center gap-2"
               onClick={() => setShowImportModal(true)}
             >
               <MdUpload />
-              Import Workers (CSV)
+              {t("import_workers", "Import Workers (CSV)")}
             </button>
           </div>
           <div className="flex items-center justify-end">
             <input
               type="text"
               className="input input-bordered w-full max-w-xs"
-              placeholder="Search worker by name..."
+              placeholder={t("search_worker_placeholder", "Search worker by name...")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -928,12 +929,12 @@ const WorkforceManagement = () => {
                 <span className="loading loading-spinner loading-lg text-primary"></span>
                 <p className="mt-4 text-gray-500">
                   {projectsLoading
-                    ? "Loading projects..."
+                    ? t("loading_projects", "Loading projects...")
                     : crewMembersLoading
-                    ? "Loading crew members..."
+                    ? t("loading_crew_members", "Loading crew members...")
                     : attendanceLoading
-                    ? "Loading attendance data..."
-                    : "Loading workforce data..."}
+                    ? t("loading_attendance_data", "Loading attendance data...")
+                    : t("loading_workforce_data", "Loading workforce data...")}
                 </p>
               </div>
             </div>
@@ -952,9 +953,9 @@ const WorkforceManagement = () => {
                   >
                     ✕
                   </button>
-                  <h3 className="font-bold text-lg mb-2">Add New Worker</h3>
+                  <h3 className="font-bold text-lg mb-2">{t("add_new_worker", "Add New Worker")}</h3>
                   <p className="text-sm text-gray-600 mb-4">
-                    Worker will be automatically assigned to:{" "}
+                    {t("worker_assigned_to", "Worker will be automatically assigned to:")}{" "}
                     <span className="font-semibold">
                       {projects.find((p: Project) => p.id === selectedProject)
                         ?.name || "Current Project"}
@@ -964,7 +965,7 @@ const WorkforceManagement = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="label">
-                          <span className="label-text">Name *</span>
+                          <span className="label-text">{t("name_required", "Name *")}</span>
                         </label>
                         <input
                           type="text"
@@ -977,7 +978,7 @@ const WorkforceManagement = () => {
                       </div>
                       <div>
                         <label className="label">
-                          <span className="label-text">Role *</span>
+                          <span className="label-text">{t("role_required", "Role *")}</span>
                         </label>
                         <select
                           name="role"
@@ -986,45 +987,45 @@ const WorkforceManagement = () => {
                           onChange={handleNewWorkerChange}
                           required
                         >
-                          <option value="">Select a role</option>
-                          <option value="Foreman">Foreman</option>
-                          <option value="Carpenter">Carpenter</option>
-                          <option value="Electrician">Electrician</option>
-                          <option value="Plumber">Plumber</option>
-                          <option value="Mason">Mason</option>
-                          <option value="Roofer">Roofer</option>
+                          <option value="">{t("select_role_placeholder", "Select a role")}</option>
+                          <option value="Foreman">{t("role_foreman", "Foreman")}</option>
+                          <option value="Carpenter">{t("role_carpenter", "Carpenter")}</option>
+                          <option value="Electrician">{t("role_electrician", "Electrician")}</option>
+                          <option value="Plumber">{t("role_plumber", "Plumber")}</option>
+                          <option value="Mason">{t("role_mason", "Mason")}</option>
+                          <option value="Roofer">{t("role_roofer", "Roofer")}</option>
                           <option value="HVAC Technician">
-                            HVAC Technician
+                            {t("role_hvac", "HVAC Technician")}
                           </option>
                           <option value="Heavy Equipment Operator">
-                            Heavy Equipment Operator
+                            {t("role_operator", "Heavy Equipment Operator")}
                           </option>
                           <option value="General Laborer">
-                            General Laborer
+                            {t("role_laborer", "General Laborer")}
                           </option>
-                          <option value="Safety Officer">Safety Officer</option>
+                          <option value="Safety Officer">{t("role_safety", "Safety Officer")}</option>
                           <option value="Quality Control Inspector">
-                            Quality Control Inspector
+                            {t("role_qc", "Quality Control Inspector")}
                           </option>
-                          <option value="Welder">Welder</option>
-                          <option value="Painter">Painter</option>
+                          <option value="Welder">{t("role_welder", "Welder")}</option>
+                          <option value="Painter">{t("role_painter", "Painter")}</option>
                           <option value="Drywall Installer">
-                            Drywall Installer
+                            {t("role_drywall", "Drywall Installer")}
                           </option>
                           <option value="Flooring Specialist">
-                            Flooring Specialist
+                            {t("role_flooring", "Flooring Specialist")}
                           </option>
                           <option value="Concrete Worker">
-                            Concrete Worker
+                            {t("role_concrete", "Concrete Worker")}
                           </option>
-                          <option value="Landscaper">Landscaper</option>
-                          <option value="Other">Other</option>
+                          <option value="Landscaper">{t("role_landscaper", "Landscaper")}</option>
+                          <option value="Other">{t("other", "Other")}</option>
                         </select>
                         {newWorkerData.role === "Other" && (
                           <input
                             type="text"
                             className="input input-bordered w-full mt-2"
-                            placeholder="Specify custom role"
+                            placeholder={t("specify_custom_role", "Specify custom role")}
                             onChange={(e) =>
                               setNewWorkerData((prev) => ({
                                 ...prev,
@@ -1036,7 +1037,7 @@ const WorkforceManagement = () => {
                       </div>
                       <div>
                         <label className="label">
-                          <span className="label-text">Phone</span>
+                          <span className="label-text">{t("phone", "Phone")}</span>
                         </label>
                         <input
                           type="tel"
@@ -1049,7 +1050,7 @@ const WorkforceManagement = () => {
                       </div>
                       <div>
                         <label className="label">
-                          <span className="label-text">Email</span>
+                          <span className="label-text">{t("email", "Email")}</span>
                         </label>
                         <input
                           type="email"
@@ -1062,7 +1063,7 @@ const WorkforceManagement = () => {
                       </div>
                       <div>
                         <label className="label">
-                          <span className="label-text">Hire Date</span>
+                          <span className="label-text">{t("hire_date", "Hire Date")}</span>
                         </label>
                         <input
                           type="date"
@@ -1074,7 +1075,7 @@ const WorkforceManagement = () => {
                       </div>
                       <div>
                         <label className="label">
-                          <span className="label-text">Status</span>
+                          <span className="label-text">{t("status", "Status")}</span>
                         </label>
                         <select
                           name="isActive"
@@ -1087,21 +1088,21 @@ const WorkforceManagement = () => {
                             }))
                           }
                         >
-                          <option value="true">Active</option>
-                          <option value="false">Inactive</option>
+                          <option value="true">{t("active", "Active")}</option>
+                          <option value="false">{t("inactive", "Inactive")}</option>
                         </select>
                       </div>
                     </div>
                     <div>
                       <label className="label">
-                        <span className="label-text">Skills</span>
+                        <span className="label-text">{t("skills", "Skills")}</span>
                       </label>
                       <TagsInput
                         value={newWorkerData.skills || []}
                         onChange={(skills) =>
                           setNewWorkerData((prev) => ({ ...prev, skills }))
                         }
-                        placeholder="Type skills and press Enter (e.g. Carpentry, Electrical Installation, Safety Protocols)"
+                        placeholder={t("skills_placeholder", "Type skills and press Enter (e.g. Carpentry, Electrical Installation, Safety Protocols)")}
                         maxTags={20}
                         className="w-full"
                       />
@@ -1110,7 +1111,7 @@ const WorkforceManagement = () => {
                         ROLE_SPECIFIC_SKILLS[newWorkerData.role] ? (
                           <>
                             <div className="text-xs text-gray-600 mb-2">
-                              Recommended skills for {newWorkerData.role}:
+                              {t("recommended_skills", "Recommended skills for ")}{newWorkerData.role}:
                             </div>
                             <div className="flex flex-wrap gap-1 mb-2">
                               {ROLE_SPECIFIC_SKILLS[newWorkerData.role].map(
@@ -1141,7 +1142,7 @@ const WorkforceManagement = () => {
                           </>
                         ) : null}
                         <div className="text-xs text-gray-600 mb-2">
-                          Other common skills:
+                          {t("other_common_skills", "Other common skills:")}
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {COMMON_SKILLS.slice(0, 8).map((skill) => (
@@ -1181,22 +1182,22 @@ const WorkforceManagement = () => {
                         {createCrewMemberMutation.isPending ||
                         assignCrewMemberToProjectMutation.isPending
                           ? createCrewMemberMutation.isPending
-                            ? "Creating..."
-                            : "Assigning to Project..."
-                          : "Add Worker to Project"}
+                            ? t("creating", "Creating...")
+                            : t("assigning_project", "Assigning to Project...")
+                          : t("add_worker_to_project", "Add Worker to Project")}
                       </button>
                       <button
                         type="button"
                         className="btn"
                         onClick={() => setShowAddWorker(false)}
                       >
-                        Cancel
+                        {t("cancel", "Cancel")}
                       </button>
                     </div>
                   </form>
                 </div>
                 <form method="dialog" className="modal-backdrop">
-                  <button onClick={() => setShowAddWorker(false)}>close</button>
+                  <button onClick={() => setShowAddWorker(false)}>{t("close", "close")}</button>
                 </form>
               </div>
             )}
@@ -1216,7 +1217,7 @@ const WorkforceManagement = () => {
                   </button>
                   <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
                     <MdUpload />
-                    Import Workers from CSV
+                    {t("import_workers_csv", "Import Workers from CSV")}
                   </h3>
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                     <div className="flex items-start gap-2">
@@ -1235,24 +1236,20 @@ const WorkforceManagement = () => {
                       </svg>
                       <div>
                         <h4 className="font-semibold text-blue-800 mb-1">
-                          Import Instructions
+                          {t("import_instructions_title", "Import Instructions")}
                         </h4>
                         <ul className="text-sm text-blue-700 space-y-1">
                           <li>
-                            • Only CSV files exported from OnSite360 platform
-                            are supported
+                            • {t("import_instruction_1", "Only CSV files exported from OnSite360 platform are supported")}
                           </li>
                           <li>
-                            • Workers must already exist in the system (this
-                            assigns existing workers to current project)
+                            • {t("import_instruction_2", "Workers must already exist in the system (this assigns existing workers to current project)")}
                           </li>
                           <li>
-                            • CSV must include ID column for proper worker
-                            identification
+                            • {t("import_instruction_3", "CSV must include ID column for proper worker identification")}
                           </li>
                           <li>
-                            • Workers already assigned to this project will be
-                            skipped
+                            • {t("import_instruction_4", "Workers already assigned to this project will be skipped")}
                           </li>
                         </ul>
                       </div>
@@ -1264,7 +1261,7 @@ const WorkforceManagement = () => {
                       <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-8">
                         <MdUpload className="text-4xl text-gray-400 mb-2" />
                         <p className="text-gray-600 mb-4">
-                          Select a CSV file to import workers
+                          {t("select_csv_import", "Select a CSV file to import workers")}
                         </p>
                         <input
                           type="file"
@@ -1278,19 +1275,19 @@ const WorkforceManagement = () => {
                         <div className="bg-gray-50 border rounded-lg p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="font-medium">Selected File:</p>
+                              <p className="font-medium">{t("selected_file_lbl", "Selected File:")}</p>
                               <p className="text-sm text-gray-600">
                                 {importFile.name}
                               </p>
                               <p className="text-xs text-gray-500">
-                                Size: {(importFile.size / 1024).toFixed(1)} KB
+                                {t("file_size", "Size:")} {(importFile.size / 1024).toFixed(1)} KB
                               </p>
                             </div>
                             <button
                               className="btn btn-sm btn-ghost"
                               onClick={resetImport}
                             >
-                              Remove
+                              {t("remove", "Remove")}
                             </button>
                           </div>
                         </div>
@@ -1348,12 +1345,12 @@ const WorkforceManagement = () => {
                         {importStatus.loading ? (
                           <>
                             <span className="loading loading-spinner loading-sm"></span>
-                            Processing...
+                            {t("processing", "Processing...")}
                           </>
                         ) : (
                           <>
                             <MdUpload />
-                            Import Workers
+                            {t("import_workers", "Import Workers")}
                           </>
                         )}
                       </button>
@@ -1365,7 +1362,7 @@ const WorkforceManagement = () => {
                         resetImport();
                       }}
                     >
-                      {importStatus.success ? "Close" : "Cancel"}
+                      {importStatus.success ? t("close", "Close") : t("cancel", "Cancel")}
                     </button>
                   </div>
                 </div>
@@ -1376,7 +1373,7 @@ const WorkforceManagement = () => {
                       resetImport();
                     }}
                   >
-                    close
+                    {t("close", "close")}
                   </button>
                 </form>
               </div>
@@ -1386,28 +1383,28 @@ const WorkforceManagement = () => {
             {showDeleteConfirm && (
               <div className="modal modal-open">
                 <div className="modal-box">
-                  <h3 className="font-bold text-lg">Confirm Delete</h3>
+                  <h3 className="font-bold text-lg">{t("confirm_delete", "Confirm Delete")}</h3>
                   <p className="py-4">
-                    Are you sure you want to delete this worker?
+                    {t("confirm_delete_worker_desc", "Are you sure you want to delete this worker?")}
                   </p>
                   <div className="modal-action">
                     <button
                       className="btn btn-error"
                       onClick={confirmDeleteWorker}
                     >
-                      Delete
+                      {t("delete", "Delete")}
                     </button>
                     <button
                       className="btn"
                       onClick={() => setShowDeleteConfirm(false)}
                     >
-                      Cancel
+                      {t("cancel", "Cancel")}
                     </button>
                   </div>
                 </div>
                 <form method="dialog" className="modal-backdrop">
                   <button onClick={() => setShowDeleteConfirm(false)}>
-                    close
+                    {t("close", "close")}
                   </button>
                 </form>
               </div>
@@ -1422,12 +1419,9 @@ const WorkforceManagement = () => {
                     Save Attendance Changes
                   </h3>
                   <p className="py-4">
-                    Are you sure you want to save attendance changes for{" "}
-                    <span className="font-bold">
-                      {Object.keys(attendanceState).length}
-                    </span>{" "}
-                    workers for{" "}
-                    <span className="font-bold">{attendanceDate}</span>?
+                    {t("save_attendance_confirm_desc", "Are you sure you want to save attendance changes for {count} workers for {date}?")
+                      .replace("{count}", Object.keys(attendanceState).length.toString())
+                      .replace("{date}", attendanceDate)}
                   </p>
                   <div className="modal-action">
                     <button
@@ -1435,19 +1429,19 @@ const WorkforceManagement = () => {
                       onClick={confirmSaveAttendance}
                     >
                       <MdSave />
-                      Save Changes
+                      {t("save_changes", "Save Changes")}
                     </button>
                     <button
                       className="btn"
                       onClick={() => setShowSaveConfirm(false)}
                     >
-                      Cancel
+                      {t("cancel", "Cancel")}
                     </button>
                   </div>
                 </div>
                 <form method="dialog" className="modal-backdrop">
                   <button onClick={() => setShowSaveConfirm(false)}>
-                    close
+                    {t("close", "close")}
                   </button>
                 </form>
               </div>
@@ -1460,7 +1454,10 @@ const WorkforceManagement = () => {
                 {attendanceDataStatus.loading && (
                   <div className="alert alert-info mb-4">
                     <span className="loading loading-spinner loading-sm"></span>
-                    <span>Loading attendance data for {attendanceDate}...</span>
+                    <span>
+                      {t("loading_attendance_for_date", "Loading attendance data for {date}...")
+                        .replace("{date}", attendanceDate)}
+                    </span>
                   </div>
                 )}
 
@@ -1482,12 +1479,13 @@ const WorkforceManagement = () => {
                     </svg>
                     <div>
                       <span className="font-medium">
-                        No attendance record found for {attendanceDate}
+                        {t("no_attendance_record_for_date", "No attendance record found for {date}")
+                          .replace("{date}", attendanceDate)}
                       </span>
                       <div className="text-sm opacity-80 mt-1">
                         {isToday
-                          ? "You can start recording attendance for today by marking worker status below and clicking 'Save Changes'."
-                          : "No attendance was recorded for this date. You can only modify attendance for today."}
+                          ? t("instructions_today_attendance", "You can start recording attendance for today by marking worker status below and clicking 'Save Changes'.")
+                          : t("instructions_past_attendance", "No attendance was recorded for this date. You can only modify attendance for today.")}
                       </div>
                     </div>
                   </div>
@@ -1515,7 +1513,7 @@ const WorkforceManagement = () => {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                   <div className="flex items-center gap-4">
                     <label className="font-semibold flex items-center gap-2">
-                      <span>Date:</span>
+                      <span>{t("date_lbl", "Date:")}</span>
                       <input
                         type="date"
                         className="input input-bordered input-sm"
@@ -1532,7 +1530,7 @@ const WorkforceManagement = () => {
                         <div className="flex items-center gap-2">
                           <label className="label cursor-pointer flex items-center gap-2">
                             <span className="label-text font-medium">
-                              Bulk Mode:
+                              {t("bulk_mode", "Bulk Mode:")}
                             </span>
                             <input
                               type="checkbox"
@@ -1550,17 +1548,17 @@ const WorkforceManagement = () => {
                               value={bulkStatus}
                               onChange={(e) => setBulkStatus(e.target.value)}
                             >
-                              <option value="Present">Present</option>
-                              <option value="Absent">Absent</option>
-                              <option value="Half Day">Half Day</option>
-                              <option value="Sick Leave">Sick Leave</option>
-                              <option value="Holiday">Holiday</option>
+                              <option value="Present">{t("present", "Present")}</option>
+                              <option value="Absent">{t("absent", "Absent")}</option>
+                              <option value="Half Day">{t("half_day", "Half Day")}</option>
+                              <option value="Sick Leave">{t("sick_leave", "Sick Leave")}</option>
+                              <option value="Holiday">{t("holiday", "Holiday")}</option>
                             </select>
                             <button
                               className="btn btn-success btn-sm"
                               onClick={applyBulkAttendance}
                             >
-                              Apply to All ({filteredWorkers?.length || 0})
+                              {t("apply_to_all", "Apply to All")} ({filteredWorkers?.length || 0})
                             </button>
                           </div>
                         )}
@@ -1575,7 +1573,7 @@ const WorkforceManagement = () => {
                       onClick={saveAttendanceChanges}
                     >
                       <MdSave />
-                      Save Changes
+                      {t("save_changes", "Save Changes")}
                     </button>
                   )}
                 </div>
@@ -1597,7 +1595,7 @@ const WorkforceManagement = () => {
                       <>
                         <div className="stat bg-base-200 text-success rounded-xl border border-base-300">
                           <div className="stat-title text-xs opacity-80">
-                            Present
+                            {t("present", "Present")}
                           </div>
                           <div className="stat-value text-2xl">
                             {stats.Present || 0}
@@ -1605,7 +1603,7 @@ const WorkforceManagement = () => {
                         </div>
                         <div className="stat bg-base-200 text-error rounded-xl border border-base-300">
                           <div className="stat-title text-xs opacity-80">
-                            Absent
+                            {t("absent", "Absent")}
                           </div>
                           <div className="stat-value text-2xl">
                             {stats.Absent || 0}
@@ -1613,7 +1611,7 @@ const WorkforceManagement = () => {
                         </div>
                         <div className="stat bg-base-200 text-warning rounded-xl border border-base-300">
                           <div className="stat-title text-xs opacity-80">
-                            Half Day
+                            {t("half_day", "Half Day")}
                           </div>
                           <div className="stat-value text-2xl">
                             {stats["Half Day"] || 0}
@@ -1621,7 +1619,7 @@ const WorkforceManagement = () => {
                         </div>
                         <div className="stat bg-base-200 text-info rounded-xl border border-base-300">
                           <div className="stat-title text-xs opacity-80">
-                            Sick Leave
+                            {t("sick_leave", "Sick Leave")}
                           </div>
                           <div className="stat-value text-2xl">
                             {stats["Sick Leave"] || 0}
@@ -1629,7 +1627,7 @@ const WorkforceManagement = () => {
                         </div>
                         <div className="stat bg-base-200 text-neutral rounded-xl border border-base-300">
                           <div className="stat-title text-xs opacity-80">
-                            Holiday
+                            {t("holiday", "Holiday")}
                           </div>
                           <div className="stat-value text-2xl">
                             {stats.Holiday || 0}
@@ -1649,54 +1647,49 @@ const WorkforceManagement = () => {
                   <div className="bg-base-100 p-8 rounded-xl border border-base-300">
                     <MdSchedule className="mx-auto text-6xl text-gray-400 mb-4" />
                     <h3 className="text-xl font-semibold mb-2">
-                      No Attendance Record
+                      {t("no_attendance_record", "No Attendance Record")}
                     </h3>
                     <p className="text-gray-500 mb-4">
-                      No attendance has been recorded for {attendanceDate}.
+                      {t("no_attendance_for_date", "No attendance has been recorded for {date}.")
+                        .replace("{date}", attendanceDate)}
                     </p>
                     {isToday ? (
                       <div className="text-sm text-gray-600">
                         {!filteredWorkers || filteredWorkers.length === 0 ? (
                           <div>
                             <p className="mb-2 text-warning">
-                              No crew members found for this project.
+                              {t("no_crew_members_found", "No crew members found for this project.")}
                             </p>
                             <p className="mb-2">
-                              To start recording attendance:
+                              {t("to_start_recording_attendance", "To start recording attendance:")}
                             </p>
                             <ol className="list-decimal list-inside space-y-1 text-left max-w-md mx-auto">
                               <li>
-                                First, add crew members to this project using
-                                the "Add Worker" button
+                                {t("instructions_step_1", "First, add crew members to this project using the 'Add Worker' button")}
                               </li>
                               <li>
-                                Then return to the Attendance tab to record
-                                their attendance
+                                {t("instructions_step_2", "Then return to the Attendance tab to record their attendance")}
                               </li>
-                              <li>Mark attendance status for each worker</li>
+                              <li>{t("instructions_step_3", "Mark attendance status for each worker")}</li>
                               <li>
-                                Click "Save Changes" to create the attendance
-                                record
+                                {t("instructions_step_4", "Click 'Save Changes' to create the attendance record")}
                               </li>
                             </ol>
                           </div>
                         ) : (
                           <div>
                             <p className="mb-2">
-                              To start recording attendance:
+                              {t("to_start_recording_attendance", "To start recording attendance:")}
                             </p>
                             <ol className="list-decimal list-inside space-y-1 text-left max-w-md mx-auto">
                               <li>
-                                Use the date selector above to ensure today's
-                                date is selected
+                                {t("instructions_step_alt_1", "Use the date selector above to ensure today's date is selected")}
                               </li>
                               <li>
-                                Mark attendance status for each worker (table
-                                will appear once attendance is created)
+                                {t("instructions_step_alt_2", "Mark attendance status for each worker (table will appear once attendance is created)")}
                               </li>
                               <li>
-                                Click "Save Changes" to create the attendance
-                                record
+                                {t("instructions_step_alt_3", "Click 'Save Changes' to create the attendance record")}
                               </li>
                             </ol>
                           </div>
@@ -1704,7 +1697,7 @@ const WorkforceManagement = () => {
                       </div>
                     ) : (
                       <p className="text-sm text-gray-600">
-                        Attendance records can only be created for today's date.
+                        {t("attendance_today_only", "Attendance records can only be created for today's date.")}
                       </p>
                     )}
                   </div>
@@ -1719,23 +1712,23 @@ const WorkforceManagement = () => {
                 <table className="table w-full bg-base-100 border border-base-300 rounded-2xl">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Role</th>
+                      <th>{t("name", "Name")}</th>
+                      <th>{t("role", "Role")}</th>
                       {activeTab === "attendance" ? (
                         <>
-                          <th>Status</th>
-                          <th>Quick Toggle</th>
-                          <th>Notes</th>
+                          <th>{t("status", "Status")}</th>
+                          <th>{t("quick_toggle", "Quick Toggle")}</th>
+                          <th>{t("notes", "Notes")}</th>
                         </>
                       ) : activeTab === "all" ? (
                         <>
-                          <th>Phone</th>
-                          <th>Email</th>
-                          <th>Skills</th>
-                          <th>Hire Date</th>
-                          <th>Status</th>
-                          <th>Created</th>
-                          <th>Actions</th>
+                          <th>{t("phone", "Phone")}</th>
+                          <th>{t("email", "Email")}</th>
+                          <th>{t("skills", "Skills")}</th>
+                          <th>{t("hire_date", "Hire Date")}</th>
+                          <th>{t("status", "Status")}</th>
+                          <th>{t("created", "Created")}</th>
+                          <th>{t("actions", "Actions")}</th>
                         </>
                       ) : null}
                     </tr>
@@ -1751,35 +1744,35 @@ const WorkforceManagement = () => {
                                   className="btn btn-ghost btn-sm"
                                   onClick={() => setActiveTab("all")}
                                 >
-                                  ← Back to All Staff
+                                  {t("back_to_all_staff", "← Back to All Staff")}
                                 </button>
                                 <h2 className="text-2xl font-bold">
-                                  Workforce Analytics
+                                  {t("workforce_analytics", "Workforce Analytics")}
                                 </h2>
                               </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                               <div className="stat bg-base-100 rounded-xl shadow">
-                                <div className="stat-title">Total Staff</div>
+                                <div className="stat-title">{t("total_staff", "Total Staff")}</div>
                                 <div className="stat-value text-primary">
                                   {filteredWorkers?.length || 0}
                                 </div>
-                                <div className="stat-desc">All roles</div>
+                                <div className="stat-desc">{t("all_roles", "All roles")}</div>
                               </div>
                               <div className="stat bg-base-100 rounded-xl shadow">
-                                <div className="stat-title">Active Workers</div>
+                                <div className="stat-title">{t("active_workers", "Active Workers")}</div>
                                 <div className="stat-value text-success">
                                   {filteredWorkers?.filter(
                                     (w: CrewMember) => w.isActive
                                   ).length || 0}
                                 </div>
                                 <div className="stat-desc">
-                                  Currently active
+                                  {t("currently_active", "Currently active")}
                                 </div>
                               </div>
                               <div className="stat bg-base-100 rounded-xl shadow">
-                                <div className="stat-title">Total Skills</div>
+                                <div className="stat-title">{t("total_skills", "Total Skills")}</div>
                                 <div className="stat-value text-info">
                                   {
                                     Array.from(
@@ -1791,10 +1784,10 @@ const WorkforceManagement = () => {
                                     ).length
                                   }
                                 </div>
-                                <div className="stat-desc">Unique skills</div>
+                                <div className="stat-desc">{t("unique_skills", "Unique skills")}</div>
                               </div>
                               <div className="stat bg-base-100 rounded-xl shadow">
-                                <div className="stat-title">Roles</div>
+                                <div className="stat-title">{t("roles", "Roles")}</div>
                                 <div className="stat-value text-warning">
                                   {
                                     Array.from(
@@ -1806,14 +1799,14 @@ const WorkforceManagement = () => {
                                     ).length
                                   }
                                 </div>
-                                <div className="stat-desc">Role diversity</div>
+                                <div className="stat-desc">{t("role_diversity", "Role diversity")}</div>
                               </div>
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                               <div className="bg-base-100 p-4 rounded-xl">
                                 <h3 className="font-bold text-lg mb-4">
-                                  Active Status
+                                  {t("active_status", "Active Status")}
                                 </h3>
                                 <div className="space-y-2">
                                   {Object.entries(
@@ -1854,7 +1847,7 @@ const WorkforceManagement = () => {
 
                               <div className="bg-base-100 p-4 rounded-xl">
                                 <h3 className="font-bold text-lg mb-4">
-                                  Role Distribution
+                                  {t("role_distribution", "Role Distribution")}
                                 </h3>
                                 <div className="space-y-2">
                                   {Object.entries(
@@ -1888,7 +1881,7 @@ const WorkforceManagement = () => {
 
                             <div className="mt-6 bg-base-100 p-4 rounded-xl">
                               <h3 className="font-bold text-lg mb-4">
-                                Skills Distribution
+                                {t("skills_distribution", "Skills Distribution")}
                               </h3>
                               <div className="flex flex-wrap gap-2">
                                 {Object.entries(
@@ -1968,13 +1961,13 @@ const WorkforceManagement = () => {
                                       )
                                     }
                                   >
-                                    <option value="Present">Present</option>
-                                    <option value="Absent">Absent</option>
-                                    <option value="Half Day">Half Day</option>
+                                    <option value="Present">{t("present", "Present")}</option>
+                                    <option value="Absent">{t("absent", "Absent")}</option>
+                                    <option value="Half Day">{t("half_day", "Half Day")}</option>
                                     <option value="Sick Leave">
-                                      Sick Leave
+                                      {t("sick_leave", "Sick Leave")}
                                     </option>
-                                    <option value="Holiday">Holiday</option>
+                                    <option value="Holiday">{t("holiday", "Holiday")}</option>
                                   </select>
                                 ) : (
                                   <span
@@ -1992,7 +1985,7 @@ const WorkforceManagement = () => {
                                         : "badge-ghost"
                                     }`}
                                   >
-                                    {att}
+                                    {att === "Present" ? t("present", "Present") : att === "Absent" ? t("absent", "Absent") : att === "Half Day" ? t("half_day", "Half Day") : att === "Sick Leave" ? t("sick_leave", "Sick Leave") : att === "Holiday" ? t("holiday", "Holiday") : att}
                                   </span>
                                 )}
                               </td>
@@ -2001,7 +1994,7 @@ const WorkforceManagement = () => {
                                   <div className="flex items-center gap-2">
                                     <label className="label cursor-pointer flex items-center gap-2">
                                       <span className="label-text text-sm">
-                                        Present:
+                                        {t("present_lbl", "Present:")}
                                       </span>
                                       <input
                                         type="checkbox"
@@ -2027,7 +2020,7 @@ const WorkforceManagement = () => {
                                       <input
                                         type="text"
                                         className="input input-xs input-bordered flex-1"
-                                        placeholder="Add notes..."
+                                        placeholder={t("add_notes_placeholder", "Add notes...")}
                                         value={
                                           attendanceState[worker.id]?.notes ||
                                           ""
@@ -2116,7 +2109,7 @@ const WorkforceManagement = () => {
                                       : "badge-error"
                                   }`}
                                 >
-                                  {worker.isActive ? "Active" : "Inactive"}
+                                  {worker.isActive ? t("active", "Active") : t("inactive", "Inactive")}
                                 </span>
                               </td>
                               <td>
@@ -2130,7 +2123,7 @@ const WorkforceManagement = () => {
                                 <div className="flex gap-2">
                                   <button
                                     className="btn btn-sm btn-primary"
-                                    title="Edit Worker"
+                                    title={t("edit_worker", "Edit Worker")}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleEditWorker(worker);
@@ -2140,7 +2133,7 @@ const WorkforceManagement = () => {
                                   </button>
                                   <button
                                     className="btn btn-sm btn-error"
-                                    title="Delete Worker"
+                                    title={t("delete_worker", "Delete Worker")}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleDeleteWorker(worker.id);
@@ -2168,7 +2161,7 @@ const WorkforceManagement = () => {
                           }
                           className="text-center text-gray-500 py-8"
                         >
-                          No workforce data found for this project.
+                          {t("no_workforce_data", "No workforce data found for this project.")}
                         </td>
                       </tr>
                     )}
@@ -2187,11 +2180,11 @@ const WorkforceManagement = () => {
                   >
                     ✕
                   </button>
-                  <h3 className="font-bold text-lg mb-4">Edit Worker</h3>
+                  <h3 className="font-bold text-lg mb-4">{t("edit_worker", "Edit Worker")}</h3>
                   <form onSubmit={handleUpdateWorker}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="label font-semibold">Name</label>
+                        <label className="label font-semibold">{t("name", "Name")}</label>
                         <input
                           className="input input-bordered w-full"
                           name="name"
@@ -2201,7 +2194,7 @@ const WorkforceManagement = () => {
                         />
                       </div>
                       <div>
-                        <label className="label font-semibold">Role</label>
+                        <label className="label font-semibold">{t("role", "Role")}</label>
                         <select
                           name="role"
                           className="select select-bordered w-full"
@@ -2209,51 +2202,51 @@ const WorkforceManagement = () => {
                           onChange={handleEditWorkerChange}
                           required
                         >
-                          <option value="">Select a role</option>
+                          <option value="">{t("select_role_placeholder", "Select a role")}</option>
                           <option value="Project Manager">
-                            Project Manager
+                            {t("role_pm", "Project Manager")}
                           </option>
                           <option value="Site Supervisor">
-                            Site Supervisor
+                            {t("role_supervisor", "Site Supervisor")}
                           </option>
-                          <option value="Foreman">Foreman</option>
-                          <option value="Carpenter">Carpenter</option>
-                          <option value="Electrician">Electrician</option>
-                          <option value="Plumber">Plumber</option>
-                          <option value="Mason">Mason</option>
-                          <option value="Roofer">Roofer</option>
+                          <option value="Foreman">{t("role_foreman", "Foreman")}</option>
+                          <option value="Carpenter">{t("role_carpenter", "Carpenter")}</option>
+                          <option value="Electrician">{t("role_electrician", "Electrician")}</option>
+                          <option value="Plumber">{t("role_plumber", "Plumber")}</option>
+                          <option value="Mason">{t("role_mason", "Mason")}</option>
+                          <option value="Roofer">{t("role_roofer", "Roofer")}</option>
                           <option value="HVAC Technician">
-                            HVAC Technician
+                            {t("role_hvac", "HVAC Technician")}
                           </option>
                           <option value="Heavy Equipment Operator">
-                            Heavy Equipment Operator
+                            {t("role_operator", "Heavy Equipment Operator")}
                           </option>
                           <option value="General Laborer">
-                            General Laborer
+                            {t("role_laborer", "General Laborer")}
                           </option>
-                          <option value="Safety Officer">Safety Officer</option>
+                          <option value="Safety Officer">{t("role_safety", "Safety Officer")}</option>
                           <option value="Quality Control Inspector">
-                            Quality Control Inspector
+                            {t("role_qc", "Quality Control Inspector")}
                           </option>
-                          <option value="Welder">Welder</option>
-                          <option value="Painter">Painter</option>
+                          <option value="Welder">{t("role_welder", "Welder")}</option>
+                          <option value="Painter">{t("role_painter", "Painter")}</option>
                           <option value="Drywall Installer">
-                            Drywall Installer
+                            {t("role_drywall", "Drywall Installer")}
                           </option>
                           <option value="Flooring Specialist">
-                            Flooring Specialist
+                            {t("role_flooring", "Flooring Specialist")}
                           </option>
                           <option value="Concrete Worker">
-                            Concrete Worker
+                            {t("role_concrete", "Concrete Worker")}
                           </option>
-                          <option value="Landscaper">Landscaper</option>
-                          <option value="Other">Other</option>
+                          <option value="Landscaper">{t("role_landscaper", "Landscaper")}</option>
+                          <option value="Other">{t("other", "Other")}</option>
                         </select>
                         {editWorkerData.role === "Other" && (
                           <input
                             type="text"
                             className="input input-bordered w-full mt-2"
-                            placeholder="Specify custom role"
+                            placeholder={t("specify_custom_role", "Specify custom role")}
                             onChange={(e) =>
                               setEditWorkerData((prev) => ({
                                 ...prev,
@@ -2264,7 +2257,7 @@ const WorkforceManagement = () => {
                         )}
                       </div>
                       <div>
-                        <label className="label font-semibold">Phone</label>
+                        <label className="label font-semibold">{t("phone", "Phone")}</label>
                         <input
                           className="input input-bordered w-full"
                           name="phone"
@@ -2275,7 +2268,7 @@ const WorkforceManagement = () => {
                         />
                       </div>
                       <div>
-                        <label className="label font-semibold">Email</label>
+                        <label className="label font-semibold">{t("email", "Email")}</label>
                         <input
                           className="input input-bordered w-full"
                           name="email"
@@ -2286,7 +2279,7 @@ const WorkforceManagement = () => {
                         />
                       </div>
                       <div>
-                        <label className="label font-semibold">Hire Date</label>
+                        <label className="label font-semibold">{t("hire_date", "Hire Date")}</label>
                         <input
                           className="input input-bordered w-full"
                           name="hireDate"
@@ -2296,7 +2289,7 @@ const WorkforceManagement = () => {
                         />
                       </div>
                       <div>
-                        <label className="label font-semibold">Status</label>
+                        <label className="label font-semibold">{t("status", "Status")}</label>
                         <select
                           className="select select-bordered w-full"
                           name="isActive"
@@ -2308,19 +2301,19 @@ const WorkforceManagement = () => {
                             }))
                           }
                         >
-                          <option value="true">Active</option>
-                          <option value="false">Inactive</option>
+                          <option value="true">{t("active", "Active")}</option>
+                          <option value="false">{t("inactive", "Inactive")}</option>
                         </select>
                       </div>
                     </div>
                     <div>
-                      <label className="label font-semibold">Skills</label>
+                      <label className="label font-semibold">{t("skills", "Skills")}</label>
                       <TagsInput
                         value={editWorkerData.skills || []}
                         onChange={(skills) =>
                           setEditWorkerData((prev) => ({ ...prev, skills }))
                         }
-                        placeholder="Type skills and press Enter (e.g. Carpentry, Electrical Installation, Safety Protocols)"
+                        placeholder={t("skills_placeholder", "Type skills and press Enter (e.g. Carpentry, Electrical Installation, Safety Protocols)")}
                         maxTags={20}
                         className="w-full"
                       />
@@ -2329,7 +2322,7 @@ const WorkforceManagement = () => {
                         ROLE_SPECIFIC_SKILLS[editWorkerData.role] ? (
                           <>
                             <div className="text-xs text-gray-600 mb-2">
-                              Recommended skills for {editWorkerData.role}:
+                              {t("recommended_skills", "Recommended skills for ")}{editWorkerData.role}:
                             </div>
                             <div className="flex flex-wrap gap-1 mb-2">
                               {ROLE_SPECIFIC_SKILLS[editWorkerData.role].map(
@@ -2360,7 +2353,7 @@ const WorkforceManagement = () => {
                           </>
                         ) : null}
                         <div className="text-xs text-gray-600 mb-2">
-                          Other common skills:
+                          {t("other_common_skills", "Other common skills:")}
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {COMMON_SKILLS.slice(0, 8).map((skill) => (
@@ -2395,21 +2388,21 @@ const WorkforceManagement = () => {
                         disabled={updateCrewMemberMutation.isPending}
                       >
                         {updateCrewMemberMutation.isPending
-                          ? "Updating..."
-                          : "Update Worker"}
+                          ? t("updating", "Updating...")
+                          : t("update_worker", "Update Worker")}
                       </button>
                       <button
                         type="button"
                         className="btn"
                         onClick={() => setEditWorker(null)}
                       >
-                        Cancel
+                        {t("cancel", "Cancel")}
                       </button>
                     </div>
                   </form>
                 </div>
                 <form method="dialog" className="modal-backdrop">
-                  <button onClick={() => setEditWorker(null)}>close</button>
+                  <button onClick={() => setEditWorker(null)}>{t("close", "close")}</button>
                 </form>
               </div>
             )}
@@ -2424,18 +2417,17 @@ const WorkforceManagement = () => {
                   <div className="bg-base-100 p-6 rounded-xl border border-base-300">
                     <MdPeople className="mx-auto text-4xl text-gray-400 mb-4" />
                     <h3 className="text-lg font-semibold mb-2">
-                      No Crew Members Found
+                      {t("no_crew_members_found_title", "No Crew Members Found")}
                     </h3>
                     <p className="text-gray-500 mb-4">
-                      Get started by adding your first crew member to this
-                      project.
+                      {t("no_crew_members_desc", "Get started by adding your first crew member to this project.")}
                     </p>
                     <button
                       className="btn btn-primary"
                       onClick={() => setShowAddWorker(true)}
                     >
                       <MdPersonAdd />
-                      Add First Crew Member
+                      {t("add_first_crew_member", "Add First Crew Member")}
                     </button>
                   </div>
                 </div>
@@ -2449,7 +2441,7 @@ const WorkforceManagement = () => {
               crewMembers.length > 0 && (
                 <div className="text-center py-8">
                   <p className="text-gray-500">
-                    No workers match your current search criteria.
+                    {t("no_workers_match_search", "No workers match your current search criteria.")}
                   </p>
                 </div>
               )}

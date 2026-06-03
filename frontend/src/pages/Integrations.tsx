@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaPlus, FaTrash, FaEdit, FaSync } from 'react-icons/fa';
+import { useTranslation } from "../hooks/useTranslation";
 
 interface Integration {
     id: string;
@@ -11,6 +12,7 @@ interface Integration {
 }
 
 const Integrations: React.FC = () => {
+    const { t } = useTranslation();
     const [integrations, setIntegrations] = useState<Integration[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
@@ -90,7 +92,7 @@ const Integrations: React.FC = () => {
     };
 
     const handleDeleteIntegration = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this integration?')) {
+        if (window.confirm(t("confirm_delete_integration", "Are you sure you want to delete this integration?"))) {
             try {
                 // Replace with actual API call
                 setIntegrations(integrations.filter(integration => integration.id !== id));
@@ -158,21 +160,21 @@ const Integrations: React.FC = () => {
 
     const getIntegrationTypeLabel = (type: string) => {
         switch(type) {
-            case 'openai': return 'OpenAI';
-            case 'openweather': return 'OpenWeather';
-            default: return 'Other';
+            case 'openai': return t("openai", "OpenAI");
+            case 'openweather': return t("openweather", "OpenWeather");
+            default: return t("other", "Other");
         }
     };
 
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">External API Integrations</h1>
+                <h1 className="text-2xl font-bold">{t("integrations_title", "External API Integrations")}</h1>
                 <button
                     className="btn btn-primary"
                     onClick={handleAddIntegration}
                 >
-                    <FaPlus className="mr-2" /> Add Integration
+                    <FaPlus className="mr-2" /> {t("add_integration", "Add Integration")}
                 </button>
             </div>
 
@@ -185,19 +187,19 @@ const Integrations: React.FC = () => {
                     <table className="table w-full">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>API Key</th>
-                                <th>Status</th>
-                                <th>Last Synced</th>
-                                <th>Actions</th>
+                                <th>{t("name", "Name")}</th>
+                                <th>{t("type", "Type")}</th>
+                                <th>{t("api_key", "API Key")}</th>
+                                <th>{t("status", "Status")}</th>
+                                <th>{t("last_synced", "Last Synced")}</th>
+                                <th>{t("actions", "Actions")}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {integrations.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="text-center py-4">
-                                        No integrations found. Add one to get started.
+                                        {t("no_integrations_found", "No integrations found. Add one to get started.")}
                                     </td>
                                 </tr>
                             ) : (
@@ -208,13 +210,13 @@ const Integrations: React.FC = () => {
                                         <td>{integration.apiKey}</td>
                                         <td>
                                             <div className={`badge ${integration.isActive ? 'badge-success' : 'badge-error'}`}>
-                                                {integration.isActive ? 'Active' : 'Inactive'}
+                                                {integration.isActive ? t("active", "Active") : t("inactive", "Inactive")}
                                             </div>
                                         </td>
                                         <td>
                                             {integration.lastSynced 
                                                 ? new Date(integration.lastSynced).toLocaleDateString() 
-                                                : 'Never'}
+                                                : t("never", "Never")}
                                         </td>
                                         <td className="flex space-x-2">
                                             <button
@@ -248,18 +250,18 @@ const Integrations: React.FC = () => {
             {isAddModalOpen && (
                 <div className="modal modal-open">
                     <div className="modal-box">
-                        <h3 className="font-bold text-lg mb-4">Add New Integration</h3>
+                        <h3 className="font-bold text-lg mb-4">{t("add_new_integration", "Add New Integration")}</h3>
                         <form onSubmit={handleSubmitAdd}>
                             <div className="form-control mb-4">
                                 <label className="label">
-                                    <span className="label-text">Integration Name</span>
+                                    <span className="label-text">{t("integration_name", "Integration Name")}</span>
                                 </label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    placeholder="Enter integration name"
+                                    placeholder={t("enter_integration_name", "Enter integration name")}
                                     className="input input-bordered w-full"
                                     required
                                 />
@@ -267,7 +269,7 @@ const Integrations: React.FC = () => {
                             
                             <div className="form-control mb-4">
                                 <label className="label">
-                                    <span className="label-text">Integration Type</span>
+                                    <span className="label-text">{t("integration_type", "Integration Type")}</span>
                                 </label>
                                 <select
                                     name="type"
@@ -276,22 +278,22 @@ const Integrations: React.FC = () => {
                                     className="select select-bordered w-full"
                                     required
                                 >
-                                    <option value="openai">OpenAI</option>
-                                    <option value="openweather">OpenWeather</option>
-                                    <option value="other">Other</option>
+                                    <option value="openai">{t("openai", "OpenAI")}</option>
+                                    <option value="openweather">{t("openweather", "OpenWeather")}</option>
+                                    <option value="other">{t("other", "Other")}</option>
                                 </select>
                             </div>
                             
                             <div className="form-control mb-4">
                                 <label className="label">
-                                    <span className="label-text">API Key</span>
+                                    <span className="label-text">{t("api_key", "API Key")}</span>
                                 </label>
                                 <input
                                     type="text"
                                     name="apiKey"
                                     value={formData.apiKey}
                                     onChange={handleInputChange}
-                                    placeholder="Enter API key"
+                                    placeholder={t("enter_api_key", "Enter API key")}
                                     className="input input-bordered w-full"
                                     required
                                 />
@@ -299,7 +301,7 @@ const Integrations: React.FC = () => {
                             
                             <div className="form-control mb-4">
                                 <label className="label cursor-pointer">
-                                    <span className="label-text">Active</span>
+                                    <span className="label-text">{t("active", "Active")}</span>
                                     <input
                                         type="checkbox"
                                         name="isActive"
@@ -312,14 +314,14 @@ const Integrations: React.FC = () => {
                             
                             <div className="modal-action">
                                 <button type="submit" className="btn btn-primary">
-                                    Add Integration
+                                    {t("add_integration", "Add Integration")}
                                 </button>
                                 <button
                                     type="button"
                                     className="btn"
                                     onClick={() => setIsAddModalOpen(false)}
                                 >
-                                    Cancel
+                                    {t("cancel", "Cancel")}
                                 </button>
                             </div>
                         </form>
@@ -331,18 +333,18 @@ const Integrations: React.FC = () => {
             {isEditModalOpen && currentIntegration && (
                 <div className="modal modal-open">
                     <div className="modal-box">
-                        <h3 className="font-bold text-lg mb-4">Edit Integration</h3>
+                        <h3 className="font-bold text-lg mb-4">{t("edit_integration", "Edit Integration")}</h3>
                         <form onSubmit={handleSubmitEdit}>
                             <div className="form-control mb-4">
                                 <label className="label">
-                                    <span className="label-text">Integration Name</span>
+                                    <span className="label-text">{t("integration_name", "Integration Name")}</span>
                                 </label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    placeholder="Enter integration name"
+                                    placeholder={t("enter_integration_name", "Enter integration name")}
                                     className="input input-bordered w-full"
                                     required
                                 />
@@ -350,7 +352,7 @@ const Integrations: React.FC = () => {
                             
                             <div className="form-control mb-4">
                                 <label className="label">
-                                    <span className="label-text">Integration Type</span>
+                                    <span className="label-text">{t("integration_type", "Integration Type")}</span>
                                 </label>
                                 <select
                                     name="type"
@@ -359,22 +361,22 @@ const Integrations: React.FC = () => {
                                     className="select select-bordered w-full"
                                     required
                                 >
-                                    <option value="openai">OpenAI</option>
-                                    <option value="openweather">OpenWeather</option>
-                                    <option value="other">Other</option>
+                                    <option value="openai">{t("openai", "OpenAI")}</option>
+                                    <option value="openweather">{t("openweather", "OpenWeather")}</option>
+                                    <option value="other">{t("other", "Other")}</option>
                                 </select>
                             </div>
                             
                             <div className="form-control mb-4">
                                 <label className="label">
-                                    <span className="label-text">API Key</span>
+                                    <span className="label-text">{t("api_key", "API Key")}</span>
                                 </label>
                                 <input
                                     type="text"
                                     name="apiKey"
                                     value={formData.apiKey}
                                     onChange={handleInputChange}
-                                    placeholder="Enter API key"
+                                    placeholder={t("enter_api_key", "Enter API key")}
                                     className="input input-bordered w-full"
                                     required
                                 />
@@ -382,7 +384,7 @@ const Integrations: React.FC = () => {
                             
                             <div className="form-control mb-4">
                                 <label className="label cursor-pointer">
-                                    <span className="label-text">Active</span>
+                                    <span className="label-text">{t("active", "Active")}</span>
                                     <input
                                         type="checkbox"
                                         name="isActive"
@@ -395,14 +397,14 @@ const Integrations: React.FC = () => {
                             
                             <div className="modal-action">
                                 <button type="submit" className="btn btn-primary">
-                                    Update Integration
+                                    {t("update_integration", "Update Integration")}
                                 </button>
                                 <button
                                     type="button"
                                     className="btn"
                                     onClick={() => setIsEditModalOpen(false)}
                                 >
-                                    Cancel
+                                    {t("cancel", "Cancel")}
                                 </button>
                             </div>
                         </form>

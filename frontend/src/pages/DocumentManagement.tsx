@@ -17,6 +17,7 @@ import {
   type Document,
 } from "../hooks/useDocuments";
 import TagsInput from "../components/TagsInput";
+import { useTranslation } from "../hooks/useTranslation";
 
 const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   drawings: "Drawings",
@@ -30,6 +31,7 @@ const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
 };
 
 const DocumentManagement = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<DocumentType>("drawings");
   const [photoModal, setPhotoModal] = useState<null | Document>(null);
   const [openFolder, setOpenFolder] = useState<string | null>(null);
@@ -76,7 +78,7 @@ const DocumentManagement = () => {
 
   // Delete handler
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this document?")) {
+    if (window.confirm(t("confirm_delete_document", "Are you sure you want to delete this document?"))) {
       await deleteMutation.mutateAsync(id);
       refetchDocuments();
     }
@@ -156,10 +158,9 @@ const DocumentManagement = () => {
     <div className="p-8">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Document Management</h1>
+          <h1 className="text-3xl font-bold">{t("document_management_title", "Document Management")}</h1>
           <p className="text-gray-500 mt-1">
-            Manage and organize all your project documents. Upload, view, and
-            export files for each document type.
+            {t("document_management_subtitle", "Manage and organize all your project documents. Upload, view, and export files for each document type.")}
           </p>
         </div>
         {/* Task view selection */}
@@ -172,7 +173,7 @@ const DocumentManagement = () => {
               disabled={projectsLoading}
             >
               {projectsLoading ? (
-                <option>Loading projects...</option>
+                <option>{t("loading_projects", "Loading projects...")}</option>
               ) : Array.isArray(projects) && projects.length > 0 ? (
                 projects.map((project) => (
                   <option key={project.id} value={project.id}>
@@ -180,7 +181,7 @@ const DocumentManagement = () => {
                   </option>
                 ))
               ) : (
-                <option>No projects available</option>
+                <option>{t("no_projects_available", "No projects available")}</option>
               )}
             </select>
           </div>
@@ -197,7 +198,7 @@ const DocumentManagement = () => {
             }`}
             onClick={() => setActiveTab(type)}
           >
-            {DOCUMENT_TYPE_LABELS[type]}
+            {t(`doc_type_${type}`, DOCUMENT_TYPE_LABELS[type])}
           </button>
         ))}
       </div>
@@ -220,7 +221,7 @@ const DocumentManagement = () => {
                 disabled={uploading}
               >
                 <MdUploadFile />
-                Upload Document
+                {t("upload_doc", "Upload Document")}
               </button>
             </div>
             {/* Folders & Files for non-photo tabs */}
@@ -228,7 +229,7 @@ const DocumentManagement = () => {
               <div className="w-full">
                 {rolesLoading ? (
                   <div className="text-center text-gray-500 py-8">
-                    Loading folders...
+                    {t("loading_folders", "Loading folders...")}
                   </div>
                 ) : openFolder === null ? (
                   // Folder list view
@@ -245,7 +246,7 @@ const DocumentManagement = () => {
                           <span className="text-lg font-bold">{role.name}</span>
                         </div>
                         <span className="badge badge-neutral">
-                          {folderedDocuments[role.id]?.length || 0} files
+                          {folderedDocuments[role.id]?.length || 0} {t("files", "files")}
                         </span>
                       </button>
                     ))}
@@ -259,7 +260,7 @@ const DocumentManagement = () => {
                     >
                       {/* Unicode left arrow */}
                       <span className="text-xl">&#8592;</span>
-                      Back to Folders
+                      {t("back_to_folders", "Back to Folders")}
                     </button>
                     <div className="flex items-center justify-between my-7">
                       <div className="flex gap-2">
@@ -270,17 +271,17 @@ const DocumentManagement = () => {
                       </div>
 
                       <span className="badge badge-neutral">
-                        {folderedDocuments[openFolder]?.length || 0} files
+                        {folderedDocuments[openFolder]?.length || 0} {t("files", "files")}
                       </span>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="table w-full bg-base-100 rounded-2xl">
                         <thead>
                           <tr>
-                            <th>Name</th>
-                            <th>Uploaded By</th>
-                            <th>Uploaded At</th>
-                            <th>Actions</th>
+                            <th>{t("name", "Name")}</th>
+                            <th>{t("uploaded_by", "Uploaded By")}</th>
+                            <th>{t("uploaded_at", "Uploaded At")}</th>
+                            <th>{t("actions", "Actions")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -297,18 +298,18 @@ const DocumentManagement = () => {
                                       href={`${import.meta.env.VITE_DOCUMENTS_URL}${doc.url}`}
                                       download={doc.name}
                                       className="btn btn-sm btn-success flex items-center gap-1"
-                                      title="Download"
+                                      title={t("download", "Download")}
                                     >
                                       <MdDownload />
-                                      Download
+                                      {t("download", "Download")}
                                     </a>
                                     <button
                                       className="btn btn-sm btn-error flex items-center gap-1"
                                       onClick={() => handleDelete(doc.id)}
-                                      title="Delete"
+                                      title={t("delete", "Delete")}
                                     >
                                       <MdDelete />
-                                      Delete
+                                      {t("delete", "Delete")}
                                     </button>
                                   </div>
                                 </td>
@@ -320,7 +321,7 @@ const DocumentManagement = () => {
                                 colSpan={4}
                                 className="text-center text-gray-500 py-8"
                               >
-                                No documents in this folder.
+                                {t("no_documents_in_folder", "No documents in this folder.")}
                               </td>
                             </tr>
                           )}
@@ -358,8 +359,7 @@ const DocumentManagement = () => {
                   </div>
                 ) : (
                   <div className="text-center text-gray-500 py-8">
-                    No photos found for {DOCUMENT_TYPE_LABELS[activeTab]} in this
-                    project.
+                    {t("no_photos_found_for", "No photos found for")} {t(`doc_type_${activeTab}`, DOCUMENT_TYPE_LABELS[activeTab])} {t("in_this_project", "in this project.")}
                   </div>
                 )}
                 {/* Photo details modal */}
@@ -388,18 +388,18 @@ const DocumentManagement = () => {
                         className="w-full h-56 object-cover rounded mb-4"
                       />
                       <div className="mb-2">
-                        <span className="font-bold">Name:</span> {photoModal.name}
+                        <span className="font-bold">{t("name", "Name")}:</span> {photoModal.name}
                       </div>
                       <div className="mb-2">
-                        <span className="font-bold">Uploaded By:</span>{" "}
+                        <span className="font-bold">{t("uploaded_by", "Uploaded By")}:</span>{" "}
                         {photoModal.uploader?.name || "-"}
                       </div>
                       <div className="mb-2">
-                        <span className="font-bold">Uploaded At:</span>{" "}
+                        <span className="font-bold">{t("uploaded_at", "Uploaded At")}:</span>{" "}
                         {new Date(photoModal.createdAt).toLocaleDateString()}
                       </div>
                       <div className="mb-2">
-                        <span className="font-bold">Related To:</span> Project{" "}
+                        <span className="font-bold">{t("related_to", "Related To")}:</span> {t("project", "Project")}{" "}
                         {photoModal.projectId}
                       </div>
                       <div className="flex gap-2 mt-4">
@@ -409,7 +409,7 @@ const DocumentManagement = () => {
                           className="btn btn-success flex items-center gap-1"
                         >
                           <MdDownload />
-                          Download
+                          {t("download", "Download")}
                         </a>
                         <button
                           className="btn btn-error flex items-center gap-1"
@@ -419,7 +419,7 @@ const DocumentManagement = () => {
                           }}
                         >
                           <MdDelete />
-                          Delete
+                          {t("delete", "Delete")}
                         </button>
                       </div>
                     </div>
@@ -434,11 +434,11 @@ const DocumentManagement = () => {
       {showUploadModal && (
         <div className="modal modal-open">
           <div className="modal-box">
-            <h2 className="font-bold text-lg mb-4">Upload Document</h2>
+            <h2 className="font-bold text-lg mb-4">{t("upload_doc", "Upload Document")}</h2>
             <form onSubmit={handleUploadModalSubmit} className="space-y-4">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Name</span>
+                  <span className="label-text">{t("name", "Name")}</span>
                 </label>
                 <input
                   name="name"
@@ -451,7 +451,7 @@ const DocumentManagement = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Type</span>
+                  <span className="label-text">{t("type", "Type")}</span>
                 </label>
                 <select
                   name="type"
@@ -461,13 +461,13 @@ const DocumentManagement = () => {
                   required
                 >
                   {(Object.keys(DOCUMENT_TYPE_LABELS) as DocumentType[]).map((type) => (
-                    <option key={type} value={type}>{DOCUMENT_TYPE_LABELS[type]}</option>
+                    <option key={type} value={type}>{t(`doc_type_${type}`, DOCUMENT_TYPE_LABELS[type])}</option>
                   ))}
                 </select>
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Category</span>
+                  <span className="label-text">{t("category", "Category")}</span>
                 </label>
                 <input
                   name="category"
@@ -479,7 +479,7 @@ const DocumentManagement = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Version</span>
+                  <span className="label-text">{t("version", "Version")}</span>
                 </label>
                 <input
                   name="version"
@@ -491,7 +491,7 @@ const DocumentManagement = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Description</span>
+                  <span className="label-text">{t("description", "Description")}</span>
                 </label>
                 <textarea
                   name="description"
@@ -502,19 +502,19 @@ const DocumentManagement = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Tags</span>
+                  <span className="label-text">{t("tags", "Tags")}</span>
                 </label>
                 <TagsInput
                   value={uploadForm.tags}
                   onChange={tags => setUploadForm(prev => ({ ...prev, tags }))}
-                  placeholder="Type and press Enter to add tags"
+                  placeholder={t("tags_placeholder", "Type and press Enter to add tags")}
                   disabled={uploading}
                   maxTags={10}
                 />
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">File</span>
+                  <span className="label-text">{t("file", "File")}</span>
                 </label>
                 <input
                   name="file"
@@ -533,7 +533,7 @@ const DocumentManagement = () => {
                   onClick={() => setShowUploadModal(false)}
                   disabled={uploading}
                 >
-                  Cancel
+                  {t("cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -543,7 +543,7 @@ const DocumentManagement = () => {
                   {uploading ? (
                     <span className="loading loading-spinner loading-sm"></span>
                   ) : (
-                    "Upload"
+                    t("upload", "Upload")
                   )}
                 </button>
               </div>

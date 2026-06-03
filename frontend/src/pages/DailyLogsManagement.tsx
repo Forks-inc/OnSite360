@@ -51,10 +51,13 @@ import {
   useProjectAttendanceByDate,
   type AttendanceRecord,
 } from "../hooks/useProjects";
+import { useTranslation } from "../hooks/useTranslation";
 
 type DailyLogTab = "view_all" | "view_specific" | "add_log" | "view_details";
 
 export default function DailyLogsManagement() {
+  const { t, language } = useTranslation();
+
   // Tab state
   const [activeTab, setActiveTab] = useState<DailyLogTab>("view_all");
 
@@ -645,12 +648,12 @@ export default function DailyLogsManagement() {
                 <div className="bg-blue-100 p-2 rounded-lg">
                   <MdVisibility className="text-blue-600" />
                 </div>
-                All Daily Logs
+                {t("all_daily_logs", "All Daily Logs")}
               </h2>
               <div className="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-600">
                 {allLogsLoading
-                  ? "Loading..."
-                  : `${allDailyLogs.length} logs found`}
+                  ? t("loading", "Loading...")
+                  : `${allDailyLogs.length} ${t("logs_found_count", "logs found")}`}
               </div>
             </div>
 
@@ -663,17 +666,17 @@ export default function DailyLogsManagement() {
                 <div className="bg-base-100 p-6 rounded-2xl shadow-sm inline-block">
                   <MdCalendarToday className="mx-auto text-6xl text-gray-300 mb-4" />
                   <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                    No Daily Logs Found
+                    {t("no_logs_found", "No Logs Found")}
                   </h3>
                   <p className="text-gray-500 mb-6">
-                    Start by creating your first daily log entry.
+                    {t("no_daily_logs_found_desc", "Start by creating your first daily log entry.")}
                   </p>
                   <button
                     className="btn btn-primary btn-lg gap-2"
                     onClick={() => setActiveTab("add_log")}
                   >
                     <MdAdd />
-                    Add Daily Log
+                    {t("add_daily_log", "Add Daily Log")}
                   </button>
                 </div>
               </div>
@@ -692,10 +695,10 @@ export default function DailyLogsManagement() {
                           </div>
                           <div>
                             <h3 className="text-xl font-bold text-gray-800">
-                              {moment(log.date).format("MMMM D, YYYY")}
+                              {moment(log.date).locale(language).format("MMMM D, YYYY")}
                             </h3>
                             <span className="badge badge-outline badge-lg">
-                              {moment(log.date).format("dddd")}
+                              {moment(log.date).locale(language).format("dddd")}
                             </span>
                           </div>
                         </div>
@@ -705,9 +708,9 @@ export default function DailyLogsManagement() {
                             <div className="flex items-center gap-2">
                               <MdWbSunny className="text-orange-500" />
                               <span className="text-sm font-medium text-gray-600">
-                                Weather:
+                                {t("weather", "Weather")}:
                               </span>
-                              <span className="text-sm">{log.weather}</span>
+                              <span className="text-sm">{t(log.weather.toLowerCase(), log.weather)}</span>
                             </div>
                           )}
 
@@ -716,7 +719,7 @@ export default function DailyLogsManagement() {
                             <div className="flex items-center gap-2">
                               <MdLocationOn className="text-blue-500" />
                               <span className="text-sm font-medium text-gray-600">
-                                Location:
+                                {t("location", "Location")}:
                               </span>
                               <a
                                 href={getMapLink(log.coordinates) || "#"}
@@ -724,7 +727,7 @@ export default function DailyLogsManagement() {
                                 rel="noopener noreferrer"
                                 className="text-sm text-blue-600 hover:underline"
                               >
-                                View on map
+                                {t("view_on_map", "View on map")}
                               </a>
                             </div>
                           )}
@@ -733,7 +736,7 @@ export default function DailyLogsManagement() {
                           <div className="flex items-center gap-2">
                             <MdWork className="text-purple-500" />
                             <span className="text-sm font-medium text-gray-600">
-                              Activities:
+                              {t("activities", "Activities")}:
                             </span>
                             <span className="text-sm">
                               {log._count?.activities ||
@@ -747,7 +750,7 @@ export default function DailyLogsManagement() {
                             <div className="flex items-center gap-2">
                               <MdAttachFile className="text-amber-500" />
                               <span className="text-sm font-medium text-gray-600">
-                                Files:
+                                {t("files", "Files")}:
                               </span>
                               <span className="text-sm">
                                 {log.files.length}
@@ -761,7 +764,7 @@ export default function DailyLogsManagement() {
                             <div className="flex items-center gap-2 mb-2">
                               <MdNotes className="text-purple-500" />
                               <span className="text-sm font-medium text-gray-600">
-                                Notes:
+                                {t("notes", "Notes")}:
                               </span>
                             </div>
                             <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
@@ -771,10 +774,10 @@ export default function DailyLogsManagement() {
                         )}
 
                         <div className="text-xs text-gray-500 mb-4">
-                          Logged by {log.logger.firstName} {log.logger.lastName}{" "}
+                          {t("logged_by", "Logged by")} {log.logger.firstName} {log.logger.lastName}{" "}
                           •{" "}
-                          {moment(log.createdAt).format(
-                            "MMM D, YYYY [at] h:mm A"
+                          {moment(log.createdAt).locale(language).format(
+                            language === "es" ? "D [de] MMM, YYYY [a las] h:mm A" : "MMM D, YYYY [at] h:mm A"
                           )}
                         </div>
 
@@ -783,7 +786,7 @@ export default function DailyLogsManagement() {
                           {log.activities && log.activities.length > 0 && (
                             <div className="flex items-center gap-1">
                               <MdWork className="text-blue-500" />
-                              <span>{log.activities.length} activities</span>
+                              <span>{log.activities.length} {t("activities_plural", "activities")}</span>
                             </div>
                           )}
                           <button
@@ -791,7 +794,7 @@ export default function DailyLogsManagement() {
                             onClick={() => handleViewLogDetails(log)}
                           >
                             <MdVisibility className="mr-1" />
-                            View Details
+                            {t("view_details", "View Details")}
                           </button>
                         </div>
                       </div>
@@ -800,14 +803,14 @@ export default function DailyLogsManagement() {
                         <button
                           className="btn btn-sm btn-outline"
                           onClick={() => handleEditLog(log)}
-                          title="Edit Log"
+                          title={t("edit_log", "Edit Log")}
                         >
                           <MdEdit />
                         </button>
                         <button
                           className="btn btn-sm btn-error btn-outline"
                           onClick={() => handleDeleteLog(log)}
-                          title="Delete Log"
+                          title={t("delete_log", "Delete Log")}
                         >
                           <MdDelete />
                         </button>
@@ -827,12 +830,12 @@ export default function DailyLogsManagement() {
                 <div className="bg-green-100 p-2 rounded-lg">
                   <MdSearch className="text-green-600" />
                 </div>
-                View Logs for Specific Date
+                {t("view_logs_specific_date", "View Logs for Specific Date")}
               </h2>
               <div className="flex items-center gap-4 bg-base-300 p-4 rounded-lg">
                 <MdCalendarToday className="text-gray-500 text-xl" />
                 <label className="text-sm font-medium text-gray-700">
-                  Select Date:
+                  {t("select_date", "Select Date")}:
                 </label>
                 <input
                   type="date"
@@ -854,11 +857,11 @@ export default function DailyLogsManagement() {
                     <div className="bg-base-100 p-6 rounded-2xl shadow-sm inline-block">
                       <MdCalendarToday className="mx-auto text-6xl text-gray-300 mb-4" />
                       <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                        No Logs Found
+                        {t("no_logs_found", "No Logs Found")}
                       </h3>
                       <p className="text-gray-500 mb-6">
-                        No daily logs were found for{" "}
-                        {moment(selectedDate).format("MMMM D, YYYY")}.
+                        {t("no_daily_logs_found_date", "No daily logs were found for")}{" "}
+                        {moment(selectedDate).locale(language).format("MMMM D, YYYY")}.
                       </p>
                       <button
                         className="btn btn-primary btn-lg gap-2"
@@ -871,7 +874,7 @@ export default function DailyLogsManagement() {
                         }}
                       >
                         <MdAdd />
-                        Add Log for This Date
+                        {t("add_log_this_date", "Add Log for This Date")}
                       </button>
                     </div>
                   </div>
@@ -889,9 +892,9 @@ export default function DailyLogsManagement() {
                                 <div className="flex items-center gap-2">
                                   <MdWbSunny className="text-orange-500" />
                                   <span className="text-sm font-medium text-gray-600">
-                                    Weather:
+                                    {t("weather", "Weather")}:
                                   </span>
-                                  <span className="text-sm">{log.weather}</span>
+                                  <span className="text-sm">{t(log.weather.toLowerCase(), log.weather)}</span>
                                 </div>
                               )}
                               {/* Attendance/Workforce info shown from attendance data (see Add Log tab) */}
@@ -902,7 +905,7 @@ export default function DailyLogsManagement() {
                                 <div className="flex items-center gap-2 mb-2">
                                   <MdNotes className="text-purple-500" />
                                   <span className="text-sm font-medium text-gray-600">
-                                    Notes:
+                                    {t("notes", "Notes")}:
                                   </span>
                                 </div>
                                 <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
@@ -912,10 +915,10 @@ export default function DailyLogsManagement() {
                             )}
 
                             <div className="text-xs text-gray-500 mb-4">
-                              Logged by {log.logger.firstName}{" "}
+                              {t("logged_by", "Logged by")} {log.logger.firstName}{" "}
                               {log.logger.lastName} •{" "}
-                              {moment(log.createdAt).format(
-                                "MMM D, YYYY [at] h:mm A"
+                              {moment(log.createdAt).locale(language).format(
+                                language === "es" ? "D [de] MMM, YYYY [a las] h:mm A" : "MMM D, YYYY [at] h:mm A"
                               )}
                             </div>
 
@@ -925,7 +928,7 @@ export default function DailyLogsManagement() {
                                 <div className="flex items-center gap-1">
                                   <MdWork className="text-blue-500" />
                                   <span>
-                                    {log.activities.length} activities
+                                    {log.activities.length} {t("activities_plural", "activities")}
                                   </span>
                                 </div>
                               )}
@@ -934,7 +937,7 @@ export default function DailyLogsManagement() {
                                 onClick={() => handleViewLogDetails(log)}
                               >
                                 <MdVisibility className="mr-1" />
-                                View Details
+                                {t("view_details", "View Details")}
                               </button>
                             </div>
                           </div>
@@ -943,14 +946,14 @@ export default function DailyLogsManagement() {
                             <button
                               className="btn btn-sm btn-outline"
                               onClick={() => handleEditLog(log)}
-                              title="Edit Log"
+                              title={t("edit_log", "Edit Log")}
                             >
                               <MdEdit />
                             </button>
                             <button
                               className="btn btn-sm btn-error btn-outline"
                               onClick={() => handleDeleteLog(log)}
-                              title="Delete Log"
+                              title={t("delete_log", "Delete Log")}
                             >
                               <MdDelete />
                             </button>
@@ -966,10 +969,10 @@ export default function DailyLogsManagement() {
                 <div className="bg-base-100 p-6 rounded-2xl shadow-sm inline-block">
                   <MdCalendarToday className="mx-auto text-6xl text-gray-300 mb-4" />
                   <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                    Select a Date
+                    {t("select_a_date", "Select a Date")}
                   </h3>
                   <p className="text-gray-500">
-                    Choose a date to view daily logs for that specific day.
+                    {t("choose_date_daily_logs_desc", "Choose a date to view daily logs for that specific day.")}
                   </p>
                 </div>
               </div>
@@ -991,7 +994,7 @@ export default function DailyLogsManagement() {
                   <MdAdd className="text-purple-600" />
                 )}
               </div>
-              {editingLog ? "Edit Daily Log" : "Add New Daily Log"}
+              {editingLog ? t("edit_daily_log", "Edit Daily Log") : t("add_new_daily_log", "Add New Daily Log")}
             </h2>
 
             {/* Display geolocation status */}
@@ -1002,14 +1005,14 @@ export default function DailyLogsManagement() {
                 />
                 <span className="text-sm font-medium">
                   {geoLoading
-                    ? "Fetching location..."
+                    ? t("fetching_location", "Fetching location...")
                     : geoError
                     ? geoError
                     : coordinates
-                    ? `Location captured: ${coordinates.lat.toFixed(
+                    ? `${t("location_captured", "Location captured")}: ${coordinates.lat.toFixed(
                         6
                       )}, ${coordinates.lng.toFixed(6)}`
-                    : "Location not available"}
+                    : t("location_not_available", "Location not available")}
                 </span>
                 {!geoLoading && (geoError || !coordinates) && (
                   <button
@@ -1017,7 +1020,7 @@ export default function DailyLogsManagement() {
                     className="btn btn-xs btn-outline"
                     onClick={getCurrentLocation}
                   >
-                    Retry
+                    {t("retry", "Retry")}
                   </button>
                 )}
               </div>
@@ -1027,7 +1030,7 @@ export default function DailyLogsManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Date</span>
+                    <span className="label-text font-medium">{t("date", "Date")}</span>
                   </label>
                   <input
                     type="date"
@@ -1041,7 +1044,7 @@ export default function DailyLogsManagement() {
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Weather</span>
+                    <span className="label-text font-medium">{t("weather", "Weather")}</span>
                   </label>
 
                   {/* Weather icon selector */}
@@ -1058,10 +1061,10 @@ export default function DailyLogsManagement() {
                         onClick={() =>
                           setLogForm((prev) => ({ ...prev, weather: key }))
                         }
-                        title={key}
+                        title={t(key.toLowerCase(), key)}
                       >
                         <Icon className="text-lg" />
-                        <span className="hidden sm:inline text-sm">{key}</span>
+                        <span className="hidden sm:inline text-sm">{t(key.toLowerCase(), key)}</span>
                       </button>
                     ))}
                   </div>
@@ -1070,13 +1073,13 @@ export default function DailyLogsManagement() {
 
               <div className="grid grid-cols-1 gap-4">
                 <label className="label">
-                  <span className="label-text font-medium">Workforce</span>
+                  <span className="label-text font-medium">{t("workforce", "Workforce")}</span>
                 </label>
                 {/* Show attendance summary pulled from workforce attendance for the selected date */}
                 <div className="p-4 bg-base-100 rounded-lg border border-base-300">
                   {attendanceLoading ? (
                     <div className="text-sm text-gray-500">
-                      Loading attendance...
+                      {t("loading_attendance", "Loading attendance...")}
                     </div>
                   ) : attendanceResponse && attendanceResponse.data ? (
                     (() => {
@@ -1094,14 +1097,14 @@ export default function DailyLogsManagement() {
                           <div className="flex items-center gap-2">
                             <MdPeople className="text-blue-500" />
                             <div>
-                              <div className="text-sm font-medium">Present</div>
+                              <div className="text-sm font-medium">{t("present", "Present")}</div>
                               <div className="text-lg font-bold">{present}</div>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <MdPeople className="text-gray-400" />
                             <div>
-                              <div className="text-sm font-medium">Absent</div>
+                              <div className="text-sm font-medium">{t("absent", "Absent")}</div>
                               <div className="text-lg font-bold">{absent}</div>
                             </div>
                           </div>
@@ -1110,8 +1113,7 @@ export default function DailyLogsManagement() {
                     })()
                   ) : (
                     <div className="text-sm text-yellow-600">
-                      Attendance not marked for this date. Please mark
-                      attendance in Workforce Management before creating a log.
+                      {t("attendance_not_marked_warning", "Attendance not marked for this date. Please mark attendance in Workforce Management before creating a log.")}
                     </div>
                   )}
                 </div>
@@ -1119,7 +1121,7 @@ export default function DailyLogsManagement() {
 
               <div>
                 <label className="label">
-                  <span className="label-text font-medium">Notes</span>
+                  <span className="label-text font-medium">{t("notes", "Notes")}</span>
                 </label>
                 <textarea
                   name="notes"
@@ -1127,7 +1129,7 @@ export default function DailyLogsManagement() {
                   rows={4}
                   value={logForm.notes}
                   onChange={handleFormChange}
-                  placeholder="Describe work completed, issues encountered, or any other relevant information..."
+                  placeholder={t("describe_work_placeholder", "Describe work completed, issues encountered, or any other relevant information...")}
                 />
               </div>
 
@@ -1135,14 +1137,14 @@ export default function DailyLogsManagement() {
               {!editingLog && (
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Attachments</span>
+                    <span className="label-text font-medium">{t("attachments", "Attachments")}</span>
                   </label>
 
                   <div className="bg-base-100 p-4 rounded-lg border border-dashed border-gray-300">
                     <div className="flex flex-col items-center justify-center gap-2 mb-4">
                       <MdCloudUpload className="text-3xl text-gray-400" />
                       <p className="text-sm text-gray-500">
-                        Upload photos, documents, or other files
+                        {t("upload_files_desc", "Upload photos, documents, or other files")}
                       </p>
                       <input
                         type="file"
@@ -1157,7 +1159,7 @@ export default function DailyLogsManagement() {
                         className="btn btn-sm btn-outline gap-2"
                       >
                         <MdAttachFile />
-                        Select Files
+                        {t("select_files", "Select Files")}
                       </button>
                     </div>
 
@@ -1165,7 +1167,7 @@ export default function DailyLogsManagement() {
                     {logFiles.length > 0 && (
                       <div className="mt-4">
                         <h4 className="text-sm font-medium mb-2">
-                          Selected Files:
+                          {t("selected_files_lbl", "Selected Files:")}
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {logFiles.map((file, idx) => (
@@ -1202,7 +1204,7 @@ export default function DailyLogsManagement() {
               {editingLog && editingLog.files && editingLog.files.length > 0 && (
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Existing Attachments</span>
+                    <span className="label-text font-medium">{t("existing_attachments", "Existing Attachments")}</span>
                   </label>
                   <div className="bg-base-100 p-4 rounded-lg border border-base-300">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1226,7 +1228,7 @@ export default function DailyLogsManagement() {
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium truncate">{fileName}</p>
                               <p className="text-xs text-gray-500">
-                                {isImage ? "Image" : fileName.split(".").pop()?.toUpperCase()}
+                                {isImage ? t("image", "Image") : fileName.split(".").pop()?.toUpperCase()}
                               </p>
                             </div>
                             <MdDownload className="text-gray-400" />
@@ -1250,7 +1252,7 @@ export default function DailyLogsManagement() {
                   }
                   title={
                     !(attendanceResponse && attendanceResponse.data)
-                      ? "Attendance must be marked for the selected date"
+                      ? t("attendance_must_be_marked", "Attendance must be marked for the selected date")
                       : undefined
                   }
                 >
@@ -1258,10 +1260,10 @@ export default function DailyLogsManagement() {
                   updateLogMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm"></span>
-                      {editingLog ? "Updating..." : "Creating..."}
+                      {editingLog ? t("updating", "Updating...") : t("adding", "Adding...")}
                     </>
                   ) : (
-                    <>{editingLog ? "Update Log" : "Create Log"}</>
+                    <>{editingLog ? t("update_log", "Update Log") : t("create_log", "Create Log")}</>
                   )}
                 </button>
 
@@ -1279,7 +1281,7 @@ export default function DailyLogsManagement() {
                       });
                     }}
                   >
-                    Cancel Edit
+                    {t("cancel_edit", "Cancel Edit")}
                   </button>
                 )}
               </div>

@@ -24,6 +24,7 @@ import {
   useDeleteExpense,
   type Expense,
 } from "../hooks/useProjects";
+import { useTranslation } from "../hooks/useTranslation";
 
 ChartJS.register(
   ArcElement,
@@ -37,6 +38,7 @@ ChartJS.register(
 );
 
 const RiskManagement: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { data: projects = [] } = useUserProjects(user?.id || "");
   const [selectedProject, setSelectedProject] = useState<string>(
@@ -80,11 +82,11 @@ const RiskManagement: React.FC = () => {
   const expenseByCategory = useMemo(() => {
     const map: Record<string, number> = {};
     expenses.forEach((e) => {
-      const category = e.category || "No Category";
+      const category = e.category || t("none", "None");
       map[category] = (map[category] || 0) + (e.amount || 0);
     });
     return map;
-  }, [expenses]);
+  }, [expenses, t]);
 
   const doughnutData = useMemo(() => {
     const labels = Object.keys(expenseByCategory);
@@ -93,7 +95,7 @@ const RiskManagement: React.FC = () => {
       labels,
       datasets: [
         {
-          label: "Expenses",
+          label: t("expenses", "Expenses"),
           data,
           backgroundColor: [
             "#3b82f6",
@@ -105,9 +107,7 @@ const RiskManagement: React.FC = () => {
         },
       ],
     };
-  }, [expenseByCategory]);
-
-  // (expenses over time chart was removed for brevity)
+  }, [expenseByCategory, t]);
 
   // budget / spent
   const projectBudget = useMemo(() => {
@@ -128,16 +128,16 @@ const RiskManagement: React.FC = () => {
 
   const budgetBarData = useMemo(
     () => ({
-      labels: ["Budget", "Spent"],
+      labels: [t("budget", "Budget"), t("spent", "Spent")],
       datasets: [
         {
-          label: "Amount",
+          label: t("amount", "Amount"),
           data: [projectBudget, totalSpent],
           backgroundColor: ["#06b6d4", "#ef4444"],
         },
       ],
     }),
-    [projectBudget, totalSpent]
+    [projectBudget, totalSpent, t]
   );
 
   // Compute alert visibility/message when relevant data changes
@@ -160,17 +160,21 @@ const RiskManagement: React.FC = () => {
     let message = "";
     if (overBudget && overduePhases.length > 0) {
       const overBy = (totalSpent - projectBudget).toFixed(2);
-      message = `Project is over budget by $${overBy} and ${overduePhases.length} phase(s) are past their end date but not complete.`;
+      message = t("risk_over_budget_and_phases", "Project is over budget by {overBy} and {phases} phase(s) are past their end date but not complete.")
+        .replace("{overBy}", `$${overBy}`)
+        .replace("{phases}", overduePhases.length.toString());
     } else if (overBudget) {
       const overBy = (totalSpent - projectBudget).toFixed(2);
-      message = `Project is over budget by $${overBy}.`;
+      message = t("risk_over_budget", "Project is over budget by {overBy}.")
+        .replace("{overBy}", `$${overBy}`);
     } else if (overduePhases.length > 0) {
-      message = `${overduePhases.length} phase(s) are past their end date but not complete.`;
+      message = t("risk_overdue_phases", "{phases} phase(s) are past their end date but not complete.")
+        .replace("{phases}", overduePhases.length.toString());
     }
 
     setRiskMessage(message);
     setShowRiskAlert(!!message);
-  }, [projectBudget, totalSpent, projectPhases, selectedProject]);
+  }, [projectBudget, totalSpent, projectPhases, selectedProject, t]);
 
   // time/schedule insights
   const plannedDays = useMemo(() => {
@@ -254,7 +258,7 @@ const RiskManagement: React.FC = () => {
 
   const handleDeleteExpense = async (id: string) => {
     if (!selectedProject) return;
-    if (!window.confirm("Delete this expense?")) return;
+    if (!window.confirm(t("confirm_delete_expense", "Delete this expense?"))) return;
     try {
       await deleteExpenseMutation.mutateAsync({
         projectId: selectedProject,
@@ -264,7 +268,7 @@ const RiskManagement: React.FC = () => {
       await refetchExpenses();
     } catch (err) {
       console.error("Failed to delete expense:", err);
-      alert("Failed to delete expense");
+      alert(t("failed_delete_expense", "Failed to delete expense"));
     }
   };
 
@@ -279,7 +283,7 @@ const RiskManagement: React.FC = () => {
     isReimbursable?: boolean;
   }) => {
     if (!selectedProject) {
-      alert("Select a project first");
+      alert(t("select_project_first", "Please select a project first"));
       return;
     }
     try {
@@ -319,7 +323,7 @@ const RiskManagement: React.FC = () => {
       await refetchExpenses();
     } catch (err) {
       console.error("Failed to save expense:", err);
-      alert("Failed to save expense");
+      alert(t("failed_save_expense", "Failed to save expense"));
     }
   };
 
@@ -329,7 +333,7 @@ const RiskManagement: React.FC = () => {
     const printContent = `
       <html>
         <head>
-          <title>Expense Report - ${projects.find((p: UserProject) => p.id === selectedProject)?.name || 'Project'}</title>
+          <title>${t("print_report", "Print Report")} - ${projects.find((p: UserProject) => p.id === selectedProject)?.name || t("project", "Project")}</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 20px; }
             h1 { font-size: 24px; margin-bottom: 20px; }
@@ -342,21 +346,21 @@ const RiskManagement: React.FC = () => {
           </style>
         </head>
         <body>
-          <h1>Expense Report</h1>
+          <h1>${t("expense_records", "Expense Records")}</h1>
           <div class="meta">
-            <div><strong>Project:</strong> ${projects.find((p: UserProject) => p.id === selectedProject)?.name || 'Unknown'}</div>
-            <div><strong>Date Generated:</strong> ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
-            <div><strong>Total Expenses:</strong> $${totalSpent.toFixed(2)}</div>
-            <div><strong>Budget:</strong> $${projectBudget.toFixed(2)}</div>
+            <div><strong>${t("project", "Project")}:</strong> ${projects.find((p: UserProject) => p.id === selectedProject)?.name || 'Unknown'}</div>
+            <div><strong>${t("date", "Date")}:</strong> ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
+            <div><strong>${t("spent", "Spent")}:</strong> $${totalSpent.toFixed(2)}</div>
+            <div><strong>${t("budget", "Budget")}:</strong> $${projectBudget.toFixed(2)}</div>
           </div>
           <table>
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Vendor</th>
-                <th>Amount</th>
-                <th>Note</th>
+                <th>${t("date", "Date")}</th>
+                <th>${t("category", "Category")}</th>
+                <th>${t("vendor", "Vendor")}</th>
+                <th>${t("amount", "Amount")}</th>
+                <th>${t("note", "Note")}</th>
               </tr>
             </thead>
             <tbody>
@@ -371,7 +375,7 @@ const RiskManagement: React.FC = () => {
               `).join('')}
               ${(!expenses || expenses.length === 0) ? `
                 <tr>
-                  <td colspan="5" style="text-align: center; padding: 20px;">No expenses found for this project.</td>
+                  <td colspan="5" style="text-align: center; padding: 20px;">${t("no_expenses_found", "No expenses found for this project.")}</td>
                 </tr>
               ` : ''}
             </tbody>
@@ -392,7 +396,6 @@ const RiskManagement: React.FC = () => {
       // Wait for content to load before printing
       printWindow.onload = function() {
         printWindow.print();
-        // printWindow.close(); // Uncomment to auto-close after print dialog
       };
     } else {
       alert('Please allow pop-ups to print the expense report.');
@@ -418,7 +421,7 @@ const RiskManagement: React.FC = () => {
               />
             </svg>
             <div>
-              <h3 className="font-bold">Project Risk Alert</h3>
+              <h3 className="font-bold">{t("project_risk_alert", "Project Risk Alert")}</h3>
               <div className="text-xs">{riskMessage}</div>
             </div>
 
@@ -427,7 +430,7 @@ const RiskManagement: React.FC = () => {
                 className="btn btn-sm btn-outline"
                 onClick={() => setShowRiskAlert(false)}
               >
-                Dismiss
+                {t("dismiss", "Dismiss")}
               </button>
             </div>
           </div>
@@ -435,16 +438,16 @@ const RiskManagement: React.FC = () => {
 
         <div className="flex items-end justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Risk Management</h1>
+            <h1 className="text-3xl font-bold">{t("risk_management_title", "Risk Management")}</h1>
             <p className="text-gray-500 mt-1">
-              View risk analytics and expense records per project.
+              {t("risk_management_subtitle", "View risk analytics and expense records per project.")}
             </p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="min-w-[240px]">
               <label className="label">
-                <span className="label-text">Project</span>
+                <span className="label-text">{t("project", "Project")}</span>
               </label>
               <select
                 className="select select-bordered w-full"
@@ -464,31 +467,31 @@ const RiskManagement: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-          <h3 className="font-semibold mb-2">Budget vs Spent</h3>
+          <h3 className="font-semibold mb-2">{t("budget_vs_spent", "Budget vs Spent")}</h3>
           <div style={{ height: 220 }}>
             <Bar data={budgetBarData} />
           </div>
           <div className="mt-3 text-sm text-gray-500">
-            Budget: ${projectBudget.toFixed(2)} • Spent: $
-            {totalSpent.toFixed(2)} • Remaining: $
+            {t("budget", "Budget")}: ${projectBudget.toFixed(2)} • {t("spent", "Spent")}: $
+            {totalSpent.toFixed(2)} • {t("remaining", "Remaining")}: $
             {(projectBudget - totalSpent).toFixed(2)}
             {projectDetail && (
               <div className="text-xs text-gray-400 mt-1">
-                (Project costToDate: ${projectDetail.costToDate ?? 0})
+                ({t("project_cost_to_date", "Project cost to date")}: ${projectDetail.costToDate ?? 0})
               </div>
             )}
         </div>
         </div>
 
         <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-          <h3 className="font-semibold mb-2">Expense Distribution</h3>
+          <h3 className="font-semibold mb-2">{t("expense_distribution", "Expense Distribution")}</h3>
           <Doughnut data={doughnutData} />
         </div>
 
         <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-          <h3 className="font-semibold mb-2">Schedule / Time</h3>
+          <h3 className="font-semibold mb-2">{t("schedule_time", "Schedule / Time")}</h3>
           <div className="mb-3 text-sm text-gray-600">
-            Planned days: <strong>{plannedDays}</strong>
+            {t("planned_days", "Planned days: ")}<strong>{plannedDays}</strong>
           </div>
           {phaseLineData ? (
             <>
@@ -497,9 +500,9 @@ const RiskManagement: React.FC = () => {
                   data={phaseLineData}
                   options={{
                     scales: {
-                      x: { title: { display: true, text: "Date" } },
+                      x: { title: { display: true, text: t("date", "Date") } },
                       y: {
-                        title: { display: true, text: "Progress (%)" },
+                        title: { display: true, text: t("progress_percent", "Progress (%)") },
                         min: 0,
                         max: 100,
                       },
@@ -509,18 +512,18 @@ const RiskManagement: React.FC = () => {
                 />
               </div>
               <div className="mt-2 text-sm text-gray-600">
-                Average phase progress: <strong>{averagePhaseProgress}%</strong>
+                {t("avg_phase_progress", "Average phase progress: ")}<strong>{averagePhaseProgress}%</strong>
               </div>
             </>
           ) : (
-            <div className="text-sm text-gray-500">No phase data available</div>
+            <div className="text-sm text-gray-500">{t("no_phase_data", "No phase data available")}</div>
           )}
         </div>
       </div>
 
       <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Expense Records</h3>
+          <h3 className="font-semibold">{t("expense_records", "Expense Records")}</h3>
           <div className="flex items-center gap-4">
             <button
               className="btn btn-sm btn-outline"
@@ -529,13 +532,13 @@ const RiskManagement: React.FC = () => {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
-              Print Report
+              {t("print_report", "Print Report")}
             </button>
             <button
               className="btn btn-sm btn-primary"
               onClick={handleAddExpense}
             >
-              Add Expense
+              {t("add_expense", "Add Expense")}
             </button>
           </div>
         </div>
@@ -544,13 +547,13 @@ const RiskManagement: React.FC = () => {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Vendor</th>
-                <th>Amount</th>
-                <th>Invoice</th>
-                <th>Note</th>
-                <th>Actions</th>
+                <th>{t("date", "Date")}</th>
+                <th>{t("category", "Category")}</th>
+                <th>{t("vendor", "Vendor")}</th>
+                <th>{t("amount", "Amount")}</th>
+                <th>{t("invoice", "Invoice")}</th>
+                <th>{t("note", "Note")}</th>
+                <th>{t("actions", "Actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -571,7 +574,7 @@ const RiskManagement: React.FC = () => {
                         rel="noreferrer"
                         className="link"
                       >
-                        View
+                        {t("view", "View")}
                       </a>
                     ) : (
                       <span className="text-xs text-gray-400">—</span>
@@ -584,13 +587,13 @@ const RiskManagement: React.FC = () => {
                         className="btn btn-xs"
                         onClick={() => handleEditExpense(e)}
                       >
-                        Edit
+                        {t("edit", "Edit")}
                       </button>
                       <button
                         className="btn btn-xs btn-error"
                         onClick={() => handleDeleteExpense(e.id)}
                       >
-                        Delete
+                        {t("delete", "Delete")}
                       </button>
                     </div>
                   </td>
@@ -599,7 +602,7 @@ const RiskManagement: React.FC = () => {
               {(!expenses || expenses.length === 0) && (
                 <tr>
                   <td colSpan={7} className="text-center text-gray-500 py-6">
-                    No expenses found for this project.
+                    {t("no_expenses_found", "No expenses found for this project.")}
                   </td>
                 </tr>
               )}
@@ -645,6 +648,7 @@ const ExpenseModal: React.FC<{
   selectedFile?: File | null;
   onFileChange?: (file: File | null) => void;
 }> = ({ show, onClose, onSave, expense, selectedFile, onFileChange }) => {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     id: expense?.id ?? "",
     date: expense
@@ -681,7 +685,7 @@ const ExpenseModal: React.FC<{
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.category || !form.vendor || !form.amount) {
-      alert("Please fill required fields: category, vendor, amount");
+      alert(t("fill_required_fields_expense", "Please fill required fields: category, vendor, amount"));
       return;
     }
     onSave({
@@ -702,12 +706,12 @@ const ExpenseModal: React.FC<{
     <div className="modal modal-open">
       <div className="modal-box max-w-lg">
         <h3 className="font-bold text-lg mb-4">
-          {expense ? "Edit Expense" : "Add Expense"}
+          {expense ? t("edit_expense", "Edit Expense") : t("add_expense", "Add Expense")}
         </h3>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="label">
-              <span className="label-text">Date</span>
+              <span className="label-text">{t("date", "Date")}</span>
             </label>
             <input
               type="date"
@@ -719,7 +723,7 @@ const ExpenseModal: React.FC<{
 
           <div>
             <label className="label">
-              <span className="label-text">Category</span>
+              <span className="label-text">{t("category", "Category")}</span>
             </label>
             <input
               className="input input-bordered w-full"
@@ -731,7 +735,7 @@ const ExpenseModal: React.FC<{
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label">
-                <span className="label-text">Vendor</span>
+                <span className="label-text">{t("vendor", "Vendor")}</span>
               </label>
               <input
                 className="input input-bordered w-full"
@@ -741,7 +745,7 @@ const ExpenseModal: React.FC<{
             </div>
             <div>
               <label className="label">
-                <span className="label-text">Amount</span>
+                <span className="label-text">{t("amount", "Amount")}</span>
               </label>
               <input
                 type="number"
@@ -757,7 +761,7 @@ const ExpenseModal: React.FC<{
 
           <div>
             <label className="label">
-              <span className="label-text">Receipt / Invoice</span>
+              <span className="label-text">{t("receipt_invoice", "Receipt / Invoice")}</span>
             </label>
             <input
               type="file"
@@ -767,7 +771,7 @@ const ExpenseModal: React.FC<{
             />
             {expense?.receiptUrl && !selectedFile && (
               <div className="text-sm mt-2">
-                Existing:{" "}
+                {t("existing", "Existing: ")}{" "}
                 <a
                   href={`${
                     import.meta.env.VITE_DOCUMENTS_URL ||
@@ -777,18 +781,18 @@ const ExpenseModal: React.FC<{
                   rel="noreferrer"
                   className="link"
                 >
-                  View invoice
+                  {t("view_invoice", "View invoice")}
                 </a>
               </div>
             )}
             {selectedFile && (
-              <div className="text-sm mt-2">Selected: {selectedFile.name}</div>
+              <div className="text-sm mt-2">{t("selected", "Selected: ")}{selectedFile.name}</div>
             )}
           </div>
 
           <div>
             <label className="label">
-              <span className="label-text">Note</span>
+              <span className="label-text">{t("note", "Note")}</span>
             </label>
             <input
               className="input input-bordered w-full"
@@ -799,10 +803,10 @@ const ExpenseModal: React.FC<{
 
           <div className="modal-action">
             <button type="button" className="btn" onClick={onClose}>
-              Cancel
+              {t("cancel", "Cancel")}
             </button>
             <button type="submit" className="btn btn-primary">
-              Save
+              {t("save", "Save")}
             </button>
           </div>
         </form>

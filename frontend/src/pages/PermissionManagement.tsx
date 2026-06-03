@@ -7,8 +7,10 @@ import {
   type Permission,
   type CreatePermissionDto,
 } from "../hooks/usePermissions";
+import { useTranslation } from "../hooks/useTranslation";
 
 const PermissionManagement = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("permissions");
   const [editingPermission, setEditingPermission] = useState<Permission | null>(
     null
@@ -43,7 +45,7 @@ const PermissionManagement = () => {
   const handleDeletePermission = (id: string) => {
     if (
       window.confirm(
-        "Are you sure you want to delete this permission? This action cannot be undone."
+        t("confirm_delete_permission_desc", "Are you sure you want to delete this permission? This action cannot be undone.")
       )
     ) {
       deletePermission.mutate(id, {
@@ -52,7 +54,7 @@ const PermissionManagement = () => {
         },
         onError: (error) => {
           console.error("Failed to delete permission:", error);
-          alert("Failed to delete permission. Please try again.");
+          alert(t("failed_delete_permission", "Failed to delete permission. Please try again."));
         },
       });
     }
@@ -63,7 +65,7 @@ const PermissionManagement = () => {
 
     // Validate required fields
     if (!formData.pageId.trim() || !formData.pageName.trim()) {
-      alert("Please fill in all required fields.");
+      alert(t("fill_required_fields", "Please fill in all required fields."));
       return;
     }
 
@@ -82,7 +84,7 @@ const PermissionManagement = () => {
       },
       onError: (error) => {
         console.error("Failed to create permission:", error);
-        alert("Failed to create permission. Please try again.");
+        alert(t("failed_create_permission", "Failed to create permission. Please try again."));
       },
     });
   };
@@ -93,7 +95,7 @@ const PermissionManagement = () => {
 
     // Validate required fields
     if (!formData.pageId.trim() || !formData.pageName.trim()) {
-      alert("Please fill in all required fields.");
+      alert(t("fill_required_fields", "Please fill in all required fields."));
       return;
     }
 
@@ -115,7 +117,7 @@ const PermissionManagement = () => {
         },
         onError: (error) => {
           console.error("Failed to update permission:", error);
-          alert("Failed to update permission. Please try again.");
+          alert(t("failed_update_permission", "Failed to update permission. Please try again."));
         },
       }
     );
@@ -155,7 +157,7 @@ const PermissionManagement = () => {
 
     // Check for duplicates
     if (formData.components.includes(trimmedComponent)) {
-      alert("This component already exists.");
+      alert(t("component_exists", "This component already exists."));
       return;
     }
 
@@ -188,9 +190,9 @@ const PermissionManagement = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-1">Permission Management</h1>
+      <h1 className="text-3xl font-bold mb-1">{t("permission_management_title", "Permission Management")}</h1>
       <p className="text-gray-500 mb-6">
-        Manage page permissions and access controls
+        {t("permission_management_subtitle", "Manage page permissions and access controls")}
       </p>
 
       {/* Tabs navigation */}
@@ -199,7 +201,7 @@ const PermissionManagement = () => {
           type="radio"
           name="permission_tab_group"
           className="tab"
-          aria-label="Permissions"
+          aria-label={t("permissions", "Permissions")}
           checked={activeTab === "permissions"}
           onChange={() => switchToTab("permissions")}
         />
@@ -207,9 +209,9 @@ const PermissionManagement = () => {
           <div className="tab-content p-5">
             {/* Permissions List Section */}
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
-              <h2 className="text-2xl font-bold">Permissions</h2>
+              <h2 className="text-2xl font-bold">{t("permissions", "Permissions")}</h2>
               <p className="text-neutral-500 mb-4">
-                Manage page permissions and component access
+                {t("manage_page_permissions_desc", "Manage page permissions and component access")}
               </p>
 
               <div className="space-y-4">
@@ -229,7 +231,7 @@ const PermissionManagement = () => {
                             {permission.pageName}
                           </h3>
                           <p className="text-sm text-gray-500 mb-2">
-                            Page ID:{" "}
+                            {t("page_id", "Page ID:")}{" "}
                             <span className="font-mono">{permission.pageId}</span>
                           </p>
                         </div>
@@ -239,7 +241,7 @@ const PermissionManagement = () => {
                             onClick={() => handleEditPermission(permission)}
                             disabled={updatePermission.isPending}
                           >
-                            Edit
+                            {t("edit", "Edit")}
                           </button>
                           <button
                             className="btn btn-error btn-sm"
@@ -249,10 +251,10 @@ const PermissionManagement = () => {
                             {deletePermission.isPending ? (
                               <>
                                 <span className="loading loading-spinner loading-xs"></span>
-                                Deleting...
+                                {t("deleting", "Deleting...")}
                               </>
                             ) : (
-                              "Delete"
+                              t("delete", "Delete")
                             )}
                           </button>
                         </div>
@@ -260,7 +262,7 @@ const PermissionManagement = () => {
                       
                       <div>
                         <p className="text-sm font-medium text-gray-700 mb-2">
-                          Components:
+                          {t("components_lbl", "Components:")}
                         </p>
                         {permission.components && permission.components.length > 0 ? (
                           <div className="flex flex-wrap gap-1">
@@ -275,7 +277,7 @@ const PermissionManagement = () => {
                           </div>
                         ) : (
                           <span className="text-xs text-gray-400 italic">
-                            No components assigned
+                            {t("no_components_assigned", "No components assigned")}
                           </span>
                         )}
                       </div>
@@ -283,8 +285,7 @@ const PermissionManagement = () => {
                   ))
                 ) : (
                   <div className="text-center text-gray-500 py-8">
-                    No permissions found. Create your first permission to get
-                    started.
+                    {t("no_permissions_found", "No permissions found. Create your first permission to get started.")}
                   </div>
                 )}
               </div>
@@ -295,16 +296,16 @@ const PermissionManagement = () => {
           type="radio"
           name="permission_tab_group"
           className="tab"
-          aria-label="Add Permission"
+          aria-label={t("add_permission", "Add Permission")}
           checked={activeTab === "add_permission"}
           onChange={() => switchToTab("add_permission")}
         />
         {activeTab === "add_permission" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl w-full">
-              <h2 className="text-2xl font-bold mb-1">Add New Permission</h2>
+              <h2 className="text-2xl font-bold mb-1">{t("add_new_permission", "Add New Permission")}</h2>
               <p className="text-neutral-500 mb-6">
-                Create a new permission for page access and components.
+                {t("create_new_permission_desc", "Create a new permission for page access and components.")}
               </p>
               <form
                 className="flex flex-col gap-4"
@@ -313,7 +314,7 @@ const PermissionManagement = () => {
                 <div className="flex gap-4">
                   <div className="w-1/2">
                     <label className="label">
-                      <span className="label-text font-medium">Page ID</span>
+                      <span className="label-text font-medium">{t("page_id_label", "Page ID")}</span>
                     </label>
                     <input
                       type="text"
@@ -328,7 +329,7 @@ const PermissionManagement = () => {
                   </div>
                   <div className="w-1/2">
                     <label className="label">
-                      <span className="label-text font-medium">Page Name</span>
+                      <span className="label-text font-medium">{t("page_name_label", "Page Name")}</span>
                     </label>
                     <input
                       type="text"
@@ -345,16 +346,16 @@ const PermissionManagement = () => {
 
                 <div>
                   <label className="label">
-                    <span className="label-text font-medium">Components</span>
+                    <span className="label-text font-medium">{t("components", "Components")}</span>
                     <span className="label-text-alt">
-                      Add components that will be accessible
+                      {t("add_components_accessible", "Add components that will be accessible")}
                     </span>
                   </label>
                   <div className="flex gap-2 mb-2">
                     <input
                       type="text"
                       className="input input-bordered flex-1"
-                      placeholder="Add a component (e.g., projects, tasks)"
+                      placeholder={t("add_component_placeholder", "Add a component (e.g., projects, tasks)")}
                       value={newComponent}
                       onChange={(e) => setNewComponent(e.target.value)}
                       onKeyPress={(e) => handleComponentKeyPress(e, false)}
@@ -365,7 +366,7 @@ const PermissionManagement = () => {
                       onClick={() => addComponent(newComponent, false)}
                       disabled={!newComponent.trim()}
                     >
-                      Add
+                      {t("add", "Add")}
                     </button>
                   </div>
 
@@ -387,13 +388,12 @@ const PermissionManagement = () => {
                       </div>
                     ) : (
                       <div className="text-gray-400 text-center py-3">
-                        No components added yet
+                        {t("no_components_added_yet", "No components added yet")}
                       </div>
                     )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    Components represent features or sections users can access
-                    within this page
+                    {t("components_helper_text", "Components represent features or sections users can access within this page")}
                   </p>
                 </div>
 
@@ -403,7 +403,7 @@ const PermissionManagement = () => {
                     className="btn btn-outline"
                     onClick={handleCancel}
                   >
-                    Cancel
+                    {t("cancel", "Cancel")}
                   </button>{" "}
                   <button
                     type="submit"
@@ -417,10 +417,10 @@ const PermissionManagement = () => {
                     {createPermission.isPending ? (
                       <>
                         <span className="loading loading-spinner loading-xs"></span>
-                        Creating...
+                        {t("creating", "Creating...")}
                       </>
                     ) : (
-                      "Create Permission"
+                      t("create_permission", "Create Permission")
                     )}
                   </button>
                 </div>
@@ -432,16 +432,16 @@ const PermissionManagement = () => {
           type="radio"
           name="permission_tab_group"
           className="tab"
-          aria-label="Edit Permission"
+          aria-label={t("edit_permission", "Edit Permission")}
           checked={activeTab === "edit_permission"}
           onChange={() => setActiveTab("edit_permission")}
         />
         {activeTab === "edit_permission" && (
           <div className="tab-content p-5">
             <div className="bg-base-200 border border-base-300 p-6 rounded-2xl w-full">
-              <h2 className="text-2xl font-bold mb-1">Edit Permission</h2>
+              <h2 className="text-2xl font-bold mb-1">{t("edit_permission", "Edit Permission")}</h2>
               <p className="text-neutral-500 mb-6">
-                Modify existing permission settings.
+                {t("modify_existing_permission_desc", "Modify existing permission settings.")}
               </p>
               {editingPermission ? (
                 <form
@@ -451,7 +451,7 @@ const PermissionManagement = () => {
                   <div className="flex gap-4">
                     <div className="w-1/2">
                       <label className="label">
-                        <span className="label-text font-medium">Page ID</span>
+                        <span className="label-text font-medium">{t("page_id_label", "Page ID")}</span>
                       </label>
                       <input
                         type="text"
@@ -466,7 +466,7 @@ const PermissionManagement = () => {
                     <div className="w-1/2">
                       <label className="label">
                         <span className="label-text font-medium">
-                          Page Name
+                          {t("page_name_label", "Page Name")}
                         </span>
                       </label>
                       <input
@@ -483,16 +483,16 @@ const PermissionManagement = () => {
 
                   <div>
                     <label className="label">
-                      <span className="label-text font-medium">Components</span>
+                      <span className="label-text font-medium">{t("components", "Components")}</span>
                       <span className="label-text-alt">
-                        Add components that will be accessible
+                        {t("add_components_accessible", "Add components that will be accessible")}
                       </span>
                     </label>
                     <div className="flex gap-2 mb-2">
                       <input
                         type="text"
                         className="input input-bordered flex-1"
-                        placeholder="Add a component (e.g., projects, tasks)"
+                        placeholder={t("add_component_placeholder", "Add a component (e.g., projects, tasks)")}
                         value={editComponent}
                         onChange={(e) => setEditComponent(e.target.value)}
                         onKeyPress={(e) => handleComponentKeyPress(e, true)}
@@ -503,7 +503,7 @@ const PermissionManagement = () => {
                         onClick={() => addComponent(editComponent, true)}
                         disabled={!editComponent.trim()}
                       >
-                        Add
+                        {t("add", "Add")}
                       </button>
                     </div>
 
@@ -528,13 +528,12 @@ const PermissionManagement = () => {
                         </div>
                       ) : (
                         <div className="text-gray-400 text-center py-3">
-                          No components added yet
+                          {t("no_components_added_yet", "No components added yet")}
                         </div>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      Components represent features or sections users can access
-                      within this page
+                      {t("components_helper_text", "Components represent features or sections users can access within this page")}
                     </p>
                   </div>
 
@@ -544,7 +543,7 @@ const PermissionManagement = () => {
                       className="btn btn-outline"
                       onClick={handleCancel}
                     >
-                      Cancel
+                      {t("cancel", "Cancel")}
                     </button>
                     <button
                       type="submit"
@@ -558,16 +557,16 @@ const PermissionManagement = () => {
                       {updatePermission.isPending ? (
                         <>
                           <span className="loading loading-spinner loading-xs"></span>
-                          Updating...
+                          {t("updating", "Updating...")}
                         </>
                       ) : (
-                        "Update Permission"
+                        t("update_permission", "Update Permission")
                       )}
                     </button>
                   </div>
                 </form>
               ) : (
-                <p>No permission selected for editing.</p>
+                <p>{t("no_permission_selected_edit", "No permission selected for editing.")}</p>
               )}
             </div>
           </div>
