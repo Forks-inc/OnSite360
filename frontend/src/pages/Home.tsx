@@ -8,18 +8,10 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 import P5Background from "../components/P5Background";
-
-const featureCardDescriptions: Record<string, string> = {
-  "Employee Management":
-    "Manage your workforce efficiently and track employee progress.",
-  "Schedule Management":
-    "Plan, assign, and monitor project schedules in real time.",
-  "Project Oversight": "Gain insights and control over all ongoing projects.",
-  "Workforce Management": "Optimize labor allocation and productivity on site.",
-  "Document Management": "Centralize and secure all your project documents.",
-};
+import { useTranslation } from "../hooks/useTranslation";
 
 const Home = () => {
+  const { t, language } = useTranslation();
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
@@ -27,6 +19,14 @@ const Home = () => {
   const [showDemoModal, setShowDemoModal] = useState(false);
   const [showThankYouModal, setShowThankYouModal] = useState(false);
   const featureCardsRef = useRef<HTMLDivElement>(null);
+
+  const featureCardDescriptions: Record<string, string> = {
+    "Employee Management": t("employee_mgmt_desc"),
+    "Schedule Management": t("schedule_mgmt_desc"),
+    "Project Oversight": t("project_oversight_desc"),
+    "Workforce Management": t("workforce_mgmt_desc"),
+    "Document Management": t("document_mgmt_desc"),
+  };
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -41,12 +41,13 @@ const Home = () => {
       window.removeEventListener("beforeinstallprompt", handler);
     };
   }, []);
+
   // Navigation menu items
   const navItems = [
-    { name: "Home", active: true },
-    { name: "Solutions", active: false },
-    { name: "Product", active: false },
-    { name: "Support", active: false },
+    { name: t("home_nav_home"), id: "home", active: true },
+    { name: t("home_nav_solutions"), id: "solutions", active: false },
+    { name: t("home_nav_product"), id: "product", active: false },
+    { name: t("home_nav_support"), id: "support", active: false },
   ];
 
   // Hamburger menu state
@@ -55,28 +56,33 @@ const Home = () => {
   // Feature cards data
   const featureCards = [
     {
-      title: "Employee Management",
-      icon: <FaUsers size={48} color="#eab308" />, // blue
+      title: t("employee-management"),
+      key: "Employee Management",
+      icon: <FaUsers size={48} color="#eab308" />,
       color: "#eab308",
     },
     {
-      title: "Schedule Management",
-      icon: <FaCalendarAlt size={48} color="#f59e42" />, // green
+      title: t("schedule-management"),
+      key: "Schedule Management",
+      icon: <FaCalendarAlt size={48} color="#f59e42" />,
       color: "#f59e42",
     },
     {
-      title: "Project Oversight",
-      icon: <FaClipboardList size={48} color="#eab308" />, // purple
+      title: t("project-oversight"),
+      key: "Project Oversight",
+      icon: <FaClipboardList size={48} color="#eab308" />,
       color: "#eab308",
     },
     {
-      title: "Workforce Management",
-      icon: <FaHardHat size={48} color="#f59e42" />, // orange
+      title: t("workforce-management"),
+      key: "Workforce Management",
+      icon: <FaHardHat size={48} color="#f59e42" />,
       color: "#f59e42",
     },
     {
-      title: "Document Management",
-      icon: <FaFileAlt size={48} color="#eab308" />, // yellow
+      title: t("document-management"),
+      key: "Document Management",
+      icon: <FaFileAlt size={48} color="#eab308" />,
       color: "#eab308",
     },
   ];
@@ -141,7 +147,7 @@ const Home = () => {
     <div className="bg-base-200 relative">
       {/* Navbar */}
       <nav className="px-4 py-4 md:px-12 md:py-6 flex items-center justify-between relative">
-        <img src="/logo.png" alt="OnSite360 Logo" className="w-52" />
+        <img src="/logo.png" alt="ONE-365 Logo" className="w-52" />
         {/* Hamburger icon for mobile */}
         <button
           className="md:hidden flex items-center justify-center p-2 rounded focus:outline-none"
@@ -183,9 +189,7 @@ const Home = () => {
                   : "text-[#1c1c1c] hover:bg-[#fdc700] hover:text-[#a35608]"
               }`}
               onClick={() => {
-                const section = document.getElementById(
-                  item.name.toLowerCase()
-                );
+                const section = document.getElementById(item.id);
                 if (section) section.scrollIntoView({ behavior: "smooth" });
               }}
             >
@@ -195,15 +199,15 @@ const Home = () => {
         </div>
         <div className="lg:flex gap-2 hidden">
           <Link to="/login">
-            <button className="bg-[#3b3b3b] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#2a2a2a]">
-              Login
+            <button className="bg-[#3b3b3b] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#2a2a2a] cursor-pointer">
+              {t("signin_btn")}
             </button>
           </Link>
           <button
-            className="bg-[#fdc700] text-[#a35608] px-6 py-2 rounded-lg font-medium hover:bg-[#e5b400]"
+            className="bg-[#fdc700] text-[#a35608] px-6 py-2 rounded-lg font-medium hover:bg-[#e5b400] cursor-pointer"
             onClick={handleDemoClick}
           >
-            Request a Demo
+            {t("home_request_demo")}
           </button>
         </div>
         {/* Mobile nav links dropdown */}
@@ -227,16 +231,13 @@ const Home = () => {
                 }`}
                 onClick={() => {
                   setNavOpen(false);
-                  const section = document.getElementById(
-                    item.name.toLowerCase()
-                  );
+                  const section = document.getElementById(item.id);
                   if (section) section.scrollIntoView({ behavior: "smooth" });
                 }}
               >
                 {item.name}
               </button>
             ))}
-            {/* Removed Login and Request a Demo buttons for mobile */}
           </div>
         )}
       </nav>
@@ -246,29 +247,28 @@ const Home = () => {
         className="flex flex-col items-center justify-center text-center py-10 px-4 md:py-20 md:px-0 relative"
         style={{ overflow: "hidden" }}
       >
-        {/* --- Add the P5.js interactive background here --- */}
         <P5Background />
         <div className="z-50 flex flex-col justify-center items-center bg-neutral-100/10 backdrop-blur-md p-5 md:p-10 rounded-3xl  max-w-5xl mx-auto">
           <div className="text-neutral-500 z-50 text-base md:text-lg tracking-widest font-medium mb-6 break-words text-center max-w-xs sm:max-w-md md:max-w-2xl mx-auto">
-            CONSTRUCTION PROJECT MANAGEMENT SOFTWARE
+            {t("home_subtitle")}
           </div>
           <h1 className="text-4xl md:text-7xl z-50 font-bold text-[#fdc700] mb-2">
-            Shaping <span className="text-[#1c1c1c]">your vision</span>
+            {t("home_hero_shaping").split("your vision")[0]} <span className="text-[#1c1c1c]">{t("home_hero_shaping").includes("vision") ? (language === "en" ? "your vision" : "su visión") : ""}</span>
           </h1>
           <h2 className="text-4xl md:text-7xl z-50 font-bold text-[#1c1c1c] mb-4">
-            With <span className="text-[#fdc700]">Precision</span>
+            {t("home_hero_precision").split("Precision")[0]} <span className="text-[#fdc700]">{t("home_hero_precision").includes("Precision") || t("home_hero_precision").includes("Precisión") ? (language === "en" ? "Precision" : "Precisión") : ""}</span>
           </h2>
 
           <div className="flex flex-wrap gap-1 justify-center w-full z-50 mt-4">
             <button
-              className="bg-[#fdc700] text-[#a45505] font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-[#e5b400]"
+              className="bg-[#fdc700] text-[#a45505] font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-[#e5b400] cursor-pointer"
               onClick={handleDemoClick}
             >
-              Request a Demo
+              {t("home_request_demo")}
             </button>{" "}
             <Link to="/login" className="md:hidden">
               <button className="bg-[#3b3b3b] text-white px-8 py-4 rounded-lg font-medium hover:bg-[#2a2a2a] w-full">
-                Login
+                {t("signin_btn")}
               </button>
             </Link>
           </div>
@@ -299,8 +299,8 @@ const Home = () => {
           >
             <div className="mb-2">{card.icon}</div>
             {hoveredCard === idx ? (
-              <div className="text-sm text-neutral-500 text-center mt-2">
-                {featureCardDescriptions[card.title]}
+              <div className="text-xs text-neutral-500 text-center mt-2 px-1">
+                {featureCardDescriptions[card.key]}
               </div>
             ) : (
               <div
@@ -326,7 +326,7 @@ const Home = () => {
       {/* Companies Section */}
       <section className="flex flex-col items-center justify-center gap-6 py-8 md:py-16 px-4 md:px-0">
         <h1 className="text-2xl md:text-4xl text-[#a45505] font-normal text-center">
-          The best in building own their success with ONE-365
+          {t("home_best_building")}
         </h1>
         <img
           src="/company_scroll.png"
@@ -344,21 +344,19 @@ const Home = () => {
         />
         <div className="flex flex-col gap-4">
           <div className="font-medium text-black text-lg tracking-widest">
-            COMMUNICATION
+            {t("home_comm_label")}
           </div>
           <h2 className="font-bold text-[#1c1c1c] text-2xl md:text-4xl">
-            Close the communication loop.
+            {t("home_comm_title")}
           </h2>
           <p className="text-[#434343] text-base md:text-lg">
-            Mobile collaboration tools are built for the site, making it easy
-            for everyone to have a clear understanding of what needs to get done
-            every day to stay on schedule and prevent rework.
+            {t("home_comm_desc")}
           </p>
           <button
-            className="btn btn-primary w-full lg:w-2xs md:w-auto"
+            className="btn btn-primary w-full lg:w-2xs md:w-auto cursor-pointer"
             onClick={handleDemoClick}
           >
-            Request a Demo
+            {t("home_request_demo")}
           </button>
         </div>
       </section>
@@ -367,22 +365,19 @@ const Home = () => {
       <section className="flex flex-col-reverse md:flex-row items-center justify-center gap-8 py-8 md:py-16 lg:px-10 px-4 md:px-0">
         <div className="flex flex-col gap-4">
           <div className="font-medium text-black text-lg tracking-widest">
-            ACCESS
+            {t("home_access_label")}
           </div>
           <h2 className="font-bold text-[#1c1c1c] text-2xl md:text-4xl">
-            Keep information accurate.
+            {t("home_access_title")}
           </h2>
           <div className="text-[#434343] text-base md:text-lg">
-            Trust that all stakeholders have access to the latest information in
-            a centralised location, and in a format that everyone can
-            understand. Information is updated instantly so all stakeholders
-            have ultimate visability. Mitigate risks with accurate data logs
+            {t("home_access_desc")}
           </div>
           <button
-            className="btn btn-primary w-full lg:w-2xs md:w-auto mt-2"
+            className="btn btn-primary w-full lg:w-2xs md:w-auto mt-2 cursor-pointer"
             onClick={handleDemoClick}
           >
-            Request a Demo
+            {t("home_request_demo")}
           </button>
         </div>
         <img
@@ -396,31 +391,26 @@ const Home = () => {
       <section className="flex flex-col-reverse md:flex-row items-center justify-center gap-8 py-8 md:py-16 lg:px-10 px-4 md:px-0">
         <div className="flex flex-col gap-4">
           <div className="font-medium text-black text-lg tracking-widest">
-            VISIBILITY
+            {t("home_visibility_label")}
           </div>
           <h2 className="font-bold text-[#1c1c1c] text-2xl md:text-4xl">
-            Stay ahead of your projects.
+            {t("home_visibility_title")}
           </h2>
           <div className="text-[#434343] text-base md:text-lg">
-            Quickly identify potential issues and their impact to schedule and
-            budgets. Avoid unwanted surprises with better project visibility.
-            
-            Project overview gives a complete picture of any outstanding items.
-           
-            Track all steps and speed up the approval process.
+            {t("home_visibility_desc")}
           </div>
           <div className="flex flex-col md:flex-row gap-2 mt-2 w-full">
             <button
-              className="btn btn-primary lg:w-2xs w-full md:w-auto"
+              className="btn btn-primary lg:w-2xs w-full md:w-auto cursor-pointer"
               onClick={handleDemoClick}
             >
-              Request a Demo
+              {t("home_request_demo")}
             </button>
             <button
               onClick={handleInstallClick}
-              className="btn btn-neutral lg:w-2xs w-full md:w-auto"
+              className="btn btn-neutral lg:w-2xs w-full md:w-auto cursor-pointer"
             >
-              Get Mobile App
+              {t("home_get_mobile")}
             </button>
           </div>
         </div>
@@ -435,13 +425,13 @@ const Home = () => {
       <section className="flex flex-col-reverse md:flex-row items-center justify-center gap-8 py-8  lg:px-10 px-4 md:px-0 bg-accent">
         <div className="flex flex-col gap-4">
           <h2 className="font-bold text-white text-2xl md:text-6xl">
-            See how Project Management can work for your team.
+            {t("home_pm_cta")}
           </h2>
           <button
-            className="btn btn-primary w-full lg:w-2xs lg:mt-10 md:w-auto mt-2"
+            className="btn btn-primary w-full lg:w-2xs lg:mt-10 md:w-auto mt-2 cursor-pointer"
             onClick={handleDemoClick}
           >
-            Request a Demo
+            {t("home_request_demo")}
           </button>
         </div>
         <img src="footer_img.webp" alt="" className="w-full md:w-1/2 h-auto" />
@@ -453,7 +443,7 @@ const Home = () => {
           <div className="modal-box max-w-md md:max-w-2xl py-5 px-4 md:px-10 relative">
             {/* Close icon at top right */}
             <button
-              className="btn btn-sm btn-circle absolute right-4 top-4"
+              className="btn btn-sm btn-circle absolute right-4 top-4 cursor-pointer"
               onClick={() => setShowDemoModal(false)}
               aria-label="Close"
               type="button"
@@ -461,7 +451,7 @@ const Home = () => {
               ✕
             </button>
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-10">
-              Unlock our product demo
+              {t("modal_demo_title")}
             </h2>
             <form
               className="space-y-4 md:space-y-6"
@@ -470,7 +460,7 @@ const Home = () => {
               <div className="flex flex-col md:flex-row gap-4 md:gap-6">
                 <div className="flex-1">
                   <label className="block font-medium mb-2">
-                    First Name <span className="text-red-500">*</span>
+                    {t("modal_first_name")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     className="input input-bordered w-full bg-[#f6f8fa]"
@@ -480,7 +470,7 @@ const Home = () => {
                 </div>
                 <div className="flex-1">
                   <label className="block font-medium mb-2">
-                    Last Name <span className="text-red-500">*</span>
+                    {t("modal_last_name")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     className="input input-bordered w-full bg-[#f6f8fa]"
@@ -494,14 +484,14 @@ const Home = () => {
                   <input
                     className="input input-bordered w-full bg-[#f6f8fa]"
                     type="tel"
-                    placeholder="(555) 555-5555"
+                    placeholder={t("modal_phone_placeholder")}
                   />
                 </div>
                 <div className="flex-1">
                   <input
                     className="input input-bordered w-full bg-[#f6f8fa]"
                     type="text"
-                    placeholder="Company *"
+                    placeholder={t("modal_company_placeholder")}
                     required
                   />
                 </div>
@@ -510,63 +500,61 @@ const Home = () => {
                 <input
                   className="input input-bordered w-full bg-[#f6f8fa]"
                   type="email"
-                  placeholder="Email *"
+                  placeholder={t("modal_email_placeholder")}
                   required
                 />
               </div>
               <div>
                 <label className="block font-medium mb-2">
-                  Country <span className="text-red-500">*</span>
+                  {t("modal_country")} <span className="text-red-500">*</span>
                 </label>
                 <select
                   className="select select-bordered w-full bg-[#f6f8fa]"
                   required
                 >
-                  <option value="">Select</option>
+                  <option value="">{t("modal_country_select")}</option>
                   <option value="us">United States</option>
                   <option value="ca">Canada</option>
                   <option value="uk">United Kingdom</option>
-                  {/* ...other countries... */}
                 </select>
               </div>
               <div>
                 <label className="block font-medium mb-2">
-                  Which builder type best describes your business?{" "}
+                  {t("modal_builder_type")}{" "}
                   <span className="text-red-500">*</span>
                 </label>
                 <select
                   className="select select-bordered w-full bg-[#f6f8fa]"
                   required
                 >
-                  <option value="">Select</option>
-                  <option value="residential">Residential</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="industrial">Industrial</option>
-                  {/* ...other types... */}
+                  <option value="">{t("modal_builder_select")}</option>
+                  <option value="residential">{t("modal_builder_residential")}</option>
+                  <option value="commercial">{t("modal_builder_commercial")}</option>
+                  <option value="industrial">{t("modal_builder_industrial")}</option>
                 </select>
               </div>
               <div>
                 <label className="block font-medium mb-2">
-                  What is your average annual revenue?{" "}
+                  {t("modal_revenue")}{" "}
                   <span className="text-red-500">*</span>
                 </label>
                 <select
                   className="select select-bordered w-full bg-[#f6f8fa]"
                   required
                 >
-                  <option value="">Select</option>
-                  <option value="under1m">Under $1M</option>
-                  <option value="1m-5m">$1M - $5M</option>
-                  <option value="5m-20m">$5M - $20M</option>
-                  <option value="over20m">Over $20M</option>
+                  <option value="">{t("modal_revenue_select")}</option>
+                  <option value="under1m">{t("modal_revenue_1")}</option>
+                  <option value="1m-5m">{t("modal_revenue_2")}</option>
+                  <option value="5m-20m">{t("modal_revenue_3")}</option>
+                  <option value="over20m">{t("modal_revenue_4")}</option>
                 </select>
               </div>
               <div className="pt-2 md:pt-4">
                 <button
                   type="submit"
-                  className="btn btn-primary w-full font-bold text-black"
+                  className="btn btn-primary w-full font-bold text-black cursor-pointer"
                 >
-                  Unlock Demo
+                  {t("modal_submit_btn")}
                 </button>
               </div>
             </form>
@@ -578,23 +566,23 @@ const Home = () => {
         <div className="modal modal-open backdrop-blur-md">
           <div className="modal-box max-w-md md:max-w-3xl py-8 px-4 md:px-8 relative">
             <button
-              className="btn btn-sm btn-circle absolute right-4 top-4"
+              className="btn btn-sm btn-circle absolute right-4 top-4 cursor-pointer"
               onClick={() => setShowThankYouModal(false)}
               aria-label="Close"
               type="button"
             >
               ✕
             </button>
-            <h3 className="font-bold text-3xl md:text-6xl mb-4">Thank you!</h3>
+            <h3 className="font-bold text-3xl md:text-6xl mb-4">{t("thank_you_title")}</h3>
             <p className="mb-6 text-neutral-500">
-              A ONE-365 member will contact you to schedule the product demo.
+              {t("thank_you_desc")}
             </p>
             <div className="flex justify-end">
               <button
-                className="btn btn-primary"
+                className="btn btn-primary cursor-pointer"
                 onClick={() => setShowThankYouModal(false)}
               >
-                Go to Home
+                {t("thank_you_home_btn")}
               </button>
             </div>
           </div>
@@ -612,13 +600,13 @@ const Home = () => {
           </div>
           <div className="flex gap-4">
             <a href="mailto:support@one365.com" className="hover:underline">
-              Contact
+              {t("footer_contact")}
             </a>
             <a href="#" className="hover:underline">
-              Privacy Policy
+              {t("footer_privacy")}
             </a>
             <a href="#" className="hover:underline">
-              Terms of Service
+              {t("footer_terms")}
             </a>
           </div>
         </div>

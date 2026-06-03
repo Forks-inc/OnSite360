@@ -24,6 +24,7 @@ import { useTextGeneration } from "../hooks/useCopilot";
 import { useUserProjects } from "../hooks/useUsers";
 import { useDailyLogsByDate } from "../hooks/useSchedule";
 import { useThreads } from "../hooks/useCommunication";
+import { useTranslation } from "../hooks/useTranslation";
 
 // Define interfaces for API responses that are not in useProjects.ts
 interface DailyActivity {
@@ -116,6 +117,7 @@ interface ChatSuggestion {
 
 const Copilot = () => {
   const { user } = useAuthStore();
+  const { t } = useTranslation();
   const { data: projects = [], isLoading: projectsLoading } = useUserProjects(user?.id || "");
   
   // State management
@@ -152,28 +154,28 @@ const Copilot = () => {
     const smartSuggestions: ChatSuggestion[] = [
       {
         id: '1',
-        text: 'Show me all unresolved issues in this project',
+        text: t("copilot_suggest_1"),
         icon: <IoBulb className="text-red-500" />,
         category: 'issues',
         promptType: 'smart'
       },
       {
         id: '2',
-        text: 'Study the July 9th daily log and prepare a report',
+        text: t("copilot_suggest_2"),
         icon: <IoDocument className="text-blue-500" />,
         category: 'daily-log',
         promptType: 'smart'
       },
       {
         id: '3',
-        text: 'Give me a summary of employee attendance in July',
+        text: t("copilot_suggest_3"),
         icon: <IoSearch className="text-green-500" />,
         category: 'attendance',
         promptType: 'smart'
       },
       {
         id: '4',
-        text: 'Summarize communication threads for this project',
+        text: t("copilot_suggest_4"),
         icon: <IoRocket className="text-purple-500" />,
         category: 'communication',
         promptType: 'smart'
@@ -462,7 +464,7 @@ Please provide:
     if (Array.isArray(projects) && projects.length === 0 && !projectsLoading) {
       const errorMessage: Message = {
         id: Date.now().toString(),
-        content: "It looks like you don't have access to any projects yet. Please contact your administrator to get assigned to a project, or create a new project to start using OnSite360 Copilot.",
+        content: t("copilot_no_project_access"),
         isUser: false,
         timestamp: new Date()
       };
@@ -473,7 +475,7 @@ Please provide:
     if (!selectedProject) {
       const errorMessage: Message = {
         id: Date.now().toString(),
-        content: "Please select a project from the dropdown above to get project-specific insights and assistance.",
+        content: t("copilot_select_project_warn"),
         isUser: false,
         timestamp: new Date()
       };
@@ -485,7 +487,7 @@ Please provide:
     if (isDataLoading && !currentProject) {
       const loadingMessage: Message = {
         id: Date.now().toString(),
-        content: "Loading project data... Please wait a moment for the most up-to-date information.",
+        content: t("copilot_wait_loading"),
         isUser: false,
         timestamp: new Date()
       };
@@ -497,7 +499,7 @@ Please provide:
     if (selectedProject && !currentProject) {
       const waitingMessage: Message = {
         id: Date.now().toString(),
-        content: "Please wait while I gather the latest project information...",
+        content: t("copilot_gather_info"),
         isUser: false,
         timestamp: new Date()
       };
@@ -609,7 +611,7 @@ Please provide a helpful response based on the project context above.`;
       if (!selectedProject) {
         const errorMessage: Message = {
           id: Date.now().toString(),
-          content: "Please select a project from the dropdown above to get project-specific insights and assistance.",
+          content: t("copilot_select_project_warn"),
           isUser: false,
           timestamp: new Date()
         };
@@ -689,10 +691,10 @@ Please provide a helpful response based on the project context above.`;
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3">
             <MdSupportAgent className="text-primary" />
-            ONE-365 Copilot
+            {t("copilot_title")}
           </h1>
           <p className="text-gray-500 mt-1">
-            Your AI assistant for project management, document search, and technical support
+            {t("copilot_subtitle")}
           </p>
         </div>
         
@@ -706,7 +708,7 @@ Please provide a helpful response based on the project context above.`;
               disabled={projectsLoading}
             >
               {projectsLoading ? (
-                <option>Loading projects...</option>
+                <option>{t("copilot_loading_projects")}</option>
               ) : Array.isArray(projects) && projects.length > 0 ? (
                 projects.map((project) => (
                   <option key={project.id} value={project.id}>
@@ -714,24 +716,24 @@ Please provide a helpful response based on the project context above.`;
                   </option>
                 ))
               ) : (
-                <option>No projects available</option>
+                <option>{t("copilot_no_projects")}</option>
               )}
             </select>
             {!selectedProject && Array.isArray(projects) && projects.length > 0 && (
               <label className="label">
-                <span className="label-text-alt text-error">Please select a project</span>
+                <span className="label-text-alt text-error">{t("copilot_select_project")}</span>
               </label>
             )}
             {Array.isArray(projects) && projects.length === 0 && !projectsLoading && (
               <label className="label">
-                <span className="label-text-alt text-warning">No projects assigned</span>
+                <span className="label-text-alt text-warning">{t("copilot_no_projects_assigned")}</span>
               </label>
             )}
             {selectedProject && isDataLoading && (
               <label className="label">
                 <span className="label-text-alt text-info">
                   <span className="loading loading-dots loading-xs"></span>
-                  Loading project data...
+                  {t("copilot_loading_project_data")}
                 </span>
               </label>
             )}
@@ -759,10 +761,9 @@ Please provide a helpful response based on the project context above.`;
             <div className="h-full flex flex-col items-center justify-center">
               <div className="text-center mb-8">
                 <MdSupportAgent className="text-8xl text-primary mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-2">Welcome to ONE-365 Copilot</h2>
+                <h2 className="text-2xl font-bold mb-2">{t("copilot_welcome_title")}</h2>
                 <p className="text-gray-500 max-w-md">
-                  I'm here to help you with project documents, draft responses, search information, and more. 
-                  Try one of the suggestions below or ask me anything!
+                  {t("copilot_welcome")}
                 </p>
               </div>
               
@@ -822,7 +823,7 @@ Please provide a helpful response based on the project context above.`;
                   <div className="bg-base-100 border border-base-300 rounded-2xl px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="loading loading-dots loading-sm"></span>
-                      <span className="text-sm text-gray-500">Copilot is thinking...</span>
+                      <span className="text-sm text-gray-500">{t("copilot_thinking")}</span>
                     </div>
                   </div>
                 </div>
@@ -849,16 +850,16 @@ Please provide a helpful response based on the project context above.`;
               {showAttachments && (
                 <div className="absolute bottom-full left-0 mb-2 bg-base-100 border border-base-300 rounded-lg shadow-lg p-2 min-w-48">
                   <button className="btn btn-ghost btn-sm w-full justify-start">
-                    <IoDocument /> Upload Document
+                    <IoDocument /> {t("copilot_upload_doc")}
                   </button>
                   <button className="btn btn-ghost btn-sm w-full justify-start">
-                    <MdHistory /> Reference Past Chat
+                    <MdHistory /> {t("copilot_past_chat")}
                   </button>
                   <button
                     className="btn btn-ghost btn-sm w-full justify-start text-error"
                     onClick={() => setShowAttachments(false)}
                   >
-                    <IoClose /> Close
+                    <IoClose /> {t("close")}
                   </button>
                 </div>
               )}
@@ -871,7 +872,7 @@ Please provide a helpful response based on the project context above.`;
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me about documents, draft responses, search information, or get project insights..."
+                placeholder={t("copilot_input_placeholder")}
                 className="textarea textarea-bordered w-full resize-none min-h-[44px] max-h-32"
                 rows={1}
                 disabled={isTyping}
@@ -892,19 +893,19 @@ Please provide a helpful response based on the project context above.`;
           <div className="flex flex-wrap gap-2 mt-3">
             <button className="btn btn-ghost btn-xs">
               <IoDocument className="text-xs" />
-              Find Documents
+              {t("copilot_find_docs")}
             </button>
             <button className="btn btn-ghost btn-xs">
               <IoBulb className="text-xs" />
-              Draft Response
+              {t("copilot_draft_resp")}
             </button>
             <button className="btn btn-ghost btn-xs">
               <IoSearch className="text-xs" />
-              Search Project
+              {t("copilot_search_proj")}
             </button>
             <button className="btn btn-ghost btn-xs">
               <IoRocket className="text-xs" />
-              Generate Report
+              {t("copilot_gen_report")}
             </button>
           </div>
         </div>

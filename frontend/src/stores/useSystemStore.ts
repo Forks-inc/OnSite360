@@ -9,6 +9,8 @@ interface SystemState {
   setTheme: (theme: "bumblebee" | "halloween") => void;
   isMobile: boolean;
   setIsMobile: (mobile: boolean) => void;
+  language: "en" | "es";
+  setLanguage: (lang: "en" | "es") => void;
 }
 
 export const useSystemStore = create<SystemState>()(
@@ -35,6 +37,8 @@ export const useSystemStore = create<SystemState>()(
           set({ sidebarOpen: false });
         }
       },
+      language: "en",
+      setLanguage: (lang) => set({ language: lang }),
     }),
     {
       name: "system-storage", // name of the item in storage

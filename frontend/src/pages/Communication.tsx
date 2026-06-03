@@ -662,343 +662,435 @@ const Communication = () => {
           checked={activeTab === "chat"}
           onChange={() => setActiveTab("chat")}
         />
-        {activeTab === "chat" && selectedThread && (
+        {activeTab === "chat" && (
           <div className="tab-content p-5 w-full">
-            <div className="flex flex-col lg:flex-row gap-3 w-full h-[calc(100vh-300px)]">
-              {/* Thread Information Panel */}
-              <div
-                id="thread-info"
-                className={`bg-base-200 border border-base-300 rounded-2xl p-4 lg:w-1/3 w-full transition-all duration-300 flex flex-col ${
-                  showThreadInfo ? "block" : "hidden"
-                }`}
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold">Thread Information</h2>
+            <div className="flex flex-col lg:flex-row gap-4 w-full h-[calc(100vh-300px)]">
+              {/* Left Sidebar: Threads List */}
+              <div className="w-full lg:w-80 flex flex-col bg-base-200 border border-base-300 rounded-2xl overflow-hidden shrink-0">
+                <div className="p-4 border-b border-base-300 bg-base-300/40 flex justify-between items-center">
+                  <h3 className="font-bold text-lg text-base-content">Chats</h3>
                   <button
-                    className="btn btn-circle"
-                    onClick={() => setShowThreadInfo(false)}
+                    className="btn btn-primary btn-xs"
+                    onClick={() => setShowCreateThreadModal(true)}
                   >
-                    <IoClose size={15} />
+                    + New Thread
                   </button>
                 </div>
-
-                <div className="space-y-4 overflow-y-auto flex-1">
-                  {/* Thread Details */}
-                  <div className="bg-base-100 p-4 rounded-xl">
-                    <h3 className="font-bold text-lg mb-2">{selectedThread.title}</h3>
-                    {selectedThread.description && (
-                      <p className="text-sm text-gray-600 mb-3">{selectedThread.description}</p>
-                    )}
-                    
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="font-medium">Type:</span>
-                        <span>General</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Status:</span>
-                        <span className="badge badge-sm badge-success">
-                          Active
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Privacy:</span>
-                        <span>Public</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Messages:</span>
-                        <span>{messages.length}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Created:</span>
-                        <span>{new Date(selectedThread.createdAt).toLocaleDateString()}</span>
-                      </div>
+                <div className="flex-1 overflow-y-auto p-2 space-y-1">
+                  {threadsLoading ? (
+                    <div className="flex justify-center items-center py-4">
+                      <span className="loading loading-spinner loading-md"></span>
                     </div>
-                  </div>
-
-                  {/* Project Info */}
-                  {selectedThread.project && (
-                    <div className="bg-base-100 p-4 rounded-xl">
-                      <h4 className="font-bold mb-2">Project</h4>
-                      <p className="text-sm">{selectedThread.project.name}</p>
-                    </div>
-                  )}
-
-                  {/* Participants */}
-                  <div className="bg-base-100 p-4 rounded-xl">
-                    <h4 className="font-bold mb-2">Participants ({selectedThread.users.length})</h4>
-                    <div className="space-y-2">
-                      {selectedThread.users.map((user) => (
-                        <div key={user.id} className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                            <span className="text-xs font-medium text-primary">
-                              {user.firstName.charAt(0)}
-                            </span>
-                          </div>
-                          <div className="text-sm">
-                            <div className="font-medium">{user.firstName} {user.lastName}</div>
-                            <div className="text-gray-500 text-xs">{user.email}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Chat Screen */}
-              <div className={`bg-base-200 border border-base-300 rounded-2xl overflow-hidden transition-all duration-300 flex flex-col ${
-                showThreadInfo ? 'lg:w-2/3 w-full' : 'w-full'
-              }`}>
-                <div className="bg-primary p-4 border-b border-base-300">
-                  <div className="flex flex-col sm:flex-row justify-between text-primary-content items-start sm:items-center gap-3">
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                      <div className="flex-1 sm:flex-initial">
-                        <button
-                          className="text-lg sm:text-xl font-bold hover:underline cursor-pointer text-left"
-                          onClick={() => setShowThreadInfo(!showThreadInfo)}
-                          title="Click to view thread information"
-                        >
-                          {selectedThread.title}
-                        </button>
-                        <p className="text-xs sm:text-sm">
-                          Participants:{" "}
-                          <span className="hidden sm:inline">
-                            {selectedThread.users
-                              .map((u) => `${u.firstName} ${u.lastName}`)
-                              .join(", ")}
-                          </span>
-                          <span className="sm:hidden">
-                            {selectedThread.users.length} member{selectedThread.users.length !== 1 ? 's' : ''}
-                          </span>
-                        </p>
-                      </div>
-                      <button
-                        className="btn btn-ghost btn-circle btn-sm"
-                        onClick={() => setShowThreadInfo(!showThreadInfo)}
-                        title="Thread Information"
-                      >
-                        <IoInformationCircle size={20} />
-                      </button>
-                    </div>
-                    <div className="flex gap-2 w-full sm:w-auto">
-                      <button
-                        className="btn btn-active btn-sm sm:btn-md w-full sm:w-auto"
-                        onClick={() => setActiveTab("threads")}
-                      >
-                        <span className="hidden sm:inline">Export Thread</span>
-                        <span className="sm:hidden">Export</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Display RFIs associated with this thread */}
-                {selectedThreadRFIs.length > 0 && (
-                  <div className="bg-base-300 p-4 border-b border-base-300">
-                    <h3 className="text-sm font-semibold text-gray-600 mb-2">
-                      Related RFIs ({selectedThreadRFIs.length})
-                    </h3>
-                    <div className="space-y-2">
-                      {selectedThreadRFIs.map((rfi) => (
-                        <div
-                          key={rfi.id}
-                          className="flex items-center justify-between bg-base-200 p-4 rounded-xl"
-                        >
-                          <div className="flex-1">
-                            <span className="text-lg font-medium">
-                              {rfi.title}
-                            </span>
-                            <div className="flex items-center gap-2 mt-2">
-                              <span className="badge badge-sm badge-neutral">
-                                {rfi.id}
-                              </span>
-                              {rfi.status && (
-                                <span
-                                  className={`badge badge-sm ${getStatusBadge(
-                                    rfi.status
-                                  )}`}
-                                >
-                                  {rfi.status}
-                                </span>
-                              )}
-                              {rfi.priority && (
-                                <span
-                                  className={`badge badge-xs ${getPriorityBadge(
-                                    rfi.priority
-                                  )}`}
-                                >
-                                  {rfi.priority}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            className="btn btn-xs btn-outline"
-                            onClick={() => setActiveTab("rfis")}
-                          >
-                            View RFI
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
-                  {messages.length === 0 ? (
-                    <div className="text-center text-gray-500 py-8">
-                      No messages yet. Start the conversation!
+                  ) : threads.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500 text-sm">
+                      No chats available
                     </div>
                   ) : (
-                    messages.map((message) => {
-                      const isCurrentUser =
-                        currentUser?.id === message.senderId;
+                    threads.map((thread) => {
+                      const isSelected = selectedThread?.id === thread.id;
                       return (
-                        <div
-                          key={message.id}
-                          className={`chat ${
-                            isCurrentUser ? "chat-end" : "chat-start"
+                        <button
+                          key={thread.id}
+                          onClick={() => setSelectedThread(thread)}
+                          className={`w-full text-left p-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${
+                            isSelected
+                              ? "bg-primary text-primary-content shadow-md"
+                              : "hover:bg-base-300 text-base-content"
                           }`}
                         >
-                          <div className="chat-header text-xs sm:text-sm">
-                            <span className="hidden sm:inline">
-                              {message.sender.firstName} {message.sender.lastName}
-                            </span>
-                            <span className="sm:hidden">
-                              {message.sender.firstName}
-                            </span>
-                            <time className="text-xs opacity-50 ml-2">
-                              {formatTime(message.createdAt)}
-                            </time>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
+                            isSelected ? "bg-primary-content/20 text-primary-content" : "bg-primary/10 text-primary"
+                          }`}>
+                            {thread.title.charAt(0).toUpperCase()}
                           </div>
-                          <div className="chat-bubble bg-neutral text-neutral-content text-sm sm:text-base max-w-xs sm:max-w-md">
-                            {message.content}
-                            {message.attachment && (
-                              <div className="mt-2">
-                                {isImageFile(message.attachment) ? (
-                                  <img
-                                    src={getAttachmentUrl(message.attachment)}
-                                    alt="Attachment"
-                                    className="max-w-full h-auto rounded-lg cursor-pointer"
-                                    onClick={() => window.open(getAttachmentUrl(message.attachment!), '_blank')}
-                                  />
-                                ) : (
-                                  <a
-                                    href={getAttachmentUrl(message.attachment)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors"
-                                  >
-                                    {getFileIcon(message.attachment)}
-                                    <span className="text-xs">
-                                      {message.attachment.split('/').pop()}
-                                    </span>
-                                  </a>
-                                )}
+                          <div className="flex-1 min-w-0">
+                            <div className="font-semibold text-sm truncate">{thread.title}</div>
+                            {thread.project && (
+                              <div className={`text-xs truncate ${isSelected ? "text-primary-content/75" : "text-gray-500"}`}>
+                                {thread.project.name}
                               </div>
                             )}
                           </div>
-                        </div>
+                          {thread.users && (
+                            <div className={`badge badge-xs shrink-0 ${isSelected ? "badge-outline text-primary-content border-primary-content/30" : "badge-neutral"}`}>
+                              {thread.users.length}
+                            </div>
+                          )}
+                        </button>
                       );
                     })
                   )}
                 </div>
+              </div>
 
-                {/* Attachment Preview */}
-                {selectedFiles.length > 0 && (
-                  <div className="px-3 sm:px-4 py-2 bg-base-200 border-t border-base-300">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-600">
-                        {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
-                      </span>
+              {/* Right Content Area: Chat or Placeholder */}
+              {selectedThread ? (
+                <div className="flex-1 flex flex-col lg:flex-row gap-3 h-full overflow-hidden min-w-0">
+                  {/* Thread Information Panel */}
+                  <div
+                    id="thread-info"
+                    className={`bg-base-200 border border-base-300 rounded-2xl p-4 lg:w-1/3 w-full transition-all duration-300 flex flex-col shrink-0 overflow-y-auto ${
+                      showThreadInfo ? "block" : "hidden"
+                    }`}
+                  >
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-lg font-bold">Thread Information</h2>
                       <button
-                        type="button"
-                        onClick={() => setSelectedFiles([])}
-                        className="btn btn-ghost btn-xs"
+                        className="btn btn-circle btn-sm"
+                        onClick={() => setShowThreadInfo(false)}
                       >
-                        Clear all
+                        <IoClose size={15} />
                       </button>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedFiles.map((file, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm"
-                        >
-                          <div className="flex items-center gap-1">
-                            {getFileIcon(file.name)}
-                            <span className="text-xs max-w-20 truncate">
-                              {file.name}
+
+                    <div className="space-y-4 flex-1">
+                      {/* Thread Details */}
+                      <div className="bg-base-100 p-4 rounded-xl">
+                        <h3 className="font-bold text-lg mb-2">{selectedThread.title}</h3>
+                        {selectedThread.description && (
+                          <p className="text-sm text-gray-600 mb-3">{selectedThread.description}</p>
+                        )}
+                        
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="font-medium">Type:</span>
+                            <span>General</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Status:</span>
+                            <span className="badge badge-sm badge-success">
+                              Active
                             </span>
                           </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Privacy:</span>
+                            <span>Public</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Messages:</span>
+                            <span>{messages.length}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Created:</span>
+                            <span>{new Date(selectedThread.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Project Info */}
+                      {selectedThread.project && (
+                        <div className="bg-base-100 p-4 rounded-xl">
+                          <h4 className="font-bold mb-2">Project</h4>
+                          <p className="text-sm">{selectedThread.project.name}</p>
+                        </div>
+                      )}
+
+                      {/* Participants */}
+                      <div className="bg-base-100 p-4 rounded-xl">
+                        <h4 className="font-bold mb-2">Participants ({selectedThread.users.length})</h4>
+                        <div className="space-y-2">
+                          {selectedThread.users.map((user) => (
+                            <div key={user.id} className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                                <span className="text-xs font-medium text-primary">
+                                  {user.firstName.charAt(0)}
+                                </span>
+                              </div>
+                              <div className="text-sm">
+                                <div className="font-medium">{user.firstName} {user.lastName}</div>
+                                <div className="text-gray-500 text-xs">{user.email}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Chat Screen */}
+                  <div className="bg-base-200 border border-base-300 rounded-2xl overflow-hidden flex flex-col flex-1 h-full min-w-0">
+                    <div className="bg-primary p-4 border-b border-base-300 shrink-0">
+                      <div className="flex flex-col sm:flex-row justify-between text-primary-content items-start sm:items-center gap-3">
+                        <div className="flex items-center gap-3 w-full sm:w-auto min-w-0">
+                          <div className="flex-1 sm:flex-initial min-w-0">
+                            <button
+                              className="text-lg sm:text-xl font-bold hover:underline cursor-pointer text-left truncate block w-full"
+                              onClick={() => setShowThreadInfo(!showThreadInfo)}
+                              title="Click to view thread information"
+                            >
+                              {selectedThread.title}
+                            </button>
+                            <p className="text-xs sm:text-sm truncate">
+                              Participants:{" "}
+                              <span className="hidden sm:inline">
+                                {selectedThread.users
+                                  .map((u) => `${u.firstName} ${u.lastName}`)
+                                  .join(", ")}
+                              </span>
+                              <span className="sm:hidden">
+                                {selectedThread.users.length} member{selectedThread.users.length !== 1 ? 's' : ''}
+                              </span>
+                            </p>
+                          </div>
                           <button
-                            type="button"
-                            onClick={() => handleRemoveFile(index)}
-                            className="btn btn-ghost btn-circle btn-xs text-red-500 hover:bg-red-100"
+                            className="btn btn-ghost btn-circle btn-sm shrink-0"
+                            onClick={() => setShowThreadInfo(!showThreadInfo)}
+                            title="Thread Information"
                           >
-                            <IoTrash size={12} />
+                            <IoInformationCircle size={20} />
                           </button>
                         </div>
-                      ))}
+                        <div className="flex gap-2 w-full sm:w-auto shrink-0">
+                          <button
+                            className="btn btn-active btn-sm sm:btn-md w-full sm:w-auto"
+                            onClick={() => setActiveTab("threads")}
+                          >
+                            <span className="hidden sm:inline">All Threads</span>
+                            <span className="sm:hidden">Threads</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
 
-                <form
-                  onSubmit={handleSendMessage}
-                  className="p-3 sm:p-4 border-t border-base-300 bg-base-300"
-                >
-                  <div className="flex gap-2 items-end">
-                    {/* File and Camera Actions */}
-                    <div className="flex flex-col gap-2 sm:flex-row sm:gap-1">
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-circle btn-sm sm:btn-md bg-base-200 rounded-full p-1"
-                        onClick={handleFileUpload}
-                        title="Upload Documents"
-                      >
-                        <div className="flex items-center justify-center">
-                          <IoAttach size={18} />
+                    {/* Display RFIs associated with this thread */}
+                    {selectedThreadRFIs.length > 0 && (
+                      <div className="bg-base-300 p-4 border-b border-base-300 shrink-0">
+                        <h3 className="text-sm font-semibold text-gray-600 mb-2">
+                          Related RFIs ({selectedThreadRFIs.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {selectedThreadRFIs.map((rfi) => (
+                            <div
+                              key={rfi.id}
+                              className="flex items-center justify-between bg-base-200 p-4 rounded-xl"
+                            >
+                              <div className="flex-1">
+                                <span className="text-lg font-medium">
+                                  {rfi.title}
+                                </span>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <span className="badge badge-sm badge-neutral">
+                                    {rfi.id}
+                                  </span>
+                                  {rfi.status && (
+                                    <span
+                                      className={`badge badge-sm ${getStatusBadge(
+                                        rfi.status
+                                      )}`}
+                                    >
+                                      {rfi.status}
+                                    </span>
+                                  )}
+                                  {rfi.priority && (
+                                    <span
+                                      className={`badge badge-xs ${getPriorityBadge(
+                                        rfi.priority
+                                      )}`}
+                                    >
+                                      {rfi.priority}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <button
+                                className="btn btn-xs btn-outline"
+                                onClick={() => setActiveTab("rfis")}
+                              >
+                                View RFI
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-circle btn-sm sm:btn-md bg-base-200 rounded-full p-1"
-                        onClick={handleCameraCapture}
-                        title="Take Photo"
-                      >
-                        <div className="flex items-center justify-center">
-                          <IoCamera size={18} />
+                      </div>
+                    )}
+
+                    <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
+                      {messages.length === 0 ? (
+                        <div className="text-center text-gray-500 py-8">
+                          No messages yet. Start the conversation!
                         </div>
-                      </button>
-                    </div>
-                    <input
-                      type="text"
-                      className="input input-bordered input-sm sm:input-md flex-1"
-                      placeholder="Type your message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      disabled={sendMessageMutation.isPending || sendMessageWithAttachmentsMutation.isPending}
-                    />
-                    <button
-                      type="submit"
-                      className="btn btn-primary btn-sm sm:btn-md"
-                      disabled={
-                        sendMessageMutation.isPending || 
-                        sendMessageWithAttachmentsMutation.isPending || 
-                        (!newMessage.trim() && selectedFiles.length === 0)
-                      }
-                    >
-                      {(sendMessageMutation.isPending || sendMessageWithAttachmentsMutation.isPending) ? (
-                        <span className="loading loading-spinner loading-sm"></span>
                       ) : (
-                        <span className="hidden sm:inline">Send</span>
+                        messages.map((message) => {
+                          const isCurrentUser =
+                            currentUser?.id === message.senderId;
+                          return (
+                            <div
+                              key={message.id}
+                              className={`chat ${
+                                isCurrentUser ? "chat-end" : "chat-start"
+                              }`}
+                            >
+                              <div className="chat-header text-xs sm:text-sm">
+                                <span className="hidden sm:inline">
+                                  {message.sender.firstName} {message.sender.lastName}
+                                </span>
+                                <span className="sm:hidden">
+                                  {message.sender.firstName}
+                                </span>
+                                <time className="text-xs opacity-50 ml-2">
+                                  {formatTime(message.createdAt)}
+                                </time>
+                              </div>
+                              <div className="chat-bubble bg-neutral text-neutral-content text-sm sm:text-base max-w-xs sm:max-w-md">
+                                {message.content}
+                                {message.attachment && (
+                                  <div className="mt-2">
+                                    {isImageFile(message.attachment) ? (
+                                      <img
+                                        src={getAttachmentUrl(message.attachment)}
+                                        alt="Attachment"
+                                        className="max-w-full h-auto rounded-lg cursor-pointer"
+                                        onClick={() => window.open(getAttachmentUrl(message.attachment!), '_blank')}
+                                      />
+                                    ) : (
+                                      <a
+                                        href={getAttachmentUrl(message.attachment)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-colors"
+                                      >
+                                        {getFileIcon(message.attachment)}
+                                        <span className="text-xs">
+                                          {message.attachment.split('/').pop()}
+                                        </span>
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })
                       )}
-                      <span className="sm:hidden">📤</span>
-                    </button>
+                    </div>
+
+                    {/* Attachment Preview */}
+                    {selectedFiles.length > 0 && (
+                      <div className="px-3 sm:px-4 py-2 bg-base-200 border-t border-base-300 shrink-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-600">
+                            {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''} selected
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedFiles([])}
+                            className="btn btn-ghost btn-xs"
+                          >
+                            Clear all
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedFiles.map((file, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm"
+                            >
+                              <div className="flex items-center gap-1">
+                                {getFileIcon(file.name)}
+                                <span className="text-xs max-w-20 truncate">
+                                  {file.name}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFile(index)}
+                                className="btn btn-ghost btn-circle btn-xs text-red-500 hover:bg-red-100"
+                              >
+                                <IoTrash size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <form
+                      onSubmit={handleSendMessage}
+                      className="p-3 sm:p-4 border-t border-base-300 bg-base-300 shrink-0"
+                    >
+                      <div className="flex gap-2 items-end">
+                        {/* File and Camera Actions */}
+                        <div className="flex flex-col gap-2 sm:flex-row sm:gap-1">
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-circle btn-sm sm:btn-md bg-base-200 rounded-full p-1"
+                            onClick={handleFileUpload}
+                            title="Upload Documents"
+                          >
+                            <div className="flex items-center justify-center">
+                              <IoAttach size={18} />
+                            </div>
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-circle btn-sm sm:btn-md bg-base-200 rounded-full p-1"
+                            onClick={handleCameraCapture}
+                            title="Take Photo"
+                          >
+                            <div className="flex items-center justify-center">
+                              <IoCamera size={18} />
+                            </div>
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          className="input input-bordered input-sm sm:input-md flex-1"
+                          placeholder="Type your message..."
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          disabled={sendMessageMutation.isPending || sendMessageWithAttachmentsMutation.isPending}
+                        />
+                        <button
+                          type="submit"
+                          className="btn btn-primary btn-sm sm:btn-md"
+                          disabled={
+                            sendMessageMutation.isPending || 
+                            sendMessageWithAttachmentsMutation.isPending || 
+                            (!newMessage.trim() && selectedFiles.length === 0)
+                          }
+                        >
+                          {(sendMessageMutation.isPending || sendMessageWithAttachmentsMutation.isPending) ? (
+                            <span className="loading loading-spinner loading-sm"></span>
+                          ) : (
+                            <span className="hidden sm:inline">Send</span>
+                          )}
+                          <span className="sm:hidden">📤</span>
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                </form>
-              </div>
+                </div>
+              ) : (
+                // Placeholder when no thread is selected
+                <div className="flex-1 flex flex-col items-center justify-center bg-base-200 border border-base-300 rounded-2xl p-8 text-center h-full">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+                    <svg
+                      className="w-8 h-8"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Welcome to ONE-365 Chat</h3>
+                  <p className="text-gray-500 max-w-md mb-6 text-sm">
+                    Select a conversation thread from the sidebar on the left to start chatting with your team, or click the button below to create a new thread.
+                  </p>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => setShowCreateThreadModal(true)}
+                  >
+                    + Start a New Thread
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

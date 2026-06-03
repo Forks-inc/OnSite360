@@ -5,6 +5,7 @@ import TextInput from "../components/TextInput";
 import PasswordInput from "../components/PasswordInput";
 import Button from "../components/Button";
 import ErrorMsg from "../components/Error";
+import { useTranslation } from "../hooks/useTranslation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export default function Login() {
   const login = useAuthStore((s) => s.login);
   const loading = useAuthStore((s) => s.isLoading);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +25,7 @@ export default function Login() {
         setError("");
         navigate("/dashboard");
       } else {
-        setError("Invalid username or password");
+        setError(t("login_error"));
       }
     } catch {
       setError(useAuthStore.getState().error || "Login failed");
@@ -36,14 +38,11 @@ export default function Login() {
         <div className="hidden xl:relative xl:flex w-[850px] flex-col justify-end items-center">
           <div className="flex flex-col gap-5 text-black absolute z-40 p-20 w-full rounded-3xl top-0">
             <div>
-              <h1 className="text-5xl font-bold">Welcome to ONE-365</h1>
-              <p>Construction Project Management Software</p>
+              <h1 className="text-5xl font-bold">{t("home_title")}</h1>
+              <p>{t("home_subtitle")}</p>
             </div>
             <p className="text-">
-              ONE-365 is your all-in-one solution for managing construction
-              projects efficiently. From daily logs to workforce management, we
-              provide the tools you need to streamline operations and enhance
-              productivity.
+              {t("login_desc")}
             </p>
           </div>
 
@@ -68,14 +67,14 @@ export default function Login() {
             <div className="flex gap-5 flex-col">
               <TextInput
                 id="email"
-                label="Email"
+                label={t("email_label")}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <PasswordInput
                 id="password"
-                label="Password"
+                label={t("password_label")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -88,7 +87,7 @@ export default function Login() {
               {loading ? (
                 <span className="loading loading-spinner text-primary"></span>
               ) : (
-                "Login"
+                t("signin_btn")
               )}
             </Button>
           </form>

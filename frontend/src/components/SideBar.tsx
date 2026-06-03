@@ -1,5 +1,6 @@
 import type { Permission } from "../types/database";
 import { useSystemStore } from "../stores/useSystemStore";
+import { useTranslation } from "../hooks/useTranslation";
 
 // Sidebar Component
 const Sidebar = ({
@@ -11,6 +12,8 @@ const Sidebar = ({
   activeRoute: string;
   onNavigate: (path: string) => void;
 }) => {
+  const { t } = useTranslation();
+
   const accessiblePages = permissions
     .filter((p) => p.level === 1 || p.level === 2 || p.level === 3)
     .map((p) => ({
@@ -21,8 +24,10 @@ const Sidebar = ({
       // Always put dashboard first
       if (a.page_id === "dashboard") return -1;
       if (b.page_id === "dashboard") return 1;
-      // Otherwise maintain alphabetical order by page_name
-      return a.page_name.localeCompare(b.page_name);
+      // Otherwise maintain alphabetical order by translated page name
+      const nameA = t(a.page_id, a.page_name);
+      const nameB = t(b.page_id, b.page_name);
+      return nameA.localeCompare(nameB);
     });
   const sidebarOpen = useSystemStore((s) => s.sidebarOpen);
   const setSidebarOpen = useSystemStore((s) => s.setSidebarOpen);
@@ -72,7 +77,7 @@ const Sidebar = ({
                 >
                   {/* Show page name when sidebar is open */}
                   {sidebarOpen && (
-                    <span className="truncate">{page.page_name}</span>
+                    <span className="truncate">{t(page.page_id, page.page_name)}</span>
                   )}
                 </a>
               </li>
