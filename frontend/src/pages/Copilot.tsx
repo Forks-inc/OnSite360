@@ -689,7 +689,7 @@ Please provide a helpful response based on the project context above.`;
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-3">
             <MdSupportAgent className="text-primary" />
-            OnSite360 Copilot
+            ONE-365 Copilot
           </h1>
           <p className="text-gray-500 mt-1">
             Your AI assistant for project management, document search, and technical support
@@ -759,7 +759,7 @@ Please provide a helpful response based on the project context above.`;
             <div className="h-full flex flex-col items-center justify-center">
               <div className="text-center mb-8">
                 <MdSupportAgent className="text-8xl text-primary mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-2">Welcome to OnSite360 Copilot</h2>
+                <h2 className="text-2xl font-bold mb-2">Welcome to ONE-365 Copilot</h2>
                 <p className="text-gray-500 max-w-md">
                   I'm here to help you with project documents, draft responses, search information, and more. 
                   Try one of the suggestions below or ask me anything!

@@ -326,7 +326,7 @@ const Home = () => {
       {/* Companies Section */}
       <section className="flex flex-col items-center justify-center gap-6 py-8 md:py-16 px-4 md:px-0">
         <h1 className="text-2xl md:text-4xl text-[#a45505] font-normal text-center">
-          The best in building own their success with OnSite360
+          The best in building own their success with ONE-365
         </h1>
         <img
           src="/company_scroll.png"
@@ -587,7 +587,7 @@ const Home = () => {
             </button>
             <h3 className="font-bold text-3xl md:text-6xl mb-4">Thank you!</h3>
             <p className="mb-6 text-neutral-500">
-              An OnSite360 member will contact you to schedule the product demo.
+              A ONE-365 member will contact you to schedule the product demo.
             </p>
             <div className="flex justify-end">
               <button
@@ -605,13 +605,13 @@ const Home = () => {
       <footer className="bg-primary/15 text-[#a35608] py-8 px-4 md:px-0 lg:p-10">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="OnSite360 Logo" className="w-48" />
+            <img src="/logo.png" alt="ONE-365 Logo" className="w-48" />
           </div>
           <div className="text-sm text-center md:text-right">
-            &copy; {new Date().getFullYear()} OnSite360. All rights reserved.
+            &copy; {new Date().getFullYear()} ONE-365. All rights reserved.
           </div>
           <div className="flex gap-4">
-            <a href="mailto:support@onsite360.com" className="hover:underline">
+            <a href="mailto:support@one365.com" className="hover:underline">
               Contact
             </a>
             <a href="#" className="hover:underline">

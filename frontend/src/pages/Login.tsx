@@ -36,11 +36,11 @@ export default function Login() {
         <div className="hidden xl:relative xl:flex w-[850px] flex-col justify-end items-center">
           <div className="flex flex-col gap-5 text-black absolute z-40 p-20 w-full rounded-3xl top-0">
             <div>
-              <h1 className="text-5xl font-bold">Welcome to OnSite360</h1>
+              <h1 className="text-5xl font-bold">Welcome to ONE-365</h1>
               <p>Construction Project Management Software</p>
             </div>
             <p className="text-">
-              OnSite360 is your all-in-one solution for managing construction
+              ONE-365 is your all-in-one solution for managing construction
               projects efficiently. From daily logs to workforce management, we
               provide the tools you need to streamline operations and enhance
               productivity.

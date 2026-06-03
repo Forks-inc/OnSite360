@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icon.png"],
       manifest: {
-        name: "OnSite360",
-        short_name: "OnSite360",
+        name: "ONE-365",
+        short_name: "ONE-365",
         start_url: "/",
         display: "standalone",
         background_color: "#ffffff",
