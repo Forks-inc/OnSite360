@@ -6,9 +6,29 @@ import {
   FaClipboardList,
   FaHardHat,
   FaFileAlt,
+  FaAddressBook,
+  FaChartBar,
+  FaPaperPlane,
+  FaFolderOpen,
+  FaListAlt,
+  FaTasks,
+  FaQuestionCircle,
+  FaStamp,
+  FaImages,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaClock,
+  FaThumbtack,
 } from "react-icons/fa";
+import type { IconType } from "react-icons";
 import P5Background from "../components/P5Background";
 import { useTranslation } from "../hooks/useTranslation";
+
+type ProjectTool = {
+  title: string;
+  description: string;
+  Icon: IconType;
+};
 
 const Home = () => {
   const { t, language } = useTranslation();
@@ -86,6 +106,229 @@ const Home = () => {
       color: "#eab308",
     },
   ];
+
+  const projectTools: ProjectTool[] =
+    language === "en"
+      ? [
+          {
+            title: "Contact Directory",
+            description:
+              "Store team and vendor data with role-based access through users, roles, and permissions.",
+            Icon: FaAddressBook,
+          },
+          {
+            title: "Reports",
+            description:
+              "Analyze project activity, workforce data, documents, tasks, and schedule indicators.",
+            Icon: FaChartBar,
+          },
+          {
+            title: "Transmittals",
+            description:
+              "Share document packages and keep transfer activity connected to the project record.",
+            Icon: FaPaperPlane,
+          },
+          {
+            title: "Document Administration",
+            description:
+              "Upload, classify, view, and manage controlled project files in one place.",
+            Icon: FaFolderOpen,
+          },
+          {
+            title: "Specifications",
+            description:
+              "Keep specifications organized as a dedicated document category for project teams.",
+            Icon: FaListAlt,
+          },
+          {
+            title: "Schedule",
+            description:
+              "Plan milestones, activities, meetings, inspections, and project events on an integrated calendar.",
+            Icon: FaCalendarAlt,
+          },
+          {
+            title: "Tasks",
+            description:
+              "Assign, prioritize, track progress, comment, attach files, and monitor completion.",
+            Icon: FaTasks,
+          },
+          {
+            title: "Submittals",
+            description:
+              "Manage submittal files through the document module with project-level classification.",
+            Icon: FaStamp,
+          },
+          {
+            title: "Meetings",
+            description:
+              "Schedule meeting events and keep related notes or files tied to the project timeline.",
+            Icon: FaUsers,
+          },
+          {
+            title: "RFI",
+            description:
+              "Create, assign, update, and close RFIs inside project communication threads.",
+            Icon: FaQuestionCircle,
+          },
+          {
+            title: "Drawings",
+            description:
+              "Store drawings and plan files as managed project documents with versions and categories.",
+            Icon: FaFileAlt,
+          },
+          {
+            title: "Photos",
+            description:
+              "Upload site photos, preview them, and keep them attached to the right project.",
+            Icon: FaImages,
+          },
+          {
+            title: "Daily Logs",
+            description:
+              "Capture field activity, manpower, weather, materials, equipment, and progress notes.",
+            Icon: FaClipboardList,
+          },
+          {
+            title: "Emails",
+            description:
+              "Keep project notifications and important communication visible to the right people.",
+            Icon: FaEnvelope,
+          },
+          {
+            title: "Punch Lists",
+            description:
+              "Track site issues and corrective work through issue reporting and task workflows.",
+            Icon: FaThumbtack,
+          },
+          {
+            title: "Timecards",
+            description:
+              "Workforce attendance and hours are tracked through crew and employee management.",
+            Icon: FaClock,
+          },
+          {
+            title: "Correspondence",
+            description:
+              "Centralize project messages, RFIs, attachments, and team communication threads.",
+            Icon: FaEnvelope,
+          },
+          {
+            title: "Maps",
+            description:
+              "View project locations and geotagged daily activity coordinates on map surfaces.",
+            Icon: FaMapMarkerAlt,
+          },
+        ]
+      : [
+          {
+            title: "Directorio de contactos",
+            description:
+              "Almacena datos del equipo y proveedores con acceso por usuarios, roles y permisos.",
+            Icon: FaAddressBook,
+          },
+          {
+            title: "Reportes",
+            description:
+              "Analiza actividad del proyecto, fuerza laboral, documentos, tareas e indicadores del programa.",
+            Icon: FaChartBar,
+          },
+          {
+            title: "Transmittals",
+            description:
+              "Comparte paquetes documentales y conserva los envíos conectados al expediente del proyecto.",
+            Icon: FaPaperPlane,
+          },
+          {
+            title: "Administración de documentos",
+            description:
+              "Carga, clasifica, consulta y administra archivos controlados del proyecto en un solo lugar.",
+            Icon: FaFolderOpen,
+          },
+          {
+            title: "Especificaciones",
+            description:
+              "Organiza especificaciones como una categoría dedicada dentro del módulo documental.",
+            Icon: FaListAlt,
+          },
+          {
+            title: "Programa",
+            description:
+              "Planifica hitos, actividades, reuniones, inspecciones y eventos en un calendario integrado.",
+            Icon: FaCalendarAlt,
+          },
+          {
+            title: "Tareas",
+            description:
+              "Asigna, prioriza, comenta, adjunta archivos y da seguimiento al avance de cada tarea.",
+            Icon: FaTasks,
+          },
+          {
+            title: "Submittals",
+            description:
+              "Administra submittals desde documentos con clasificación por proyecto.",
+            Icon: FaStamp,
+          },
+          {
+            title: "Reuniones",
+            description:
+              "Programa reuniones y conserva notas o archivos relacionados con la línea de tiempo del proyecto.",
+            Icon: FaUsers,
+          },
+          {
+            title: "RFI",
+            description:
+              "Crea, asigna, actualiza y cierra RFIs dentro de los hilos de comunicación del proyecto.",
+            Icon: FaQuestionCircle,
+          },
+          {
+            title: "Planos",
+            description:
+              "Guarda planos y archivos de dibujo como documentos con versiones y categorías.",
+            Icon: FaFileAlt,
+          },
+          {
+            title: "Fotos",
+            description:
+              "Carga fotos de obra, previsualízalas y mantenlas ligadas al proyecto correcto.",
+            Icon: FaImages,
+          },
+          {
+            title: "Registros diarios",
+            description:
+              "Registra actividad de campo, personal, clima, materiales, equipo y avance diario.",
+            Icon: FaClipboardList,
+          },
+          {
+            title: "Correos electrónicos",
+            description:
+              "Mantén notificaciones y comunicaciones importantes visibles para las personas correctas.",
+            Icon: FaEnvelope,
+          },
+          {
+            title: "Punch lists",
+            description:
+              "Da seguimiento a pendientes y correcciones mediante reportes de incidencias y tareas.",
+            Icon: FaThumbtack,
+          },
+          {
+            title: "Tarjetas de horas",
+            description:
+              "Da seguimiento rápido a la asistencia y horas del equipo en campo.",
+            Icon: FaClock,
+          },
+          {
+            title: "Correspondencias",
+            description:
+              "Centraliza mensajes, RFIs, adjuntos e hilos de comunicación del proyecto.",
+            Icon: FaEnvelope,
+          },
+          {
+            title: "Mapas",
+            description:
+              "Consulta ubicaciones de proyectos y coordenadas de actividades diarias en vistas de mapa.",
+            Icon: FaMapMarkerAlt,
+          },
+        ];
 
   // Dashboard screenshots
   const screenshots = [
@@ -312,6 +555,53 @@ const Home = () => {
             )}
           </div>
         ))}
+      </section>
+
+      {/* Project Administration Tools */}
+      <section
+        id="product"
+        className="bg-base-200 py-12 md:py-20 px-4 md:px-8"
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
+            <p className="text-sm font-semibold tracking-[0.18em] uppercase text-[#a45505] mb-3">
+              {language === "en" ? "Project management" : "Administración de proyectos"}
+            </p>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#111111] leading-tight">
+              {language === "en"
+                ? "Project Administration Tools"
+                : "Herramientas de Administración de Proyectos"}
+            </h2>
+            <p className="text-base md:text-lg text-neutral-600 mt-5">
+              {language === "en"
+                ? "Access the core tools your team needs to administer construction projects from the office or the field."
+                : "Accede desde cualquier dispositivo a las herramientas principales que tu equipo necesita para administrar proyectos de construcción."}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+            {projectTools.map(({ title, description, Icon }) => (
+              <article
+                key={title}
+                className="group bg-base-100 rounded-2xl shadow-xl p-5 md:p-6 transition-transform duration-300 hover:-translate-y-1"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fdc700] text-[#a45505] shadow">
+                    <Icon size={20} aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-xl md:text-2xl font-bold text-[#1c1c1c]">
+                      {title}
+                    </h3>
+                    <p className="text-neutral-600 mt-2 leading-relaxed">
+                      {description}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Dashboard Screenshot */}
