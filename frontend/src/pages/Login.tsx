@@ -33,38 +33,51 @@ export default function Login() {
   };
 
   return (
-    <div className="xl:p-1 bg-base-100 flex justify-center h-full items-center w-full">
-      <div className="w-full  rounded-4xl gap-1 flex ">
-        <div className="hidden xl:relative xl:flex w-[850px] flex-col justify-end items-center">
-          <div className="flex flex-col gap-5 text-black absolute z-40 p-20 w-full rounded-3xl top-0">
-            <div>
-              <h1 className="text-5xl font-bold">{t("home_title")}</h1>
-              <p>{t("home_subtitle")}</p>
-            </div>
-            <p className="text-">
-              {t("login_desc")}
-            </p>
-          </div>
-
-          <img
-            src="/construction.jpg"
-            className="h-2/3 object-cover z-10 rounded-3xl mb-0 mt-auto"
-            alt="construction-img"
-          />
+    <div className="min-h-screen bg-base-100 flex items-stretch">
+      {/* Left panel — visible from md breakpoint */}
+      <div className="hidden md:flex md:w-1/2 lg:w-[55%] relative flex-col justify-end items-center overflow-hidden bg-[#1c1c1c] rounded-r-3xl">
+        <div className="absolute inset-0 z-10 flex flex-col justify-start p-8 lg:p-14">
+          <h1 className="text-3xl lg:text-5xl font-bold text-white leading-tight mb-3">
+            {t("home_title")}
+          </h1>
+          <p className="text-neutral-300 text-sm lg:text-base mb-4">
+            {t("home_subtitle")}
+          </p>
+          <p className="text-neutral-400 text-sm lg:text-base leading-relaxed">
+            {t("login_desc")}
+          </p>
         </div>
-        <div className="bg-base-200 h-screen flex flex-col flex-1 rounded-3xl p-5 xl:p-5">
+        <img
+          src="/construction.jpg"
+          className="w-full h-full object-cover opacity-40"
+          alt="construction"
+        />
+      </div>
+
+      {/* Right panel — login form */}
+      <div className="flex flex-col flex-1 min-h-screen bg-base-200 px-4 sm:px-8 md:px-10 lg:px-16 py-6">
+        {/* Back button + logo */}
+        <div className="flex items-center justify-between mb-6 sm:mb-10">
           <Button variant="back" />
-          <div className="flex justify-center mt-36">
-            <img src="/logo.png" alt="" className="w-80 flex justify-center" />
-          </div>
+          <span className="text-2xl font-extrabold tracking-tight select-none">
+            <span className="text-[#1c1c1c]">ONE</span>
+            <span className="text-[#fdc700]">-365</span>
+          </span>
+        </div>
 
-          {error && <ErrorMsg>{error}</ErrorMsg>}
+        {/* Form card */}
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-sm sm:max-w-md">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1c1c1c] mb-1">
+              {t("welcome_back") ?? "Welcome back"}
+            </h2>
+            <p className="text-neutral-500 text-sm mb-6">
+              {t("signin_btn")} {t("home_title")}
+            </p>
 
-          <form
-            onSubmit={handleLogin}
-            className="flex flex-col justify-evenly h-screen p-5 xl:px-10"
-          >
-            <div className="flex gap-5 flex-col">
+            {error && <ErrorMsg>{error}</ErrorMsg>}
+
+            <form onSubmit={handleLogin} className="flex flex-col gap-5">
               <TextInput
                 id="email"
                 label={t("email_label")}
@@ -78,19 +91,19 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full"
-            >
-              {loading ? (
-                <span className="loading loading-spinner text-primary"></span>
-              ) : (
-                t("signin_btn")
-              )}
-            </Button>
-          </form>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full mt-2"
+              >
+                {loading ? (
+                  <span className="loading loading-spinner text-primary"></span>
+                ) : (
+                  t("signin_btn")
+                )}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
