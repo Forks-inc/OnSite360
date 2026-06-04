@@ -27,6 +27,17 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       NODE_ENV: development
+      MAIL_IMAP_HOST: ${MAIL_IMAP_HOST:-}
+      MAIL_IMAP_PORT: ${MAIL_IMAP_PORT:-993}
+      MAIL_IMAP_SECURE: ${MAIL_IMAP_SECURE:-true}
+      MAIL_SMTP_HOST: ${MAIL_SMTP_HOST:-}
+      MAIL_SMTP_PORT: ${MAIL_SMTP_PORT:-465}
+      MAIL_SMTP_SECURE: ${MAIL_SMTP_SECURE:-true}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+      MAIL_SYNC_ENABLED: ${MAIL_SYNC_ENABLED:-false}
+      MAIL_SYNC_INTERVAL_SECONDS: ${MAIL_SYNC_INTERVAL_SECONDS:-300}
     volumes:
       - ./backend:/app
       - /app/node_modules

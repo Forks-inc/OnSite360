@@ -24,6 +24,17 @@ Used by Docker Compose for the PostgreSQL service.
 | `LLM_SERVICE_URL` | Ollama-compatible API base URL | `http://localhost:11434/api` |
 | `LLM_MODEL_NAME` | Text generation model | `llama3` |
 | `EMBEDDING_MODEL_NAME` | Embedding model | `nomic-embed-text` |
+| `MAIL_IMAP_HOST` | IMAP host for inbound email sync | `imap.example.com` |
+| `MAIL_IMAP_PORT` | IMAP port | `993` |
+| `MAIL_IMAP_SECURE` | Use TLS for IMAP | `true` |
+| `MAIL_SMTP_HOST` | SMTP host for outbound email | `smtp.example.com` |
+| `MAIL_SMTP_PORT` | SMTP port | `465` |
+| `MAIL_SMTP_SECURE` | Use TLS for SMTP | `true` |
+| `MAIL_USERNAME` | Mailbox username | `pm@example.com` |
+| `MAIL_PASSWORD` | Mailbox password or app password | — |
+| `MAIL_FROM` | Default sender address | `pm@example.com` |
+| `MAIL_SYNC_ENABLED` | Enables scheduled inbox sync when implemented by runtime | `false` |
+| `MAIL_SYNC_INTERVAL_SECONDS` | Inbox sync interval | `300` |
 
 ## Frontend (`frontend/.env`)
 

@@ -21,6 +21,17 @@ export const translations = {
     "task-management": "Tasks",
     "user-management": "Users",
     "workforce-management": "Workforce",
+    "nav_group_dashboard": "Dashboard",
+    "nav_group_projects_team": "Projects and Team",
+    "nav_group_field_operations": "Field Operations",
+    "nav_group_documents": "Documents",
+    "nav_group_communication": "Communication",
+    "nav_group_quality_closeout": "Quality and Closeout",
+    "nav_group_administration": "Administration",
+    "workforce_tab_all": "All Staff",
+    "workforce_tab_attendance": "Attendance",
+    "workforce_tab_timecards": "Timecards",
+    "workforce_tab_analytics": "Analytics",
 
     // Login
     "login_title": "Sign In",
@@ -31,7 +42,7 @@ export const translations = {
     "signingin_btn": "Signing In...",
     "welcome_back": "Welcome back!",
     "login_error": "Invalid email or password",
-    "login_desc": "ONE-365 is your all-in-one solution for managing construction projects efficiently. From daily logs to workforce management, we provide the tools you need to streamline operations and enhance productivity.",
+    "login_desc": "ONE365 is your all-in-one solution for managing construction projects efficiently. From daily logs to workforce management, we provide the tools you need to streamline operations and enhance productivity.",
     "not_found_title": "404 - Page Not Found",
     "not_found_desc": "The page you are looking for does not exist.",
     "back_to_dashboard": "Go back to Dashboard",
@@ -56,13 +67,13 @@ export const translations = {
     "home_nav_solutions": "Solutions",
     "home_nav_product": "Product",
     "home_nav_support": "Support",
-    "home_title": "Welcome to ONE-365",
+    "home_title": "Welcome to ONE365",
     "home_subtitle": "CONSTRUCTION PROJECT MANAGEMENT SOFTWARE",
     "home_hero_shaping": "Shaping your vision",
     "home_hero_precision": "With Precision",
     "home_request_demo": "Request a Demo",
     "home_get_mobile": "Get Mobile App",
-    "home_best_building": "The best in building own their success with ONE-365",
+    "home_best_building": "The best in building own their success with ONE365",
     "home_comm_label": "COMMUNICATION",
     "home_comm_title": "Close the communication loop.",
     "home_comm_desc": "Mobile collaboration tools are built for the jobsite, making it easy for everyone to have a clear understanding of what needs to get done each day to stay on schedule and avoid rework.",
@@ -94,12 +105,12 @@ export const translations = {
     "modal_revenue_4": "Over $20M",
     "modal_submit_btn": "Unlock Demo",
     "thank_you_title": "Thank you!",
-    "thank_you_desc": "A ONE-365 member will contact you to schedule the product demo.",
+    "thank_you_desc": "A ONE365 member will contact you to schedule the product demo.",
     "thank_you_home_btn": "Go back to Home",
     "footer_contact": "Contact",
     "footer_privacy": "Privacy Policy",
     "footer_terms": "Terms of Service",
-    
+
     // Feature Card Descriptions
     "employee_mgmt_desc": "Manage your workforce efficiently and track employee progress.",
     "schedule_mgmt_desc": "Plan, assign, and monitor project schedules in real time.",
@@ -108,7 +119,7 @@ export const translations = {
     "document_mgmt_desc": "Centralize and secure all your project documents.",
 
     // AI Copilot
-    "copilot_title": "ONE-365 AI Copilot",
+    "copilot_title": "ONE365 AI Copilot",
     "copilot_subtitle": "Your construction project intelligence assistant",
     "copilot_welcome": "How can I help you today?",
     "copilot_suggest_title": "Suggested Questions",
@@ -125,11 +136,11 @@ export const translations = {
     "copilot_draft_resp": "Draft Response",
     "copilot_search_proj": "Search Project",
     "copilot_gen_report": "Generate Report",
-    "copilot_no_project_access": "It looks like you don't have access to any projects yet. Please contact your administrator to get assigned to a project, or create a new project to start using ONE-365 Copilot.",
+    "copilot_no_project_access": "It looks like you don't have access to any projects yet. Please contact your administrator to get assigned to a project, or create a new project to start using ONE365 Copilot.",
     "copilot_select_project_warn": "Please select a project from the dropdown above to get project-specific insights and assistance.",
     "copilot_wait_loading": "Loading project data... Please wait a moment for the most up-to-date information.",
     "copilot_gather_info": "Please wait while I gather the latest project information...",
-    "copilot_welcome_title": "Welcome to ONE-365 Copilot",
+    "copilot_welcome_title": "Welcome to ONE365 Copilot",
     "copilot_loading_projects": "Loading projects...",
     "copilot_no_projects": "No projects available",
     "copilot_select_project": "Please select a project",
@@ -168,7 +179,7 @@ export const translations = {
     "filter": "Filter",
     "clear": "Clear",
     "select_project": "Select a project",
-    
+
     // Statuses
     "open": "Open",
     "closed": "Closed",
@@ -179,13 +190,13 @@ export const translations = {
     "on_hold": "On Hold",
     "cancelled": "Cancelled",
     "overdue": "Overdue",
-    
+
     // Priorities / Severities
     "critical": "Critical",
     "high": "High",
     "medium": "Medium",
     "low": "Low",
-    
+
     // Modules Specific (Projects / Tasks / Logs / Crew)
     "project_name": "Project Name",
     "budget": "Budget",
@@ -233,7 +244,7 @@ export const translations = {
     "risk_title": "Risk Title",
     "impact": "Impact",
     "mitigation": "Mitigation Strategy",
-    
+
     // Headers / Placeholders / Helper text
     "daily_logs_title": "Daily Logs Management",
     "daily_logs_subtitle": "Track and manage daily operations, weather, and labor logs on site",
@@ -319,7 +330,7 @@ export const translations = {
     "map": "Map",
     "project_locations": "Project Locations",
     "enter_map_location": "Enter Map Location",
-    
+
     // Communication Module
     "communication_subtitle": "Team discussions, RFIs, and analytics dashboard",
     "threads_tab": "Threads",
@@ -354,7 +365,7 @@ export const translations = {
     "upload_documents": "Upload Documents",
     "take_photo": "Take Photo",
     "type_message_placeholder": "Type your message...",
-    "welcome_chat_title": "Welcome to ONE-365 Chat",
+    "welcome_chat_title": "Welcome to ONE365 Chat",
     "welcome_chat_desc": "Select a conversation thread from the sidebar on the left to start chatting with your team, or click the button below to create a new thread.",
     "start_new_thread": "Start a New Thread",
     "rfi_title_tab": "Request for Information (RFI)",
@@ -1012,6 +1023,17 @@ export const translations = {
     "task-management": "Tareas",
     "user-management": "Usuarios",
     "workforce-management": "Personal de Obra",
+    "nav_group_dashboard": "Panel",
+    "nav_group_projects_team": "Proyectos y Equipo",
+    "nav_group_field_operations": "Operación de Obra",
+    "nav_group_documents": "Documentos",
+    "nav_group_communication": "Comunicación",
+    "nav_group_quality_closeout": "Calidad y Cierre",
+    "nav_group_administration": "Administración",
+    "workforce_tab_all": "Todo el personal",
+    "workforce_tab_attendance": "Asistencia",
+    "workforce_tab_timecards": "Tarjetas de horas",
+    "workforce_tab_analytics": "Analítica",
 
     // Login
     "login_title": "Iniciar Sesión",
@@ -1022,7 +1044,7 @@ export const translations = {
     "signingin_btn": "Iniciando Sesión...",
     "welcome_back": "¡Bienvenido de nuevo!",
     "login_error": "Correo o contraseña incorrectos",
-    "login_desc": "ONE-365 es su solución todo en uno para gestionar proyectos de construcción de manera eficiente. Desde diarios de obra hasta la gestión de personal, proporcionamos las herramientas que necesita para optimizar las operaciones y mejorar la productividad.",
+    "login_desc": "ONE365 es su solución todo en uno para gestionar proyectos de construcción de manera eficiente. Desde diarios de obra hasta la gestión de personal, proporcionamos las herramientas que necesita para optimizar las operaciones y mejorar la productividad.",
     "not_found_title": "404 - Página no encontrada",
     "not_found_desc": "La página que está buscando no existe.",
     "back_to_dashboard": "Volver al Panel",
@@ -1047,13 +1069,13 @@ export const translations = {
     "home_nav_solutions": "Soluciones",
     "home_nav_product": "Producto",
     "home_nav_support": "Soporte",
-    "home_title": "Bienvenido a ONE-365",
+    "home_title": "Bienvenido a ONE365",
     "home_subtitle": "SOFTWARE DE GESTIÓN DE PROYECTOS DE CONSTRUCCIÓN",
     "home_hero_shaping": "Dando forma a su visión",
     "home_hero_precision": "Con Precisión",
     "home_request_demo": "Solicitar Demostración",
     "home_get_mobile": "Obtener App Móvil",
-    "home_best_building": "Los mejores en construcción construyen su éxito con ONE-365",
+    "home_best_building": "Los mejores en construcción construyen su éxito con ONE365",
     "home_comm_label": "COMUNICACIÓN",
     "home_comm_title": "Cierre el ciclo de comunicación.",
     "home_comm_desc": "Las herramientas de colaboración móvil están creadas para el sitio de obra, facilitando que todos tengan un entendimiento claro de lo que debe hacerse cada día para mantenerse en cronograma y evitar reprocesos.",
@@ -1085,12 +1107,12 @@ export const translations = {
     "modal_revenue_4": "Más de $20M",
     "modal_submit_btn": "Desbloquear Demo",
     "thank_you_title": "¡Muchas gracias!",
-    "thank_you_desc": "Un miembro de ONE-365 se pondrá en contacto con usted para programar la demostración del producto.",
+    "thank_you_desc": "Un miembro de ONE365 se pondrá en contacto con usted para programar la demostración del producto.",
     "thank_you_home_btn": "Ir al Inicio",
     "footer_contact": "Contacto",
     "footer_privacy": "Política de Privacidad",
     "footer_terms": "Términos de Servicio",
-    
+
     // Feature Card Descriptions
     "employee_mgmt_desc": "Gestione su fuerza laboral de manera eficiente y realice un seguimiento del progreso de los empleados.",
     "schedule_mgmt_desc": "Planifique, asigne y controle los cronogramas del proyecto en tiempo real.",
@@ -1099,7 +1121,7 @@ export const translations = {
     "document_mgmt_desc": "Centralice y proteja todos los documentos de su proyecto.",
 
     // AI Copilot
-    "copilot_title": "Copiloto IA de ONE-365",
+    "copilot_title": "Copiloto IA de ONE365",
     "copilot_subtitle": "Tu asistente de inteligencia para proyectos de construcción",
     "copilot_welcome": "¿Cómo te puedo ayudar hoy?",
     "copilot_suggest_title": "Preguntas Sugeridas",
@@ -1116,11 +1138,11 @@ export const translations = {
     "copilot_draft_resp": "Redactar Respuesta",
     "copilot_search_proj": "Buscar en Proyecto",
     "copilot_gen_report": "Generar Informe",
-    "copilot_no_project_access": "Parece que aún no tienes acceso a ningún proyecto. Comunícate con tu administrador para que te asigne uno, o crea un nuevo proyecto para comenzar a usar el Copiloto de ONE-365.",
+    "copilot_no_project_access": "Parece que aún no tienes acceso a ningún proyecto. Comunícate con tu administrador para que te asigne uno, o crea un nuevo proyecto para comenzar a usar el Copiloto de ONE365.",
     "copilot_select_project_warn": "Selecciona un proyecto del menú desplegable de arriba para obtener información y asistencia específicas de ese proyecto.",
     "copilot_wait_loading": "Cargando datos del proyecto... Espera un momento para obtener la información más actualizada.",
     "copilot_gather_info": "Espera un momento mientras recopilo la información más reciente del proyecto...",
-    "copilot_welcome_title": "Bienvenido al Copiloto de ONE-365",
+    "copilot_welcome_title": "Bienvenido al Copiloto de ONE365",
     "copilot_loading_projects": "Cargando proyectos...",
     "copilot_no_projects": "No hay proyectos disponibles",
     "copilot_select_project": "Selecciona un proyecto",
@@ -1159,7 +1181,7 @@ export const translations = {
     "filter": "Filtrar",
     "clear": "Limpiar",
     "select_project": "Seleccionar proyecto",
-    
+
     // Statuses
     "open": "Abierto",
     "closed": "Cerrado",
@@ -1170,13 +1192,13 @@ export const translations = {
     "on_hold": "En Espera",
     "cancelled": "Cancelado",
     "overdue": "Vencido",
-    
+
     // Priorities / Severities
     "critical": "Crítica",
     "high": "Alta",
     "medium": "Media",
     "low": "Baja",
-    
+
     // Modules Specific (Projects / Tasks / Logs / Crew)
     "project_name": "Nombre del Proyecto",
     "budget": "Presupuesto",
@@ -1224,7 +1246,7 @@ export const translations = {
     "risk_title": "Título del Riesgo",
     "impact": "Impacto",
     "mitigation": "Estrategia de Mitigación",
-    
+
     // Headers / Placeholders / Helper text
     "daily_logs_title": "Gestión de Diarios de Obra",
     "daily_logs_subtitle": "Registre y controle actividades diarias, condiciones climáticas y personal en obra",
@@ -1345,7 +1367,7 @@ export const translations = {
     "upload_documents": "Subir Documentos",
     "take_photo": "Tomar Foto",
     "type_message_placeholder": "Escriba su mensaje...",
-    "welcome_chat_title": "Bienvenido al Chat de ONE-365",
+    "welcome_chat_title": "Bienvenido al Chat de ONE365",
     "welcome_chat_desc": "Seleccione un hilo de conversación de la barra lateral izquierda para comenzar a chatear con su equipo, o haga clic en el botón de abajo para crear un nuevo hilo.",
     "start_new_thread": "Iniciar un Nuevo Hilo",
     "rfi_title_tab": "Solicitud de Información (RFI)",

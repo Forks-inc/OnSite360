@@ -27,6 +27,7 @@ import {
   ApiConsumes,
 } from '@nestjs/swagger';
 import { DocumentsService } from './documents.service';
+import { DocumentsWorkflowService } from './document-workflows.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import * as path from 'path';
@@ -38,7 +39,10 @@ import * as fs from 'fs';
 @ApiTags('Documents')
 @ApiBearerAuth()
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) {}
+  constructor(
+    private readonly documentsService: DocumentsService,
+    private readonly documentsWorkflowService: DocumentsWorkflowService,
+  ) {}
 
   @Post('upload')
   @ApiOperation({ summary: 'Upload a new document' })
@@ -96,6 +100,68 @@ export class DocumentsController {
     @Request() req: AuthenticatedRequest,
   ): Promise<PrismaDocument> {
     return this.documentsService.create(createDocumentDto, file, req.user);
+  }
+
+  @Post('transmittals')
+  @ApiOperation({ summary: 'Create a project transmittal package' })
+  createTransmittal(
+    @Body() body: any,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.documentsWorkflowService.createTransmittal(
+      body,
+      req.user?.sub,
+    );
+  }
+
+  @Get('transmittals')
+  @ApiOperation({ summary: 'List project transmittals' })
+  @ApiQuery({ name: 'projectId', required: false })
+  listTransmittals(@Query('projectId') projectId?: string) {
+    return this.documentsWorkflowService.listTransmittals(projectId);
+  }
+
+  @Get('transmittals/:id')
+  @ApiOperation({ summary: 'Get a transmittal by ID' })
+  getTransmittal(@Param('id') id: string) {
+    return this.documentsWorkflowService.getTransmittal(id);
+  }
+
+  @Patch('transmittals/:id')
+  @ApiOperation({ summary: 'Update a transmittal' })
+  updateTransmittal(@Param('id') id: string, @Body() body: any) {
+    return this.documentsWorkflowService.updateTransmittal(id, body);
+  }
+
+  @Post('transmittals/:id/send')
+  @ApiOperation({ summary: 'Mark a transmittal as sent' })
+  sendTransmittal(
+    @Param('id') id: string,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.documentsWorkflowService.sendTransmittal(id, req.user?.sub);
+  }
+
+  @Post('transmittals/:id/acknowledge')
+  @ApiOperation({ summary: 'Acknowledge a transmittal' })
+  acknowledgeTransmittal(@Param('id') id: string, @Body() body: any) {
+    return this.documentsWorkflowService.acknowledgeTransmittal(
+      id,
+      body?.recipientId,
+    );
+  }
+
+  @Get('submittal-workflows')
+  @ApiOperation({ summary: 'List submittal review workflows' })
+  @ApiQuery({ name: 'projectId', required: false })
+  listSubmittalWorkflows(@Query('projectId') projectId?: string) {
+    return this.documentsWorkflowService.listSubmittalWorkflows(projectId);
+  }
+
+  @Post('submittal-workflows')
+  @ApiOperation({ summary: 'Create or update a submittal review workflow' })
+  upsertSubmittalWorkflow(@Body() body: any) {
+    return this.documentsWorkflowService.upsertSubmittalWorkflow(body);
   }
 
   @Get()

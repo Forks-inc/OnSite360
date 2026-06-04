@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ScheduleService } from './schedule.service';
+import { MeetingWorkflowService } from './meeting-workflows.service';
 import {
   CreateProjectPhaseDto,
   CreateScheduleEventDto,
@@ -45,7 +46,32 @@ import { AuthenticatedRequest } from '../auth/auth.guard';
 @ApiTags('Schedule')
 @ApiBearerAuth()
 export class ScheduleController {
-  constructor(private readonly scheduleService: ScheduleService) {}
+  constructor(
+    private readonly scheduleService: ScheduleService,
+    private readonly meetingWorkflowService: MeetingWorkflowService,
+  ) {}
+
+  @Post('meetings')
+  @ApiOperation({ summary: 'Create a meeting with minutes and action items' })
+  createMeeting(
+    @Body() body: any,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.meetingWorkflowService.createMeeting(body, req.user.sub);
+  }
+
+  @Get('meetings')
+  @ApiOperation({ summary: 'List project meetings' })
+  @ApiQuery({ name: 'projectId', required: false })
+  listMeetings(@Query('projectId') projectId?: string) {
+    return this.meetingWorkflowService.listMeetings(projectId);
+  }
+
+  @Patch('meetings/:id')
+  @ApiOperation({ summary: 'Update meeting minutes and details' })
+  updateMeeting(@Param('id') id: string, @Body() body: any) {
+    return this.meetingWorkflowService.updateMeeting(id, body);
+  }
 
   // Project Phase Routes
   @Post('project-phases')

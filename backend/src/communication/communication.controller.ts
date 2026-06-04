@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Request,
+  Query,
   UseInterceptors,
   UploadedFiles,
   ParseFilePipe,
@@ -18,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CommunicationService } from './communication.service';
+import { CommunicationWorkflowService } from './communication-workflows.service';
 import {
   CreateThreadDto,
   AddUserToThreadDto,
@@ -34,7 +36,100 @@ import { AuthenticatedRequest } from '../auth/auth.guard';
 
 @Controller('communication')
 export class CommunicationController {
-  constructor(private readonly communicationService: CommunicationService) {}
+  constructor(
+    private readonly communicationService: CommunicationService,
+    private readonly communicationWorkflowService: CommunicationWorkflowService,
+  ) {}
+
+  @Post('correspondence')
+  @ApiBearerAuth()
+  createCorrespondence(
+    @Body() body: any,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.communicationWorkflowService.createCorrespondence(
+      body,
+      req.user?.sub,
+    );
+  }
+
+  @Get('correspondence')
+  @ApiBearerAuth()
+  listCorrespondence(@Query('projectId') projectId?: string) {
+    return this.communicationWorkflowService.listCorrespondence(projectId);
+  }
+
+  @Patch('correspondence/:id')
+  @ApiBearerAuth()
+  updateCorrespondence(@Param('id') id: string, @Body() body: any) {
+    return this.communicationWorkflowService.updateCorrespondence(id, body);
+  }
+
+  @Post('email/accounts')
+  @ApiBearerAuth()
+  createEmailAccount(
+    @Body() body: any,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.communicationWorkflowService.createEmailAccount({
+      ...body,
+      userId: body?.userId || req.user?.sub,
+    });
+  }
+
+  @Get('email/accounts')
+  @ApiBearerAuth()
+  listEmailAccounts(@Request() req: AuthenticatedRequest) {
+    return this.communicationWorkflowService.listEmailAccounts(req.user?.sub);
+  }
+
+  @Get('email/messages')
+  @ApiBearerAuth()
+  listEmailMessages(
+    @Query('projectId') projectId?: string,
+    @Query('accountId') accountId?: string,
+    @Query('correspondenceId') correspondenceId?: string,
+  ) {
+    return this.communicationWorkflowService.listEmailMessages({
+      projectId,
+      accountId,
+      correspondenceId,
+    });
+  }
+
+  @Post('email/messages/:id/reply')
+  @ApiBearerAuth()
+  replyToEmail(
+    @Param('id') id: string,
+    @Body() body: any,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.communicationWorkflowService.replyToEmail(
+      id,
+      body,
+      req.user?.sub,
+    );
+  }
+
+  @Post('email/messages/:id/forward')
+  @ApiBearerAuth()
+  forwardEmail(
+    @Param('id') id: string,
+    @Body() body: any,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.communicationWorkflowService.forwardEmail(
+      id,
+      body,
+      req.user?.sub,
+    );
+  }
+
+  @Post('email/sync')
+  @ApiBearerAuth()
+  syncInbox(@Body() body: any) {
+    return this.communicationWorkflowService.syncInbox(body?.accountId);
+  }
 
   // Thread Routes
   @Post('threads')

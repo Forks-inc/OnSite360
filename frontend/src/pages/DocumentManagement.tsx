@@ -18,21 +18,40 @@ import {
 } from "../hooks/useDocuments";
 import TagsInput from "../components/TagsInput";
 import { useTranslation } from "../hooks/useTranslation";
+import {
+  SubmittalWorkflowsPanel,
+  TransmittalsPanel,
+} from "../components/workflows/WorkflowPanels";
 
-const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
+type DocumentTab = DocumentType | "submittal-workflows" | "transmittals";
+
+const DOCUMENT_UPLOAD_TYPES: DocumentType[] = [
+  "drawings",
+  "specifications",
+  "contracts",
+  "permits",
+  "reports",
+  "submittals",
+  "invoices",
+  "photos",
+];
+
+const DOCUMENT_TYPE_LABELS: Record<DocumentTab, string> = {
   drawings: "Drawings",
   specifications: "Specifications",
   contracts: "Contracts",
   permits: "Permits",
   reports: "Reports",
   submittals: "Submittals",
+  "submittal-workflows": "Submittal Reviews",
+  transmittals: "Transmittals",
   invoices: "Invoices",
   photos: "Photos",
 };
 
 const DocumentManagement = () => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<DocumentType>("drawings");
+  const [activeTab, setActiveTab] = useState<DocumentTab>("drawings");
   const [photoModal, setPhotoModal] = useState<null | Document>(null);
   const [openFolder, setOpenFolder] = useState<string | null>(null);
   const { user } = useAuthStore();
@@ -55,7 +74,7 @@ const DocumentManagement = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadForm, setUploadForm] = useState({
     name: "",
-    type: activeTab,
+    type: "drawings" as DocumentType,
     category: "",
     version: "1.0",
     description: "",
@@ -93,7 +112,10 @@ const DocumentManagement = () => {
   const folderedDocuments: Record<string, Document[]> = {};
   const roleList = roles || [];
 
-  if (activeTab !== "photos") {
+  const isWorkflowTab =
+    activeTab === "submittal-workflows" || activeTab === "transmittals";
+
+  if (activeTab !== "photos" && !isWorkflowTab) {
     roleList.forEach((role) => {
       folderedDocuments[role.id] = [];
     });
@@ -140,7 +162,9 @@ const DocumentManagement = () => {
       setShowUploadModal(false);
       setUploadForm({
         name: "",
-        type: activeTab,
+        type: DOCUMENT_UPLOAD_TYPES.includes(activeTab as DocumentType)
+          ? (activeTab as DocumentType)
+          : "drawings",
         category: "",
         version: "1.0",
         description: "",
@@ -190,7 +214,7 @@ const DocumentManagement = () => {
 
       {/* Tabs for document types */}
       <div className="tabs tabs-border mt-6">
-        {(Object.keys(DOCUMENT_TYPE_LABELS) as DocumentType[]).map((type) => (
+        {(Object.keys(DOCUMENT_TYPE_LABELS) as DocumentTab[]).map((type) => (
           <button
             key={type}
             className={`tab text-base ${
@@ -213,11 +237,35 @@ const DocumentManagement = () => {
           </div>
         ) : (
           <>
+            {activeTab === "transmittals" && (
+              <TransmittalsPanel
+                projectId={selectedProject}
+                documents={documents.filter((doc) => doc.projectId === selectedProject)}
+              />
+            )}
+
+            {activeTab === "submittal-workflows" && (
+              <SubmittalWorkflowsPanel
+                projectId={selectedProject}
+                documents={documents.filter((doc) => doc.projectId === selectedProject)}
+              />
+            )}
+
+            {!isWorkflowTab && (
+              <>
             {/* Upload & Export Controls */}
             <div className="flex items-center gap-4 mb-6">
               <button
                 className="btn btn-primary flex items-center gap-2"
-                onClick={() => setShowUploadModal(true)}
+                onClick={() => {
+                  setUploadForm((current) => ({
+                    ...current,
+                    type: DOCUMENT_UPLOAD_TYPES.includes(activeTab as DocumentType)
+                      ? (activeTab as DocumentType)
+                      : current.type,
+                  }));
+                  setShowUploadModal(true);
+                }}
                 disabled={uploading}
               >
                 <MdUploadFile />
@@ -427,6 +475,8 @@ const DocumentManagement = () => {
                 )}
               </div>
             )}
+              </>
+            )}
           </>
         )}
       </div>
@@ -460,7 +510,7 @@ const DocumentManagement = () => {
                   onChange={handleUploadFieldChange}
                   required
                 >
-                  {(Object.keys(DOCUMENT_TYPE_LABELS) as DocumentType[]).map((type) => (
+                  {DOCUMENT_UPLOAD_TYPES.map((type) => (
                     <option key={type} value={type}>{t(`doc_type_${type}`, DOCUMENT_TYPE_LABELS[type])}</option>
                   ))}
                 </select>

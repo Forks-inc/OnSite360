@@ -31,6 +31,11 @@ export default function Login() {
       setError(useAuthStore.getState().error || "Login failed");
     }
   };
+  const handleFillAdmin = () => {
+    setEmail("admin@onsite360.com");
+    setPassword("Admin@123");
+    setError("");
+  };
 
   return (
     <div className="min-h-screen bg-base-100 flex items-stretch">
@@ -103,6 +108,19 @@ export default function Login() {
                 )}
               </Button>
             </form>
+
+            {/* Dev quick-fill */}
+            <div className="mt-6 pt-5 border-t border-base-300">
+              <p className="text-xs text-neutral-400 mb-2 text-center">Demo / Dev access</p>
+              <button
+                type="button"
+                onClick={handleFillAdmin}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-[#fdc700]/60 bg-[#fdc700]/5 hover:bg-[#fdc700]/15 text-[#a45505] text-sm font-medium transition-colors cursor-pointer"
+              >
+                <span className="text-base">🔑</span>
+                Usar cuenta Admin
+              </button>
+            </div>
           </div>
         </div>
       </div>

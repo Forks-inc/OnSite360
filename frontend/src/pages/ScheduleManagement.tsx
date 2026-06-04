@@ -26,6 +26,7 @@ import { type Project } from "../hooks/useProjects";
 import { useUserProjects } from "../hooks/useUsers";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useTranslation } from "../hooks/useTranslation";
+import { MeetingsPanel } from "../components/workflows/WorkflowPanels";
 import {
   useProjectPhases,
   useScheduleEvents,
@@ -109,7 +110,7 @@ const eventStyleGetter = (event: { resource: string }) => {
   };
 };
 
-type ScheduleTab = "gantt" | "timeline" | "calendar" | "logs";
+type ScheduleTab = "gantt" | "timeline" | "calendar" | "meetings" | "logs";
 
 // Define types for frappe-gantt
 interface GanttTask {
@@ -950,6 +951,14 @@ const ScheduleManagement = () => {
         </button>
         <button
           className={`tab text-base ${
+            activeTab === "meetings" ? "tab-active font-bold" : ""
+          }`}
+          onClick={() => setActiveTab("meetings")}
+        >
+          {t("meetings", "Meetings")}
+        </button>
+        <button
+          className={`tab text-base ${
             activeTab === "logs" ? "tab-active font-bold" : ""
           }`}
           onClick={() => setActiveTab("logs")}
@@ -1260,6 +1269,10 @@ const ScheduleManagement = () => {
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === "meetings" && (
+            <MeetingsPanel projectId={selectedProject} />
           )}
 
           {/* Daily Logs */}

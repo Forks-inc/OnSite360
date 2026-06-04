@@ -17,6 +17,7 @@ import {
   type Project,
 } from "../hooks/useProjects";
 import { useTranslation } from "../hooks/useTranslation";
+import { PunchListPanel } from "../components/workflows/WorkflowPanels";
 
 const IssueReporting = () => {
   const { t } = useTranslation();
@@ -380,6 +381,14 @@ const IssueReporting = () => {
         >
           {t("analytics", "Analytics")}
         </button>
+        <button
+          className={`tab text-base ${
+            activeTab === "punch-list" ? "tab-active font-bold" : ""
+          }`}
+          onClick={() => setActiveTab("punch-list")}
+        >
+          {t("punch_list", "Punch List")}
+        </button>
       </div>
 
       <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
@@ -528,6 +537,10 @@ const IssueReporting = () => {
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === "punch-list" && (
+            <PunchListPanel projectId={selectedProject} />
           )}
 
           {/* Analytics */}

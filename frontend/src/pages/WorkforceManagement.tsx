@@ -29,6 +29,7 @@ import {
 import { useUserProjects } from "../hooks/useUsers";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useTranslation } from "../hooks/useTranslation";
+import { TimecardsPanel } from "../components/workflows/WorkflowPanels";
 
 // Add date-fns for date formatting (optional, or use native Date)
 const todayStr = new Date().toISOString().slice(0, 10);
@@ -186,11 +187,12 @@ const ROLE_SPECIFIC_SKILLS: Record<string, string[]> = {
   ],
 };
 
-type WorkforceTab = "all" | "attendance" | "analytics";
+type WorkforceTab = "all" | "attendance" | "timecards" | "analytics";
 
 const WORKFORCE_TAB_LABELS: Record<WorkforceTab, string> = {
   all: "All Staff",
   attendance: "Attendance",
+  timecards: "Timecards",
   analytics: "Analytics",
 };
 
@@ -877,15 +879,20 @@ const WorkforceManagement = () => {
               }`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === "all"}
-              {tab === "attendance"}
-              {tab === "analytics"}
-              {tab === "all" ? t("all_staff", "All Staff") : tab === "attendance" ? t("attendance", "Attendance") : t("analytics_tab", "Analytics")}
+              {t(`workforce_tab_${tab}`, WORKFORCE_TAB_LABELS[tab])}
             </button>
           ))}
         </div>
 
+        {activeTab === "timecards" && (
+          <TimecardsPanel
+            projectId={selectedProject}
+            crewMembers={crewMembers as CrewMember[]}
+          />
+        )}
+
         {/* Controls and Search bar in one row */}
+        {activeTab !== "timecards" && (
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
           <div className="flex items-center gap-4">
             <button
@@ -920,9 +927,10 @@ const WorkforceManagement = () => {
             />
           </div>
         </div>
+        )}
 
         {/* Main content area - show loading contextually */}
-        {projectsLoading || crewMembersLoading || attendanceLoading ? (
+        {activeTab !== "timecards" && (projectsLoading || crewMembersLoading || attendanceLoading ? (
           <div className="bg-base-100 rounded-lg p-8">
             <div className="flex items-center justify-center min-h-[300px]">
               <div className="text-center">
@@ -2446,7 +2454,7 @@ const WorkforceManagement = () => {
                 </div>
               )}
           </>
-        )}
+        ))}
       </div>
     </div>
   );

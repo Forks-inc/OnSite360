@@ -22,6 +22,10 @@ import { useUsers, useUserProjects } from "../hooks/useUsers";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useTranslation } from "../hooks/useTranslation";
 import {
+  CorrespondencePanel,
+  EmailInboxPanel,
+} from "../components/workflows/WorkflowPanels";
+import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -64,6 +68,7 @@ const Communication = () => {
     error: threadsError,
   } = useThreads();
   const { data: projects = [] } = useUserProjects(currentUser?.id || "");
+  const selectedProjectId = projects[0]?.id || "";
   const { data: users = [], isLoading: usersLoading } = useUsers();
   const { data: rfis = [], isLoading: rfisLoading } = useRFIs();
 
@@ -167,16 +172,16 @@ const Communication = () => {
     const avgResponseTime =
       rfis.length > 0
         ? Math.round(
-            rfis.reduce((acc, rfi) => {
-              if (rfi.answeredAt && rfi.createdAt) {
-                const responseTime =
-                  new Date(rfi.answeredAt).getTime() -
-                  new Date(rfi.createdAt).getTime();
-                return acc + responseTime / (1000 * 60 * 60 * 24); // Convert to days
-              }
-              return acc;
-            }, 0) / rfis.filter((rfi) => rfi.answeredAt).length
-          )
+          rfis.reduce((acc, rfi) => {
+            if (rfi.answeredAt && rfi.createdAt) {
+              const responseTime =
+                new Date(rfi.answeredAt).getTime() -
+                new Date(rfi.createdAt).getTime();
+              return acc + responseTime / (1000 * 60 * 60 * 24); // Convert to days
+            }
+            return acc;
+          }, 0) / rfis.filter((rfi) => rfi.answeredAt).length
+        )
         : 0;
 
     return {
@@ -660,6 +665,54 @@ const Communication = () => {
           type="radio"
           name="comm_tab_group"
           className="tab"
+          aria-label={t("correspondence", "Correspondence")}
+          checked={activeTab === "correspondence"}
+          onChange={() => setActiveTab("correspondence")}
+        />
+        {activeTab === "correspondence" && (
+          <div className="tab-content p-5">
+            <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold">
+                  {t("correspondence", "Correspondence")}
+                </h2>
+                <p className="text-neutral-500">
+                  {t("correspondence_desc", "Formal incoming and outgoing project correspondence")}
+                </p>
+              </div>
+              <CorrespondencePanel projectId={selectedProjectId} />
+            </div>
+          </div>
+        )}
+
+        <input
+          type="radio"
+          name="comm_tab_group"
+          className="tab"
+          aria-label={t("email_inbox", "Email Inbox")}
+          checked={activeTab === "email-inbox"}
+          onChange={() => setActiveTab("email-inbox")}
+        />
+        {activeTab === "email-inbox" && (
+          <div className="tab-content p-5">
+            <div className="bg-base-200 border border-base-300 p-6 rounded-2xl">
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold">
+                  {t("email_inbox", "Email Inbox")}
+                </h2>
+                <p className="text-neutral-500">
+                  {t("email_inbox_desc", "IMAP/SMTP inbox with local records, replies, forwards and project linking")}
+                </p>
+              </div>
+              <EmailInboxPanel projectId={selectedProjectId} />
+            </div>
+          </div>
+        )}
+
+        <input
+          type="radio"
+          name="comm_tab_group"
+          className="tab"
           aria-label={t("chat_tab", "Chat")}
           checked={activeTab === "chat"}
           onChange={() => setActiveTab("chat")}
@@ -694,15 +747,13 @@ const Communication = () => {
                         <button
                           key={thread.id}
                           onClick={() => setSelectedThread(thread)}
-                          className={`w-full text-left p-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${
-                            isSelected
+                          className={`w-full text-left p-3 rounded-xl transition-all duration-200 flex items-center gap-3 ${isSelected
                               ? "bg-primary text-primary-content shadow-md"
                               : "hover:bg-base-300 text-base-content"
-                          }`}
+                            }`}
                         >
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                            isSelected ? "bg-primary-content/20 text-primary-content" : "bg-primary/10 text-primary"
-                          }`}>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${isSelected ? "bg-primary-content/20 text-primary-content" : "bg-primary/10 text-primary"
+                            }`}>
                             {thread.title.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -731,9 +782,8 @@ const Communication = () => {
                   {/* Thread Information Panel */}
                   <div
                     id="thread-info"
-                    className={`bg-base-200 border border-base-300 rounded-2xl p-4 lg:w-1/3 w-full transition-all duration-300 flex flex-col shrink-0 overflow-y-auto ${
-                      showThreadInfo ? "block" : "hidden"
-                    }`}
+                    className={`bg-base-200 border border-base-300 rounded-2xl p-4 lg:w-1/3 w-full transition-all duration-300 flex flex-col shrink-0 overflow-y-auto ${showThreadInfo ? "block" : "hidden"
+                      }`}
                   >
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-lg font-bold">{t("thread_information", "Thread Information")}</h2>
@@ -752,7 +802,7 @@ const Communication = () => {
                         {selectedThread.description && (
                           <p className="text-sm text-gray-600 mb-3">{selectedThread.description}</p>
                         )}
-                        
+
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
                             <span className="font-medium">{t("type", "Type")}:</span>
@@ -918,9 +968,8 @@ const Communication = () => {
                           return (
                             <div
                               key={message.id}
-                              className={`chat ${
-                                isCurrentUser ? "chat-end" : "chat-start"
-                              }`}
+                              className={`chat ${isCurrentUser ? "chat-end" : "chat-start"
+                                }`}
                             >
                               <div className="chat-header text-xs sm:text-sm">
                                 <span className="hidden sm:inline">
@@ -1046,8 +1095,8 @@ const Communication = () => {
                           type="submit"
                           className="btn btn-primary btn-sm sm:btn-md"
                           disabled={
-                            sendMessageMutation.isPending || 
-                            sendMessageWithAttachmentsMutation.isPending || 
+                            sendMessageMutation.isPending ||
+                            sendMessageWithAttachmentsMutation.isPending ||
                             (!newMessage.trim() && selectedFiles.length === 0)
                           }
                         >
@@ -1081,7 +1130,7 @@ const Communication = () => {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{t("welcome_chat_title", "Welcome to ONE-365 Chat")}</h3>
+                  <h3 className="text-xl font-bold mb-2">{t("welcome_chat_title", "Welcome to ONE365 Chat")}</h3>
                   <p className="text-gray-500 max-w-md mb-6 text-sm">
                     {t("welcome_chat_desc", "Select a conversation thread from the sidebar on the left to start chatting with your team, or click the button below to create a new thread.")}
                   </p>
@@ -1334,10 +1383,10 @@ const Communication = () => {
                   <div className="stat-value">
                     {rfis.length > 0
                       ? Math.round(
-                          ((analyticsData.rfisByStatus.Resolved || 0) /
-                            rfis.length) *
-                            100
-                        )
+                        ((analyticsData.rfisByStatus.Resolved || 0) /
+                          rfis.length) *
+                        100
+                      )
                       : 0}
                     %
                   </div>
@@ -1485,7 +1534,7 @@ const Communication = () => {
                             ((analyticsData.totalMessages / threads.length ||
                               0) /
                               10) *
-                              100,
+                            100,
                             100
                           )}%`,
                         }}
@@ -1512,7 +1561,7 @@ const Communication = () => {
                             ((analyticsData.recentRFIs +
                               analyticsData.recentThreads) /
                               20) *
-                              100,
+                            100,
                             100
                           )}%`,
                         }}
@@ -1526,7 +1575,7 @@ const Communication = () => {
                   <h3 className="text-lg font-semibold mb-4">{t("rfi_categories", "RFI Categories")}</h3>
                   <div className="space-y-3">
                     {Object.entries(analyticsData.rfisByCategory)
-                       .sort(([, a], [, b]) => b - a)
+                      .sort(([, a], [, b]) => b - a)
                       .slice(0, 6)
                       .map(([category, count]) => (
                         <div
@@ -1541,15 +1590,14 @@ const Communication = () => {
                               <div
                                 className="bg-indigo-600 h-2 rounded-full"
                                 style={{
-                                  width: `${
-                                    (count /
+                                  width: `${(count /
                                       Math.max(
                                         ...Object.values(
                                           analyticsData.rfisByCategory
                                         )
                                       )) *
                                     100
-                                  }%`,
+                                    }%`,
                                 }}
                               ></div>
                             </div>
@@ -1754,16 +1802,15 @@ const Communication = () => {
                     value={
                       selectedRFIThread
                         ? threads.find((t) => t.id === selectedRFIThread)
-                            ?.projectId || ""
+                          ?.projectId || ""
                         : undefined
                     }
                   >
                     <option value="">
                       {selectedRFIThread
-                        ? `${t("project", "Project")}: ${
-                            threads.find((t) => t.id === selectedRFIThread)
-                              ?.project?.name || t("unknown", "Unknown")
-                          }`
+                        ? `${t("project", "Project")}: ${threads.find((t) => t.id === selectedRFIThread)
+                          ?.project?.name || t("unknown", "Unknown")
+                        }`
                         : t("select_project", "Select a project")}
                     </option>
                     {!selectedRFIThread &&
@@ -1953,7 +2000,7 @@ const Communication = () => {
                   }
                 >
                   {createRFIMutation.isPending ||
-                  createThreadMutation.isPending ? (
+                    createThreadMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm"></span>
                       {t("creating", "Creating...")}
@@ -2117,8 +2164,8 @@ const Communication = () => {
                     defaultValue={
                       editingRFI.dueDate
                         ? new Date(editingRFI.dueDate)
-                            .toISOString()
-                            .split("T")[0]
+                          .toISOString()
+                          .split("T")[0]
                         : ""
                     }
                   />

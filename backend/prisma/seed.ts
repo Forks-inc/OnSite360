@@ -8,34 +8,38 @@ async function main() {
 
   // Create permissions data from the provided JSON
   const permissionsData = [
-    { pageId: 'dashboard', pageName: 'Dashboard' },
-    { pageId: 'user-management', pageName: 'User Management' },
-    { pageId: 'role-management', pageName: 'Role Management' },
-    { pageId: 'permission-management', pageName: 'Permission Management' },
-    { pageId: 'integrations', pageName: 'Integrations' },
-    { pageId: 'system-logs', pageName: 'System Logs' },
-    { pageId: 'project-oversight', pageName: 'Project Oversight' },
-    { pageId: 'employee-management', pageName: 'Employee Management' },
-    { pageId: 'communication', pageName: 'Communication' },
-    { pageId: 'document-management', pageName: 'Document Management' },
-    { pageId: 'schedule-management', pageName: 'Schedule Management' },
-    { pageId: 'task-management', pageName: 'Task Management' },
-    { pageId: 'risk-management', pageName: 'Risk Management' },
-    { pageId: 'notifications', pageName: 'Notifications' },
-    { pageId: 'workforce-management', pageName: 'Workforce Management' },
-    { pageId: 'daily-logs-management', pageName: 'Daily Logs Management' },
-    { pageId: 'issue-reporting', pageName: 'Issue Reporting' },
-    { pageId: 'copilot', pageName: 'Copilot' },
+    { pageId: 'dashboard', pageName: 'Dashboard', components: ['overview', 'reports', 'map'] },
+    { pageId: 'user-management', pageName: 'User Management', components: ['users'] },
+    { pageId: 'role-management', pageName: 'Role Management', components: ['roles', 'components'] },
+    { pageId: 'permission-management', pageName: 'Permission Management', components: ['permissions', 'components'] },
+    { pageId: 'integrations', pageName: 'Integrations', components: ['integrations'] },
+    { pageId: 'system-logs', pageName: 'System Logs', components: ['logs', 'monitoring'] },
+    { pageId: 'project-oversight', pageName: 'Project Oversight', components: ['projects', 'statistics'] },
+    { pageId: 'employee-management', pageName: 'Employee Management', components: ['employees', 'assignments'] },
+    { pageId: 'communication', pageName: 'Communication', components: ['threads', 'rfis', 'correspondence', 'email-inbox'] },
+    { pageId: 'document-management', pageName: 'Document Management', components: ['documents', 'drawings', 'specifications', 'photos', 'submittals', 'transmittals'] },
+    { pageId: 'schedule-management', pageName: 'Schedule Management', components: ['calendar', 'meetings', 'gantt', 'logs'] },
+    { pageId: 'task-management', pageName: 'Task Management', components: ['tasks', 'comments', 'attachments'] },
+    { pageId: 'risk-management', pageName: 'Risk Management', components: ['expenses', 'risk'] },
+    { pageId: 'notifications', pageName: 'Notifications', components: ['notifications'] },
+    { pageId: 'workforce-management', pageName: 'Workforce Management', components: ['crew', 'attendance', 'timecards', 'analytics'] },
+    { pageId: 'daily-logs-management', pageName: 'Daily Logs Management', components: ['daily-logs', 'activities', 'photos', 'maps'] },
+    { pageId: 'issue-reporting', pageName: 'Issue Reporting', components: ['issues', 'punch-list', 'analytics'] },
+    { pageId: 'copilot', pageName: 'Copilot', components: ['chat', 'documents', 'reports'] },
   ];
 
   // Create permissions in the database
   for (const permission of permissionsData) {
     await prisma.permission.upsert({
       where: { pageId: permission.pageId },
-      update: { pageName: permission.pageName },
+      update: {
+        pageName: permission.pageName,
+        components: permission.components,
+      },
       create: {
         pageId: permission.pageId,
         pageName: permission.pageName,
+        components: permission.components,
       },
     });
   }
@@ -62,11 +66,15 @@ async function main() {
           permissionId: permission.id,
         },
       },
-      update: { level: 3 },
+      update: {
+        level: 3,
+        availableComponents: permission.components,
+      },
       create: {
         roleId: adminRole.id,
         permissionId: permission.id,
         level: 3, // Admin level access
+        availableComponents: permission.components,
       },
     });
   }

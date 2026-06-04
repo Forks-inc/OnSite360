@@ -120,6 +120,13 @@ model Project {
   attendance          ProjectAttendance[]
   // NEW: expenses related to this project
   expenses            Expense[]
+  transmittals        Transmittal[]
+  submittalWorkflows  SubmittalWorkflow[]
+  correspondences     Correspondence[]
+  emailMessages       EmailMessage[]
+  meetingMinutes      MeetingMinute[]
+  punchListItems      PunchListItem[]
+  timecards           Timecard[]
 }
 
 // Junction table for many-to-many relationship between User and Project
@@ -181,6 +188,11 @@ model Document {
   tasks        Task[] // Tasks that reference this document as an attachment
   rfis         RFI[] // RFIs that reference this document as an attachment
   issues       Issue[] // Issues that reference this document as an attachment
+  transmittals Transmittal[] @relation("TransmittalDocuments")
+  correspondences Correspondence[] @relation("CorrespondenceDocuments")
+  punchListItems PunchListItem[] @relation("PunchListDocuments")
+  meetingMinutes MeetingMinute[] @relation("MeetingMinuteDocuments")
+  submittalWorkflow SubmittalWorkflow?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -212,6 +224,8 @@ model Task {
 
   // NEW: daily activities that reference this task
   dailyActivities DailyActivity[] 
+  meetingActionItems MeetingActionItem[]
+  punchListItems PunchListItem[]
 
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
@@ -245,6 +259,8 @@ model RFI {
   threadId      String? // Link to discussion thread
   thread        Thread?    @relation(fields: [threadId], references: [id])
   documents     Document[] // Array of Document IDs for attachments
+  correspondences Correspondence[]
+  emailMessages EmailMessage[]
   dueDate       DateTime?
   answeredAt    DateTime?
   answer        String? // The response/answer
@@ -267,6 +283,8 @@ model Thread {
   messages    Message[] // Messages in this thread
   users       User[]
   rfis        RFI[] // RFIs can reference threads
+  correspondences Correspondence[]
+  emailMessages EmailMessage[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -408,6 +426,7 @@ model Issue {
   resolvedAt   DateTime?
   resolution   String? // How the issue was resolved
   attachments  Document[] // Array of Document IDs for attachments
+  punchListItems PunchListItem[]
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -493,6 +512,7 @@ model CrewMember {
   hireDate          DateTime?
   assignments       CrewAssignment[]
   dailyActivities   DailyActivity[]
+  timecards          Timecard[]
   attendanceRecords AttendanceRecord[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
@@ -537,6 +557,7 @@ model ScheduleEvent {
   notes        String?
   createdById  String // User who created the event
   createdBy    User            @relation("EventCreator", fields: [createdById], references: [id])
+  meetingMinute MeetingMinute?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 }
@@ -612,6 +633,282 @@ model MaintenanceLog {
   notes       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Transmittal {
+  id             String                 @id @default(uuid())
+  projectId      String
+  project        Project                @relation(fields: [projectId], references: [id])
+  number         String
+  title          String
+  description    String?
+  status         String                 @default("Draft")
+  dueDate        DateTime?
+  sentAt         DateTime?
+  acknowledgedAt DateTime?
+  notes          String?
+  sentById       String?
+  documents      Document[]             @relation("TransmittalDocuments")
+  recipients     TransmittalRecipient[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  @@unique([projectId, number])
+  @@index([projectId, status])
+}
+
+model TransmittalRecipient {
+  id             String       @id @default(uuid())
+  transmittalId  String
+  transmittal    Transmittal  @relation(fields: [transmittalId], references: [id], onDelete: Cascade)
+  userId         String?
+  name           String
+  email          String?
+  company        String?
+  acknowledgedAt DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model SubmittalWorkflow {
+  id            String    @id @default(uuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id])
+  documentId    String    @unique
+  document      Document  @relation(fields: [documentId], references: [id])
+  status        String    @default("Draft")
+  submittedById String?
+  reviewerId    String?
+  dueDate       DateTime?
+  submittedAt   DateTime?
+  reviewedAt    DateTime?
+  response      String?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([projectId, status])
+}
+
+model Correspondence {
+  id              String                    @id @default(uuid())
+  projectId       String
+  project         Project                   @relation(fields: [projectId], references: [id])
+  number          String
+  type            String                    @default("General")
+  direction       String                    @default("Outgoing")
+  status          String                    @default("Draft")
+  senderName      String?
+  senderEmail     String?
+  subject         String
+  body            String?
+  dueDate         DateTime?
+  sentAt          DateTime?
+  receivedAt      DateTime?
+  closedAt        DateTime?
+  createdById     String?
+  threadId        String?
+  thread          Thread?                   @relation(fields: [threadId], references: [id])
+  rfiId           String?
+  rfi             RFI?                      @relation(fields: [rfiId], references: [id])
+  emailMessageId  String?
+  emailMessage    EmailMessage?             @relation("CorrespondenceSourceEmail", fields: [emailMessageId], references: [id])
+  documents       Document[]                @relation("CorrespondenceDocuments")
+  recipients      CorrespondenceRecipient[]
+  emailMessages   EmailMessage[]            @relation("CorrespondenceLinkedEmails")
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  @@unique([projectId, number])
+  @@index([projectId, status])
+}
+
+model CorrespondenceRecipient {
+  id               String          @id @default(uuid())
+  correspondenceId String
+  correspondence   Correspondence  @relation(fields: [correspondenceId], references: [id], onDelete: Cascade)
+  userId           String?
+  name             String
+  email            String?
+  company          String?
+  role             String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model EmailAccount {
+  id            String         @id @default(uuid())
+  userId        String?
+  name          String
+  email         String
+  imapHost      String?
+  imapPort      Int?
+  imapSecure    Boolean        @default(true)
+  smtpHost      String?
+  smtpPort      Int?
+  smtpSecure    Boolean        @default(true)
+  syncEnabled   Boolean        @default(false)
+  lastSyncedAt  DateTime?
+  status        String         @default("ConfigurationRequired")
+  messages      EmailMessage[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([userId, email])
+}
+
+model EmailMessage {
+  id               String             @id @default(uuid())
+  accountId        String?
+  account          EmailAccount?      @relation(fields: [accountId], references: [id])
+  projectId        String?
+  project          Project?           @relation(fields: [projectId], references: [id])
+  correspondenceId String?
+  correspondence   Correspondence?    @relation("CorrespondenceLinkedEmails", fields: [correspondenceId], references: [id])
+  sourceForCorrespondence Correspondence[] @relation("CorrespondenceSourceEmail")
+  threadId         String?
+  thread           Thread?            @relation(fields: [threadId], references: [id])
+  rfiId            String?
+  rfi              RFI?               @relation(fields: [rfiId], references: [id])
+  direction        String             @default("Incoming")
+  status           String             @default("Received")
+  messageId        String?            @unique
+  inReplyTo        String?
+  references       String[]
+  from             String
+  to               String[]
+  cc               String[]
+  bcc              String[]
+  subject          String
+  body             String?
+  bodyHtml         String?
+  sentAt           DateTime?
+  receivedAt       DateTime?
+  createdById      String?
+  attachments      EmailAttachment[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([projectId, status])
+  @@index([accountId, receivedAt])
+}
+
+model EmailAttachment {
+  id             String       @id @default(uuid())
+  emailMessageId String
+  emailMessage   EmailMessage @relation(fields: [emailMessageId], references: [id], onDelete: Cascade)
+  filename       String
+  url            String?
+  mimeType       String?
+  size           Int?
+  createdAt      DateTime     @default(now())
+}
+
+model MeetingMinute {
+  id              String              @id @default(uuid())
+  projectId       String
+  project         Project             @relation(fields: [projectId], references: [id])
+  scheduleEventId String              @unique
+  scheduleEvent   ScheduleEvent       @relation(fields: [scheduleEventId], references: [id], onDelete: Cascade)
+  agenda          String?
+  minutes         String?
+  decisions       String[]
+  createdById     String?
+  attendees       MeetingAttendee[]
+  actionItems     MeetingActionItem[]
+  documents       Document[]          @relation("MeetingMinuteDocuments")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model MeetingAttendee {
+  id              String        @id @default(uuid())
+  meetingMinuteId String
+  meetingMinute   MeetingMinute @relation(fields: [meetingMinuteId], references: [id], onDelete: Cascade)
+  userId          String?
+  name            String
+  email           String?
+  company         String?
+  status          String        @default("Invited")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model MeetingActionItem {
+  id              String        @id @default(uuid())
+  meetingMinuteId String
+  meetingMinute   MeetingMinute @relation(fields: [meetingMinuteId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?
+  assigneeId      String?
+  dueDate         DateTime?
+  status          String        @default("Open")
+  taskId          String?
+  task            Task?         @relation(fields: [taskId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model PunchListItem {
+  id          String     @id @default(uuid())
+  projectId   String
+  project     Project    @relation(fields: [projectId], references: [id])
+  title       String
+  description String?
+  location    String?
+  discipline  String?
+  status      String     @default("Open")
+  priority    String     @default("Medium")
+  assigneeId  String?
+  dueDate     DateTime?
+  closedAt    DateTime?
+  issueId     String?
+  issue       Issue?     @relation(fields: [issueId], references: [id])
+  taskId      String?
+  task        Task?      @relation(fields: [taskId], references: [id])
+  documents   Document[] @relation("PunchListDocuments")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([projectId, status])
+}
+
+model Timecard {
+  id                 String          @id @default(uuid())
+  projectId          String
+  project            Project         @relation(fields: [projectId], references: [id])
+  crewMemberId       String
+  crewMember         CrewMember      @relation(fields: [crewMemberId], references: [id])
+  weekStart          DateTime        @db.Date
+  status             String          @default("Draft")
+  totalRegularHours  Float           @default(0)
+  totalOvertimeHours Float           @default(0)
+  totalBreakHours    Float           @default(0)
+  notes              String?
+  submittedById      String?
+  submittedAt        DateTime?
+  approvedById       String?
+  approvedAt         DateTime?
+  rejectionReason    String?
+  entries            TimecardEntry[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@unique([projectId, crewMemberId, weekStart])
+  @@index([projectId, status])
+}
+
+model TimecardEntry {
+  id            String    @id @default(uuid())
+  timecardId    String
+  timecard      Timecard  @relation(fields: [timecardId], references: [id], onDelete: Cascade)
+  date          DateTime  @db.Date
+  regularHours  Float    @default(0)
+  overtimeHours Float    @default(0)
+  breakHours    Float    @default(0)
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 // New model to store user notifications

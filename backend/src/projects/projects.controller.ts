@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ProjectsService } from './projects.service';
+import { ProjectWorkflowService } from './project-workflows.service';
 
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -50,7 +51,71 @@ import { UpdateExpenseDto } from './dto/update-expense.dto';
 @ApiTags('projects')
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(
+    private readonly projectsService: ProjectsService,
+    private readonly projectWorkflowService: ProjectWorkflowService,
+  ) {}
+
+  @ApiOperation({ summary: 'Create a punch list item for a project' })
+  @ApiBearerAuth()
+  @Post(':id/punch-list')
+  createPunchListItem(@Param('id') projectId: string, @Body() body: any) {
+    return this.projectWorkflowService.createPunchListItem(projectId, body);
+  }
+
+  @ApiOperation({ summary: 'List punch list items for a project' })
+  @ApiBearerAuth()
+  @Get(':id/punch-list')
+  listPunchListItems(@Param('id') projectId: string) {
+    return this.projectWorkflowService.listPunchListItems(projectId);
+  }
+
+  @ApiOperation({ summary: 'Update a punch list item' })
+  @ApiBearerAuth()
+  @Patch(':id/punch-list/:itemId')
+  updatePunchListItem(
+    @Param('itemId') itemId: string,
+    @Body() body: any,
+  ) {
+    return this.projectWorkflowService.updatePunchListItem(itemId, body);
+  }
+
+  @ApiOperation({ summary: 'Create a project timecard' })
+  @ApiBearerAuth()
+  @Post(':id/timecards')
+  createTimecard(@Param('id') projectId: string, @Body() body: any) {
+    return this.projectWorkflowService.createTimecard(projectId, body);
+  }
+
+  @ApiOperation({ summary: 'List project timecards' })
+  @ApiBearerAuth()
+  @Get(':id/timecards')
+  listTimecards(@Param('id') projectId: string) {
+    return this.projectWorkflowService.listTimecards(projectId);
+  }
+
+  @ApiOperation({ summary: 'Export project timecards as CSV' })
+  @ApiBearerAuth()
+  @Get(':id/timecards/export')
+  exportTimecardsCsv(@Param('id') projectId: string) {
+    return this.projectWorkflowService.exportTimecardsCsv(projectId);
+  }
+
+  @ApiOperation({ summary: 'Submit, approve, reject, or reopen a timecard' })
+  @ApiBearerAuth()
+  @Post(':id/timecards/:timecardId/status')
+  updateTimecardStatus(
+    @Param('timecardId') timecardId: string,
+    @Body() body: any,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.projectWorkflowService.updateTimecardStatus(
+      timecardId,
+      body.status,
+      req.user?.sub,
+      body.rejectionReason,
+    );
+  }
 
   @ApiOperation({ summary: 'Create a new project' })
   @ApiResponse({ status: 201, description: 'Project created successfully' })
